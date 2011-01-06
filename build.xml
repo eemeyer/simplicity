@@ -29,43 +29,54 @@
     <echo message="JavaScript documentation now available at docroot/jsdoc/index.html"/>
   </target>
 
-  <!--
-    depends="jsdoc,compress-media"
-  -->
-  <property name="external.version" value="0.0.0"/>
-  <target name="dist"
+  <property name="version" value="0.0.0"/>
+  <target name="dist" depends="compress-media,jsdoc"
     description="Build a binary distribution of this project">
     <delete dir="build.ant/dist"/>
     <mkdir dir="build.ant/dist"/>
-    <!-- JavaScript dependencies -->
-    <copy todir="build.ant/dist/js">
-      <fileset dir="docroot/js/lib">
-        <exclude name="jquery.numberformatter-*.js"/>
+    <!-- Copy and rename the Simplicity widgets, to add the current version -->
+    <copy todir="build.ant/dist">
+      <fileset dir="docroot">
+        <include name="js/build/simplicity.js"/>
+        <include name="js/build/simplicity.min.js"/>
+        <include name="css/build/simplicity.css"/>
+        <include name="css/build/simplicity.min.css"/>
       </fileset>
-      <fileset dir="docroot/js/build">
+      <mapper type="regexp"
+        from="simplicity(\.min\.css|\.min\.js|\.js|\.css)"
+        to="simplicity-${version}\1"/>
+    </copy>
+    <!-- The target zipfile -->
+    <delete file="simplicity-${version}.zip"/>
+    <zip destfile="simplicity-${version}.zip">
+      <!-- Simplicity Widgets -->
+      <zipfileset prefix="simplicity-${version}/js/" dir="build.ant/dist">
+        <include name="simplicity-*.js"/>
+        <include name="simplicity-*.min.js"/>
+      </zipfileset>
+      <zipfileset prefix="simplicity-${version}/css/" dir="build.ant/dist">
+        <include name="simplicity-*.css"/>
+        <include name="simplicity-*.min.css"/>
+      </zipfileset>
+      <!-- JavaScript dependencies -->
+      <zipfileset prefix="simplicity-${version}/js/" dir="docroot/js/lib">
+        <exclude name="jquery.numberformatter-*.js"/>
+      </zipfileset>
+      <zipfileset prefix="simplicity-${version}/js/" dir="docroot/js/build">
         <include name="json2.min.js"/>
         <include name="jquery.pagination-*.min.js"/>
-      </fileset>
-    </copy>
-    <!-- CSS dependencies -->
-    <copy todir="build.ant/dist/css">
-      <fileset dir="docroot/css/lib">
+      </zipfileset>
+      <!-- CSS dependencies -->
+      <zipfileset prefix="simplicity-${version}/css/" dir="docroot/css/lib">
         <exclude name="yui-grids-*.css"/>
         <exclude name="jquery.pagination-*.css"/>
-      </fileset>
-    </copy>
-    <!-- The Simplicity widgets -->
-    <copy file="docroot/js/build/simplicity.js"
-      tofile="build.ant/dist/js/simplicity-${external.version}.js"/>
-    <copy file="docroot/js/build/simplicity.min.js"
-      tofile="build.ant/dist/js/simplicity-${external.version}.min.js"/>
-    <copy file="docroot/css/build/simplicity.css"
-      tofile="build.ant/dist/css/simplicity-${external.version}.css"/>
-    <copy file="docroot/css/build/simplicity.min.css"
-      tofile="build.ant/dist/css/simplicity-${external.version}.min.css"/>
-    <!-- JsDoc -->
-    <copy todir="build.ant/dist/jsdoc">
-      <fileset dir="docroot/jsdoc"/>
-    </copy>
+      </zipfileset>
+      <zipfileset prefix="simplicity-${version}/css/" dir="docroot/css/build">
+        <include name="jquery-ui-*.min.css"/>
+      </zipfileset>
+      <!-- JsDoc -->
+      <zipfileset prefix="simplicity-${version}/jsdoc/" dir="docroot/jsdoc"/>
+    </zip>
+    <delete dir="build.ant/dist"/>
   </target>
 </project>
