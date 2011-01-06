@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>MapQuest Map Sandbox</title>
+    <style type="text/css">
+      #map { border: 2px dashed red; }
+    </style>
+  </head>
+  <body>
+    <h1>MapQuest Map Sandbox</h1>
+    <div id="map" style="width: 400px; height: 400px;"></div>
+    <script type="text/javascript" src="../js/lib/jquery-1.4.4.min.js" charset="utf-8"></script>
+    <script src="http://mapquestapi.com/sdk/js/v6.0.0/mqa.toolkit.js?key=Dmjtd%7Clu612007nq%2C20%3Do5-50zah"></script>
+    <script type="text/javascript">//<![CDATA[
+      $(function () {
+        var map = new MQA.TileMap($('#map')[0],
+          5, {lat:40.69847032728747, lng:-73.9514422416687}, 'map');
+      });
+    //]]></script>
+  </body>
+</html>

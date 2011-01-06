@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>simplicityState sandbox</title>
+    <link href="qunit-2010-12-09.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/jquery-ui-1.8.6.custom.css" rel="stylesheet" type="text/css" />
+    <style>
+      body {
+        margin: auto; /* center in viewport */
+        width: 960px;
+      }
+      #nav {
+        width: 200px;
+      }
+      #nav2 {
+        width: 200px;
+      }
+      #nav3 {
+        width: 200px;
+      }
+      #main {
+        width: 360px;
+      }
+  </style>
+  </head>
+  <body>
+    <div class="yui3-g">
+      <div id="nav" class="yui3-u">
+        <form id="navForm" onsubmit="return false;">
+           <fieldset>
+             <legend>Checkboxes Shapes</legend>
+             <input type="checkbox" id="shape_square" name="shape" value="square"/>
+             <label for="shape_square">Square</label>
+             <br/>
+             <input type="checkbox" id="shape_circle" name="shape" value="circle"/>
+             <label for="shape_circle">Circle</label>
+             <br/>
+             <input type="checkbox" id="shape_triangle" name="shape" value="triangle"/>
+             <label for="shape_triangle">Triangle</label>
+          </fieldset>
+          <fieldset>
+            <legend>Radio Sizes</legend>
+            <input type="radio" id="size_small" name="size" value="small"/>
+            <label for="size_small">Small</label>
+            <br/>
+            <input type="radio" id="size_medium" name="size" value="medium"/>
+            <label for="size_medium">Medium</label>
+            <br/>
+            <input type="radio" id="size_large" name="size" value="large"/>
+            <label for="size_large">Large</label>
+          </fieldset>
+          <fieldset>
+            <legend>Multi Select Shapes</legend>
+            <select name="shape" multiple="multiple">
+              <option value="square">Square</option>
+              <option value="circle">Circle</option>
+              <option value="triangle">Triangle</option>
+            </select>
+          </fieldset>
+          <fieldset>
+            <legend>Single Select Sizes</legend>
+            <select name="size">
+              <option value="">Select...</option>
+              <option value="small">Small</option>
+              <option value="medium">Medium</option>
+              <option value="large">Large</option>
+            </select>
+          </fieldset>
+          <fieldset>
+            <legend>TextInput Sizes</legend>
+            <input name="size"/>
+          </fieldset>
+          <fieldset>
+            <legend>TextArea Sizes</legend>
+            <textarea name="size" rows="3" cols="18"></textarea>
+          </fieldset>
+          <fieldset>
+            <legend>Button</legend>
+            <button name="testbutton" value="testbutton">test button</button>
+          </fieldset>
+          <fieldset>
+            <legend>Input Button</legend>
+            <input type="button" name="testinputbutton" value="testinputbutton"/>
+          </fieldset>
+          <fieldset>
+            <legend>Input Image</legend>
+            <input type="image" name="testinputimage" value="testinputimage" src="../images/logo-trans.png"/>
+          </fieldset>
+        </form>
+      </div>
+      <div id="nav2" class="yui3-u">
+        <form id="nav2Form" onsubmit="return false;">
+          <fieldset>
+             <legend>Copy of Checkboxes Shapes</legend>
+             <input type="checkbox" id="shape_square_copy" name="shape" value="square"/>
+             <label for="shape_square_copy">Square</label>
+             <br/>
+             <input type="checkbox" id="shape_circle_copy" name="shape" value="circle"/>
+             <label for="shape_circle_copy">Circle</label>
+             <br/>
+             <input type="checkbox" id="shape_triangle_copy" name="shape" value="triangle"/>
+             <label for="shape_triangle_copy">Triangle</label>
+          </fieldset>
+          <fieldset>
+            <legend>Copy of Radio Sizes</legend>
+            <input type="radio" id="size_small_copy" name="size" value="small"/>
+            <label for="size_small_copy">Small</label>
+            <br/>
+            <input type="radio" id="size_medium_copy" name="size" value="medium"/>
+            <label for="size_medium_copy">Medium</label>
+            <br/>
+            <input type="radio" id="size_large_copy" name="size" value="large"/>
+            <label for="size_large_copy">Large</label>
+          </fieldset>
+          <fieldset>
+            <legend>Copy of TextInput Sizes</legend>
+            <input name="size"/>
+          </fieldset>
+          <fieldset>
+            <legend>Copy of TextArea Sizes</legend>
+            <textarea name="size" rows="3" cols="18"></textarea>
+          </fieldset>
+          <fieldset>
+            <legend>TextInput Shapes</legend>
+            <input name="shape"/>
+          </fieldset>
+          <fieldset>
+            <legend>TextArea Shapes</legend>
+            <textarea name="shape" rows="3" cols="18"></textarea>
+          </fieldset>
+          <fieldset>
+            <legend>Hidden Sizes</legend>
+            <input type="hidden" name="size"/>
+          </fieldset>
+          <fieldset>
+            <legend>Hidden Shapes</legend>
+            <input type="hidden" name="shape" value="hexagon"/>
+          </fieldset>
+        </form>
+      </div>
+      <div id="nav3" class="yui3-u">
+        <form id="nav3Form" onsubmit="return false;">
+          <fieldset>
+            <legend>Weight</legend>
+            <input id="weightInput" name="weight" />
+            <div id="weightSlider"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Copy of Weight</legend>
+            <input id="weightInputCopy" name="weight" />
+            <div id="weightSliderCopy"></div>
+          </fieldset>
+        </form>
+      </div>
+      <div id="main" class="yui3-u">
+        <fieldset>
+          <legend>State as params</legend>
+          <input id="stateParams" size="40" />
+          <br />
+          <legend>Traditional serialization</legend>
+          <input id="stateParamsTraditional" size="40" />
+        </fieldset>
+        <fieldset>
+          <legend>State</legend>
+          <textarea id="state" cols="40" rows="40"></textarea>
+        </fieldset>
+      </div>
+    </div>
+    <script type="text/javascript" src="../js/lib/jquery-1.4.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.6.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="../js/simplicity/simplicityEquiv.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityHistory.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityInput.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicitySlider.js" charset="utf-8"></script>
+
+    <script type="text/javascript">//<![CDATA[
+      $(function () {
+        $('body').simplicityState({
+          debug: false
+        });
+
+        $('#nav :input,#nav2 :input,#nav3 :input').simplicityInput();
+
+        $('body').bind('simplicityStateChange', function (evt, state) {
+          $('#stateParams').val(decodeURIComponent($.param(state, false)));
+          $('#stateParamsTraditional').val(decodeURIComponent($.param(state, true)));
+        });
+        $('#stateParams,#stateParamsTraditional').change(function () {
+          $('body').simplicityState('state', $.deparam($(this).val()));
+        });
+
+        $('#weightSlider').simplicitySlider({
+          input: $('#weightInput'),
+          min: 0,
+          max: 30
+        });
+        $('#weightSliderCopy').simplicitySlider({
+          input: $('#weightInputCopy'),
+          min: 0,
+          max: 30
+        });
+
+        $('body').bind('simplicityStateChange', function (evt, state) {
+          $('#state').val(JSON.stringify(state, null, '  '));
+        });
+        $('#state').change(function (evt) {
+          $('body').simplicityState('state', JSON.parse($(evt.target).val()));
+        });
+
+        $('body').simplicityState('mergeQueryParams');
+        $('body').simplicityHistory({
+          debug: false
+        });
+        $('body').simplicityState('triggerChangeEvent');
+      });
+    //]]></script>
+  </body>
+</html>

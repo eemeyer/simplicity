@@ -1,0 +1,33 @@
+.ui-simplicity-pagination .pagination {
+  font-size: 80%;
+}
+
+.ui-simplicity-pagination .pagination a {
+  text-decoration: none;
+  border: solid 1px #AAE;
+  color: #15B;
+}
+
+.ui-simplicity-pagination .pagination a,
+.ui-simplicity-pagination .pagination span {
+  display: block;
+  float: left;
+  padding: 0.3em 0.5em;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  min-width: 1em;
+  text-align: center;
+}
+
+.ui-simplicity-pagination .pagination .current {
+  background: #26B;
+  color: #fff;
+  border: solid 1px #AAE;
+}
+
+.ui-simplicity-pagination .pagination .current.prev,
+.ui-simplicity-pagination .pagination .current.next {
+  color: #999;
+  border-color: #999;
+  background: #fff;
+}

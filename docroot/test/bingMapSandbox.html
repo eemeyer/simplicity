@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>Bing Map Sandbox</title>
+    <style type="text/css">
+      #map { position: absolute; width: 400px; height: 400px; border: 2px dashed red; }
+    </style>
+  </head>
+  <body>
+    <h1>Bing Map Sandbox</h1>
+    <div id="map"></div>
+    <script type="text/javascript" src="../js/lib/jquery-1.4.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+    <script type="text/javascript">//<![CDATA[
+      $(function () {
+        var map = new Microsoft.Maps.Map($('#map')[0], {
+          center: new Microsoft.Maps.Location(40.69847032728747, -73.9514422416687),
+          zoom: 10,
+          mapTypeId: Microsoft.Maps.MapTypeId.road,
+          credentials: 'AqsWuHqZWoV942yySq7z7YZcyz7skrvFfPX_if4OmK5FyHkyJDmQSvX17Z7ymtok'
+        });
+      });
+    //]]></script>
+  </body>
+</html>

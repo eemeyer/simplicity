@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Simplicity">
+  <target name="clean"
+    description="Removes any temporary files or built resources.">
+    <delete dir="/tmp/simplicity"/>
+    <delete dir="docroot/js/build"/>
+    <delete dir="docroot/css/build"/>
+    <delete dir="docroot/jsdoc"/>
+  </target>
+
+  <target name="compress-media"
+    description="Lint, concatenate and compress media files as configured in media.yml.">
+    <mkdir dir="/tmp/simplicity"/>
+    <java jar="tools/mediacompressor-app-1.2.jar" fork="true" failonerror="true">
+      <arg value="--config=media.yml"/>
+    </java>
+  </target>
+
+  <target name="jsdoc"
+    description="Builds the JavaScript documentation">
+    <delete dir="docroot/jsdoc"/>
+    <java jar="tools/jsdoc-toolkit-2.4.0/jsrun.jar" fork="true" failonerror="true">
+      <arg value="tools/jsdoc-toolkit-2.4.0/app/run.js"/>
+      <arg value="-e=UTF-8"/>
+      <arg value="-d=docroot/jsdoc/"/>
+      <arg value="-t=tools/jsdoc-toolkit-2.4.0/templates/jsdoc"/>
+      <arg value="docroot/js/simplicity/"/>
+    </java>
+    <echo message="JavaScript documentation now available at docroot/jsdoc/index.html"/>
+  </target>
+</project>
