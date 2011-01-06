@@ -2,7 +2,7 @@
 <project name="Simplicity">
   <target name="clean"
     description="Removes any temporary files or built resources.">
-    <delete dir="/tmp/simplicity"/>
+    <delete dir="build.ant"/>
     <delete dir="docroot/js/build"/>
     <delete dir="docroot/css/build"/>
     <delete dir="docroot/jsdoc"/>
@@ -10,7 +10,7 @@
 
   <target name="compress-media"
     description="Lint, concatenate and compress media files as configured in media.yml.">
-    <mkdir dir="/tmp/simplicity"/>
+    <mkdir dir="build.ant/compressed"/>
     <java jar="tools/mediacompressor-app-1.2.jar" fork="true" failonerror="true">
       <arg value="--config=media.yml"/>
     </java>
@@ -27,5 +27,45 @@
       <arg value="docroot/js/simplicity/"/>
     </java>
     <echo message="JavaScript documentation now available at docroot/jsdoc/index.html"/>
+  </target>
+
+  <!--
+    depends="jsdoc,compress-media"
+  -->
+  <property name="external.version" value="0.0.0"/>
+  <target name="dist"
+    description="Build a binary distribution of this project">
+    <delete dir="build.ant/dist"/>
+    <mkdir dir="build.ant/dist"/>
+    <!-- JavaScript dependencies -->
+    <copy todir="build.ant/dist/js">
+      <fileset dir="docroot/js/lib">
+        <exclude name="jquery.numberformatter-*.js"/>
+      </fileset>
+      <fileset dir="docroot/js/build">
+        <include name="json2.min.js"/>
+        <include name="jquery.pagination-*.min.js"/>
+      </fileset>
+    </copy>
+    <!-- CSS dependencies -->
+    <copy todir="build.ant/dist/css">
+      <fileset dir="docroot/css/lib">
+        <exclude name="yui-grids-*.css"/>
+        <exclude name="jquery.pagination-*.css"/>
+      </fileset>
+    </copy>
+    <!-- The Simplicity widgets -->
+    <copy file="docroot/js/build/simplicity.js"
+      tofile="build.ant/dist/js/simplicity-${external.version}.js"/>
+    <copy file="docroot/js/build/simplicity.min.js"
+      tofile="build.ant/dist/js/simplicity-${external.version}.min.js"/>
+    <copy file="docroot/css/build/simplicity.css"
+      tofile="build.ant/dist/css/simplicity-${external.version}.css"/>
+    <copy file="docroot/css/build/simplicity.min.css"
+      tofile="build.ant/dist/css/simplicity-${external.version}.min.css"/>
+    <!-- JsDoc -->
+    <copy todir="build.ant/dist/jsdoc">
+      <fileset dir="docroot/jsdoc"/>
+    </copy>
   </target>
 </project>

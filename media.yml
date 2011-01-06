@@ -1,6 +1,6 @@
 mediaRootDir: docroot
 outputDir: .
-tempDir: /tmp/simplicity
+tempDir: build.ant/compressed
 groups:
 
   - groupName: simplicity_js
@@ -43,6 +43,22 @@ groups:
     outputFileNameMinified: js/build/simplicityLoadJs.min.js
     sourceFileNames:
       - js/simplicity/simplicityLoadJs.js
+
+  - groupName: jquery_pagination_js
+    mediaType: js
+    jslint: off
+    outputFileName: js/build/jquery.pagination-2.1.js
+    outputFileNameMinified: js/build/jquery.pagination-2.1.min.js
+    sourceFileNames:
+      - js/lib/jquery.pagination-2.1.js
+
+  - groupName: json2
+    mediaType: js
+    jslint: off
+    outputFileName: js/build/json2.js
+    outputFileNameMinified: js/build/json2.min.js
+    sourceFileNames:
+      - js/lib/json2.js
 
 jslintOptions:
     - passfail
