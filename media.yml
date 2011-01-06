@@ -59,13 +59,21 @@ groups:
     sourceFileNames:
       - js/lib/jquery.pagination-2.1.js
 
-  - groupName: json2
+  - groupName: json2_js
     mediaType: js
     jslint: off
     outputFileName: js/build/json2.js
     outputFileNameMinified: js/build/json2.min.js
     sourceFileNames:
       - js/lib/json2.js
+
+  - groupName: jquery_number_formatter_js
+    mediaType: js
+    jslint: off
+    outputFileName: js/build/jquery.numberformatter-1.1.0.js
+    outputFileNameMinified: js/build/jquery.numberformatter-1.1.0.min.js
+    sourceFileNames:
+      - js/lib/jquery.numberformatter-1.1.0.js
 
 jslintOptions:
     - passfail
