@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>Bing Geocoder Sandbox</title>
+    <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/jquery-ui-1.8.7.custom.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+      #map { position: absolute; width: 400px; height: 400px; }
+    </style>
+  </head>
+  <body>
+    <h1>Bing Geocoder Sandbox</h1>
+    <form id="myForm" onsubmit="return false;">
+      <div class="yui3-g">
+        <div class="yui3-u-1-2">
+          <fieldset>
+            <legend>Global Geocoder</legend>
+            <input id="geocodeGlobal" name="geocodeGlobal" />
+          </fieldset>
+          <fieldset>
+            <legend>Local Geocoder</legend>
+            <input id="geocodeLocal" name="geocodeLocal" />
+            near Springfield, MI
+          </fieldset>
+          <fieldset>
+            <legend>Map</legend>
+            <div style="width: 400px; height: 400px">
+              <div id="map"></div>
+            </div>
+          </fieldset>
+        </div>
+        <div class="yui3-u-1-2">
+          <fieldset>
+            <legend>Geocode Response</legend>
+            <textarea id="response" cols="72" rows="36"></textarea>
+          </fieldset>
+        </div>
+      </div>
+    </form>
+    <script type="text/javascript" src="../js/lib/jquery-1.4.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.7.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+    <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+    <script type="text/javascript">//<![CDATA[
+      $(function () {
+        var apiKey = 'AqsWuHqZWoV942yySq7z7YZcyz7skrvFfPX_if4OmK5FyHkyJDmQSvX17Z7ymtok';
+        var map = new Microsoft.Maps.Map($('#map')[0], {
+          center: new Microsoft.Maps.Location(0, 0),
+          zoom: 1,
+          mapTypeId: Microsoft.Maps.MapTypeId.road,
+          credentials: apiKey
+        });
+        var autoCompleteCallback = function (response, responseCallback) {
+          var items = [];
+          if (response.statusCode === 200) {
+            $.each(response.resourceSets[0].resources, function (i, result) {
+              items.push({
+                label: result.address.formattedAddress,
+                latitude: result.point.coordinates[0],
+                longitude: result.point.coordinates[1],
+                response: result
+              });
+            });
+            responseCallback(items);
+          }
+        };
+        var selectCallback = function (evt, ui) {
+          map.entities.clear();
+          var point = new Microsoft.Maps.Location(ui.item.latitude, ui.item.longitude);
+          map.entities.push(new Microsoft.Maps.Pushpin(point));
+          var bbox = ui.item.response.bbox;
+          map.setView({
+            bounds: Microsoft.Maps.LocationRect.fromEdges(bbox[0], bbox[1], bbox[2], bbox[3])
+          });
+        };
+        $('#geocodeGlobal').autocomplete({
+          source: function (request, responseCallback) {
+            $.ajax({
+              url: 'bingGeocoderProxy.php',
+              data: {
+                query: request.term,
+                key: apiKey
+              },
+              dataType: 'json',
+              error: function (request, textStatus, errorThrown) {
+                $('#response').text('Error');
+                responseCallback(['Error']);
+              },
+              success: function (data, status, xhr) {
+                $('#response').text(JSON.stringify(data, null, '  '));
+                autoCompleteCallback(data, responseCallback);
+              }
+            });
+          },
+          select: selectCallback,
+          change: selectCallback
+        });
+        $('#geocodeLocal').attr('disabled', 'true');
+      });
+    //]]></script>
+  </body>
+</html>

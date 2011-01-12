@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>Yahoo Geocoder Sandbox</title>
+    <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/jquery-ui-1.8.7.custom.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+      #map { width: 400px; height: 400px; }
+    </style>
+  </head>
+  <body>
+    <h1>Yahoo Geocoder Sandbox</h1>
+    <form id="myForm" onsubmit="return false;">
+      <div class="yui3-g">
+        <div class="yui3-u-1-2">
+          <fieldset>
+            <legend>Global Geocoder</legend>
+            <input id="geocodeGlobal" name="geocodeGlobal" />
+          </fieldset>
+          <fieldset>
+            <legend>Local Geocoder</legend>
+            <input id="geocodeLocal" name="geocodeLocal" />
+            near Springfield, MI
+          </fieldset>
+          <fieldset>
+            <legend>Map</legend>
+            <div id="map"></div>
+          </fieldset>
+        </div>
+        <div class="yui3-u-1-2">
+          <fieldset>
+            <legend>Geocode Response</legend>
+            <textarea id="response" cols="72" rows="36"></textarea>
+          </fieldset>
+        </div>
+      </div>
+    </form>
+    <script type="text/javascript" src="../js/lib/jquery-1.4.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.7.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+    <script type="text/javascript" src="http://api.maps.yahoo.com/ajaxymap?v=3.8&appid=YD-eQRpTl0_JX2E95l_xAFs5UwZUlNQhhn7lj1H"></script>
+    <script type="text/javascript">//<![CDATA[
+      $(function () {
+        var apiKey = 'YD-eQRpTl0_JX2E95l_xAFs5UwZUlNQhhn7lj1H';
+        var map = new YMap($('#map')[0]);
+        map.setMapType(YAHOO_MAP_REG);
+        map.drawZoomAndCenter(new YGeoPoint(0, 0), 16);
+        map.addZoomLong();
+        var autoCompleteCallback = function (response, responseCallback) {
+          var items = [];
+          if (response.ResultSet.Error !== 0) {
+            items.push(response.ResultSet.ErrorMessage);
+          } else {
+            $.each(response.ResultSet.Results, function (i, result) {
+              items.push({
+                label: result.line1 + ' ' + result.line2,
+                latitude: Number(result.latitude),
+                longitude: Number(result.longitude),
+                response: result
+              });
+            });
+            responseCallback(items);
+          }
+        };
+        var selectCallback = function (evt, ui) {
+          map.removeMarkersAll();
+          var point = new YGeoPoint(ui.item.latitude, ui.item.longitude);
+          map.addOverlay(new YMarker(point));
+          var bb = ui.item.response.boundingbox;
+          var ul = new YGeoPoint(bb.north, bb.west);
+          var ur = new YGeoPoint(bb.north, bb.east);
+          var ll = new YGeoPoint(bb.south, bb.west);
+          var lr = new YGeoPoint(bb.south, bb.east);
+          var bounds = map.getBestZoomAndCenter([ul, ur, ll, lr]);
+          map.drawZoomAndCenter(bounds.YGeoPoint, bounds.zoomLevel);
+        };
+        $('#geocodeGlobal').autocomplete({
+          source: function (request, responseCallback) {
+            $.ajax({
+              url: 'yahooGeocoderProxy.php',
+              data: {
+                q: request.term,
+                flags: 'JX', // J = JSON, X = bounding box
+                appid: apiKey
+              },
+              dataType: 'json',
+              error: function (request, textStatus, errorThrown) {
+                $('#response').text('Error');
+                responseCallback(['Error']);
+              },
+              success: function (data, status, xhr) {
+                $('#response').text(JSON.stringify(data, null, '  '));
+                autoCompleteCallback(data, responseCallback);
+              }
+            });
+          },
+          select: selectCallback,
+          change: selectCallback
+        });
+        $('#geocodeLocal').attr('disabled', 'true');
+      });
+    //]]></script>
+  </body>
+</html>

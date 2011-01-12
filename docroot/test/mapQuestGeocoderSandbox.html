@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>MapQuest Geocoder Sandbox</title>
+    <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/jquery-ui-1.8.7.custom.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1>MapQuest Geocoder Sandbox</h1>
+    <form id="myForm" onsubmit="return false;">
+      <div class="yui3-g">
+        <div class="yui3-u-1-2">
+          <fieldset>
+            <legend>Global Geocoder</legend>
+            <input id="geocodeGlobal" name="geocodeGlobal" />
+          </fieldset>
+          <fieldset>
+            <legend>Local Geocoder</legend>
+            <input id="geocodeLocal" name="geocodeLocal" />
+            near Springfield, MI
+          </fieldset>
+          <fieldset>
+            <legend>Map</legend>
+            <div id="map" style="width: 400px; height: 400px;"></div>
+          </fieldset>
+        </div>
+        <div class="yui3-u-1-2">
+          <fieldset>
+            <legend>Geocode Response</legend>
+            <textarea id="response" cols="72" rows="36"></textarea>
+          </fieldset>
+        </div>
+      </div>
+    </form>
+    <script type="text/javascript" src="../js/lib/jquery-1.4.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.7.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+    <script src="http://mapquestapi.com/sdk/js/v6.0.0/mqa.toolkit.js?key=Dmjtd%7Clu612007nq%2C20%3Do5-50zah"></script>
+    <script type="text/javascript">//<![CDATA[
+      var onLoad = function () {
+        var map = new MQA.TileMap($('#map')[0], 1, {lat: 0, lng: 0}, 'map');
+        map.addControl(new MQA.LargeZoomControl3(), new MQA.MapCornerPlacement(MQA.MapCorner.TOP_LEFT));
+        var autoCompleteCallback = function (response, responseCallback) {
+          var items = [];
+          if (response.info.statuscode === 0) {
+            $.each(response.results[0].locations, function (i, location) {
+              var label = location.street;
+              if (location.adminArea5 !== '') {
+                if (label !== '') { label += ', '; }
+                label += location.adminArea5;
+              }
+              if (location.adminArea3 !== '') {
+                if (label !== '') { label += ', '; }
+                label += location.adminArea3;
+              }
+              if (location.postalCode !== '') {
+                if (label !== '') { label += ' '; }
+                label += location.postalCode;
+              }
+              items.push({
+                label: label,
+                latitude: location.latLng.lat,
+                longitude: location.latLng.lng,
+                response: location
+              });
+            });
+            responseCallback(items);
+          }
+        };
+        var selectCallback = function (evt, ui) {
+          map.removeAllShapes();
+          var poi = new MQA.Poi({lat: ui.item.latitude, lng: ui.item.longitude});
+          map.addShape(poi);
+          // TODO Figure out better automatic zoom level
+          map.setZoomLevel(10);
+          map.setCenter({lat: ui.item.latitude, lng: ui.item.longitude});
+        };
+        $('#geocodeGlobal').autocomplete({
+          source: function (request, responseCallback) {
+            var options = {
+              thumbMaps: false
+            };
+            MQA.Geocoder.geocode(request.term, options, null, function (response) {
+              $('#response').text(JSON.stringify(response, null, '  '));
+              autoCompleteCallback(response, responseCallback);
+            });
+          },
+          select: selectCallback,
+          change: selectCallback
+        });
+        $('#geocodeLocal').autocomplete({
+          source: function (request, responseCallback) {
+            var bb = new MQA.RectLL();
+            bb.lr = new MQA.LatLng(42.3373459, -85.209457);
+            bb.ul = new MQA.LatLng(42.311917, -85.275108);
+            var options = {
+              thumbMaps: false,
+              boundingBox: bb
+            };
+            MQA.Geocoder.geocode(request.term, options, null, function (response) {
+              $('#response').text(JSON.stringify(response, null, '  '));
+              autoCompleteCallback(response, responseCallback);
+            });
+          },
+          select: selectCallback,
+          change: selectCallback
+        });
+      };
+      $(function () {
+        MQA.withModule("geocoder", 'zoomcontrol3', function() {
+          onLoad();
+        });
+      });
+    //]]></script>
+  </body>
+</html>
