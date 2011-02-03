@@ -10,6 +10,8 @@ groups:
     sourceFileNames:
       # Core
       - js/simplicity/simplicityState.js
+      - js/simplicity/simplicityFromState.js
+      - js/simplicity/simplicityToState.js
       - js/simplicity/simplicityInput.js
       - js/simplicity/simplicityHistory.js
       - js/simplicity/simplicityDiscoverySearch.js

@@ -1,6 +1,9 @@
 module("simplicityInput", {
   setup: function () {
     $(function () {
+      $('#state').simplicityState({
+        debug: false
+      });
       $(':input').not('#state').simplicityInput({
         stateElement: '#state'
       });
@@ -17,9 +20,7 @@ module("simplicityInput", {
       $('#state').bind('simplicityStateChange', function (event, extra) {
         $('#state').text(JSON.stringify(extra, null, '  '));
       });
-      $('#state').simplicityState({
-        debug: false
-      });
+      $('#state').simplicityState('triggerChangeEvent');
     });
     this._squareCheckbox = $('#shape_square')[0];
     this._circleCheckbox = $('#shape_circle')[0];
