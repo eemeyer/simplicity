@@ -29,6 +29,7 @@
  * </dl>
  */
 (function ($) {
+  var invalidInputSelector = ':button,:image,:file,:reset,:submit,:password';
   $.widget("ui.simplicityInputs", {
     options: {
       stateElement: 'body',
@@ -39,7 +40,7 @@
       debug: false
     },
     _create: function () {
-      if (this.element.is(':button,:image,:file,:reset,:submit,:password')) {
+      if (this.element.is(invalidInputSelector)) {
         // We don't want to empty out the value attribute for these
         // kinds of elements or potentially hijack their change events.
         return;
@@ -54,6 +55,9 @@
         $(this.options.stateElement).simplicityState('state', state, false);
       }
     },
+    inputs: function () {
+      return this.element.is(':input') ? this.element : this.element.find(':input').not(invalidInputSelector);
+    },
     /**
      * Handler for change events. When the underlying input is changed this
      * handler updates the state of the associated simplicityState widget
@@ -61,9 +65,9 @@
      * @private
      */
     _changeHandler: function (evt) {
-      if (!this._ignoreChangeEvent) {
+      if (!this._ignoreChangeEvent && evt.target === this.element[0]) {
         var state = $(this.options.stateElement).simplicityState('state');
-        this.element.simplicityToState(state);
+        this.inputs().simplicityToState(state);
         $(this.options.stateElement).simplicityState('state', state, this.options.quietStateChange ? false : undefined);
       }
     },
@@ -79,7 +83,7 @@
       }
       try {
         this._ignoreChangeEvent = true;
-        this.element.simplicityFromState(state, true, this.options.debug);
+        this.inputs().simplicityFromState(state, true, this.options.debug);
       } finally {
         this._ignoreChangeEvent = false;
       }
@@ -89,13 +93,15 @@
     },
     _stateResetHandler: function (evt, state) {
       if (this.options.supportsReset) {
-        var name = $.trim($(this.element).attr('name'));
-        if (name !== '' && name in state) {
-          if (this.options.debug) {
-            console.log('simplicityInputs: Resetting state parameter', name, 'for', this.element);
+        this.inputs().each($.proxy(function (idx, element) {
+          var name = $.trim($(element).attr('name'));
+          if (name !== '' && name in state) {
+            if (this.options.debug) {
+              console.log('simplicityInputs: Resetting state parameter', name, 'for', element);
+            }
+            delete state[name];
           }
-          delete state[name];
-        }
+        }, this));
       }
     },
     destroy: function () {

@@ -141,7 +141,7 @@
         </form>
       </div>
       <div id="nav3" class="yui3-u">
-        <form id="nav3Form" onsubmit="return false;">
+        <form id="nav3Form1" onsubmit="return false;">
           <fieldset>
             <legend>Weight</legend>
             <input id="weightInput" name="weight" />
@@ -173,6 +173,21 @@
             <br />
             <label for="longitudeHot">Longitude (hot)</label>
             <input id="longitudeHot" name="longitude" />
+          </fieldset>
+        </form>
+        <form id="nav3Form2" onsubmit="return false;">
+          <fieldset id="groupedInputs">
+            <legend>Grouped Inputs</legend>
+            <label for="addressGrouped">Address</label>
+            <input id="addressGrouped" name="address" />
+            <br />
+            <label for="latitudeGrouped">Latitude</label>
+            <input id="latitudeGrouped" name="latitude" />
+            <br />
+            <label for="longitudeGrouped">Longitude</label>
+            <input id="longitudeGrouped" name="longitude" />
+            <br />
+            <button id="changeGrouped">Change</button>
           </fieldset>
         </form>
       </div>
@@ -209,8 +224,13 @@
           debug: false
         });
 
-        $('#nav :input,#nav2 :input,#nav3 :input').simplicityInputs();
+        $('#nav :input,#nav2 :input,#nav3Form1 :input').simplicityInputs();
         $('#addressQuiet, #latitudeQuiet').simplicityInputs('option', 'quietStateChange', true);
+
+        $('#groupedInputs').simplicityInputs();
+        $('#changeGrouped').click(function (evt) {
+          $('#groupedInputs').change();
+        });
 
         $('body').bind('simplicityStateChange', function (evt, state) {
           $('#stateParams').val(decodeURIComponent($.param(state, false)));
