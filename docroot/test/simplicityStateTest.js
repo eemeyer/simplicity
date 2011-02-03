@@ -36,7 +36,7 @@ test("get/set state", function() {
 });
 
 test("event simplicityStateChange", function() {
-  expect(8);
+  expect(17);
 
   var stateElement = $('#state');
   stateElement.simplicityState();
@@ -54,7 +54,12 @@ test("event simplicityStateChange", function() {
   equal(0, events.length, 'No events on copyState');
 
   stateElement.simplicityState('state', {});
+  equal(1, events.length, 'Single events on first state set which allows for event propagation');
+  events.length = 0;
+
+  stateElement.simplicityState('state', {});
   equal(0, events.length, 'No events on state reset which does nothing');
+  events.length = 0;
 
   stateElement.simplicityState('state', {a: 1});
   equal(events.length, 1, 'One event on update');
@@ -74,6 +79,38 @@ test("event simplicityStateChange", function() {
       events[0].state,
       {a: 2},
       'One event on update which changes existing value');
+  events.length = 0;
+
+  stateElement.simplicityState('state', {});
+  equal(events.length, 1, 'One event on state reset');
+  deepEqual(
+      events[0].state,
+      {},
+      'One event on state reset');
+  events.length = 0;
+
+  stateElement.simplicityState('state', {a: 1}, false);
+  equal(events.length, 0, 'No events on quiet state update');
+  deepEqual(
+      stateElement.simplicityState('state'),
+      {a: 1},
+      'Quiet state update');
+  events.length = 0;
+
+  stateElement.simplicityState('state', {});
+  equal(events.length, 0, 'No events on state reset to last triggered state');
+  deepEqual(
+      stateElement.simplicityState('state'),
+      {},
+      'Reset dirty state to previous triggered state');
+  events.length = 0;
+
+  stateElement.simplicityState('state', {}, true);
+  equal(events.length, 1, 'One event on forced update');
+  deepEqual(
+      events[0].state,
+      {},
+      'Forced update');
   events.length = 0;
 });
 

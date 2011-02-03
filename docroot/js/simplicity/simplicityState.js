@@ -23,6 +23,7 @@
     _create : function () {
       this.element.addClass('ui-simplicity-state');
       this._state = JSON.stringify(this.options.initialState);
+      this._lastTriggeredState = undefined;
     },
     /**
      * Reads the state from the current query string and merges it into
@@ -64,13 +65,10 @@
         // Get the current state
         return JSON.parse(this._state);
       } else {
-        // Set the current state
+        // Set the current state, explicitly deserializing states from JSON to ensure they are data only
+        // and then perform a deep equality check to avoid depending on the order of keys in the Objects.
         var prevState = this.state();
-        var newStateVal = JSON.stringify(state);
-        // Explicitly deserialize both states from JSON to ensure they are data only
-        // and then perform a deep equality check to avoid depending on the order
-        // of keys in the Objects.
-        var newState = JSON.parse(newStateVal);
+        var newState = JSON.parse(JSON.stringify(state));
         var stateChanged = !$.simplicityEquiv(prevState, newState);
         if (stateChanged) {
           if (this.options.debug) {
@@ -82,16 +80,22 @@
           }
           stateChanged = !$.simplicityEquiv(prevState, newState);
           if (stateChanged) {
-            newStateVal = JSON.stringify(newState);
-            this._state = newStateVal;
+            this._state = JSON.stringify(newState);
             if (this.options.debug) {
               console.log('simplicityState: Changed state from', prevState, 'to', newState, 'for', this.element, 'with triggerChangeEventStyle', triggerChangeEventStyle);
             }
           }
         }
-        if (triggerChangeEventStyle === true ||
-          (stateChanged && 'undefined' === typeof triggerChangeEventStyle)) {
-          this._triggerChangeEvent(newStateVal);
+        if (triggerChangeEventStyle !== false) {
+          var triggerEvent = true;
+          if (triggerChangeEventStyle !== true) {
+            // Only trigger if the current state differs from the last triggered state
+            var lastTriggeredState = typeof this._lastTriggeredState === 'undefined' ? undefined : JSON.parse(this._lastTriggeredState);
+            triggerEvent = !$.simplicityEquiv(lastTriggeredState, newState);
+          }
+          if (triggerEvent) {
+            this.triggerChangeEvent();
+          }
         }
       }
     },
@@ -103,15 +107,14 @@
      * @function
      */
     triggerChangeEvent: function () {
-      this._triggerChangeEvent(this._state);
-    },
-    _triggerChangeEvent: function (stateVal) {
+      var state = this.state();
+      this._lastTriggeredState = this._state;
       if (this.options.debug) {
-        console.log('simplicityState: Triggering simplicityStateChange event for', this.element, 'with state', JSON.parse(stateVal));
+        console.log('simplicityState: Triggering simplicityStateChange event for', this.element, 'with state', state);
       }
-      this.element.triggerHandler('simplicityStateChange', [JSON.parse(stateVal)]);
+      this.element.triggerHandler('simplicityStateChange', [state]);
       if (this.options.debug) {
-        console.log('simplicityState: Triggered simplicityStateChange event for', this.element, 'with state', JSON.parse(stateVal));
+        console.log('simplicityState: Triggered simplicityStateChange event for', this.element, 'with state', state);
       }
     },
     /**
