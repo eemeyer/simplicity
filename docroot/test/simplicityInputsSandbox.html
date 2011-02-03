@@ -200,7 +200,7 @@
     <script type="text/javascript" src="../js/simplicity/simplicityFromState.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityToState.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityHistory.js" charset="utf-8"></script>
-    <script type="text/javascript" src="../js/simplicity/simplicityInput.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityInputs.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicitySlider.js" charset="utf-8"></script>
 
     <script type="text/javascript">//<![CDATA[
@@ -209,8 +209,8 @@
           debug: false
         });
 
-        $('#nav :input,#nav2 :input,#nav3 :input').simplicityInput();
-        $('#addressQuiet, #latitudeQuiet').simplicityInput('option', 'quietStateChange', true);
+        $('#nav :input,#nav2 :input,#nav3 :input').simplicityInputs();
+        $('#addressQuiet, #latitudeQuiet').simplicityInputs('option', 'quietStateChange', true);
 
         $('body').bind('simplicityStateChange', function (evt, state) {
           $('#stateParams').val(decodeURIComponent($.param(state, false)));

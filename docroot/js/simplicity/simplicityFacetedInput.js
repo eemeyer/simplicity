@@ -1,6 +1,6 @@
 /**
  * @name $.ui.simplicityFacetedInput
- * @namespace Combines simplicityInput and simplicityBucketCount
+ * @namespace Combines simplicityInputs and simplicityBucketCount
  */
 (function ($) {
   $.widget("ui.simplicityFacetedInput", {
@@ -11,7 +11,7 @@
     },
     _create : function () {
       this.element.addClass('ui-simplicity-faceted-input');
-      this.element.simplicityInput($.extend({}, this.options));
+      this.element.simplicityInputs($.extend({}, this.options));
       if (this.element[0].nodeName === 'SELECT') {
         var options = this.element.find('option');
         this.element.find('option').each($.proxy(function (i, option) {

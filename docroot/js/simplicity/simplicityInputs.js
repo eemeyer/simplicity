@@ -1,5 +1,5 @@
 /**
- * @name $.ui.simplicityInput
+ * @name $.ui.simplicityInputs
  * @namespace An input element that has 2-way state sync support.
  *
  * <h2>Options</h2>
@@ -29,7 +29,7 @@
  * </dl>
  */
 (function ($) {
-  $.widget("ui.simplicityInput", {
+  $.widget("ui.simplicityInputs", {
     options: {
       stateElement: 'body',
       changeEvent: 'change',
@@ -44,7 +44,7 @@
         // kinds of elements or potentially hijack their change events.
         return;
       }
-      this.element.addClass('ui-simplicity-input');
+      this.element.addClass('ui-simplicity-inputs');
       this.element.bind(this.options.changeEvent, $.proxy(this._changeHandler, this));
       $(this.options.stateElement).bind('simplicityStateChange', $.proxy(this._stateChangeHandler, this));
       $(this.options.stateElement).bind('simplicityStateReset', $.proxy(this._stateResetHandler, this));
@@ -75,7 +75,7 @@
      */
     _stateChangeHandler: function (evt, state) {
       if (this.options.debug) {
-        console.log('simplicityInput: Handling simplicityStateChange event for', this.element, 'with state', state);
+        console.log('simplicityInputs: Handling simplicityStateChange event for', this.element, 'with state', state);
       }
       try {
         this._ignoreChangeEvent = true;
@@ -84,7 +84,7 @@
         this._ignoreChangeEvent = false;
       }
       if (this.options.debug) {
-        console.log('simplicityInput: Handled simplicityStateChange event for', this.element, 'with state', state);
+        console.log('simplicityInputs: Handled simplicityStateChange event for', this.element, 'with state', state);
       }
     },
     _stateResetHandler: function (evt, state) {
@@ -92,14 +92,14 @@
         var name = $.trim($(this.element).attr('name'));
         if (name !== '' && name in state) {
           if (this.options.debug) {
-            console.log('simplicityInput: Resetting state parameter', name, 'for', this.element);
+            console.log('simplicityInputs: Resetting state parameter', name, 'for', this.element);
           }
           delete state[name];
         }
       }
     },
     destroy: function () {
-      this.element.removeClass('ui-simplicity-input');
+      this.element.removeClass('ui-simplicity-inputs');
       this.element.unbind(this.options.changeEvent, this._changeHandler);
       $(this.options.stateElement).unbind('simplicityStateChange', this._stateChangeHandler);
       $(this.options.stateElement).unbind('simplicityStateReset', this._stateResetHandler);

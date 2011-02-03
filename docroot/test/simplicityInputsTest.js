@@ -1,10 +1,10 @@
-module("simplicityInput", {
+module("simplicityInputs", {
   setup: function () {
     $(function () {
       $('#state').simplicityState({
         debug: false
       });
-      $(':input').not('#state').simplicityInput({
+      $(':input').not('#state').simplicityInputs({
         stateElement: '#state'
       });
       $('#weightSlider').simplicitySlider({
@@ -49,7 +49,7 @@ module("simplicityInput", {
   }
 });
 
-test("simplicityInput toggle single checkbox", function() {
+test("simplicityInputs toggle single checkbox", function() {
   //expect(55);
 
   this._squareCheckbox.checked = true;
@@ -117,7 +117,7 @@ test("simplicityInput toggle single checkbox", function() {
       'State is now empty');
 });
 
-test("simplicityInput toggle multiple checkboxes", function() {
+test("simplicityInputs toggle multiple checkboxes", function() {
   expect(44);
   this._circleCheckbox.checked = true;
   $(this._circleCheckbox).change();

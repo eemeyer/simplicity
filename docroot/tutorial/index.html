@@ -253,7 +253,7 @@
     <script type="text/javascript" src="../js/simplicity/simplicityToState.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityHistory.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
-    <script type="text/javascript" src="../js/simplicity/simplicityInput.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityInputs.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicitySlider.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityBucketCount.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityFacetedInput.js" charset="utf-8"></script>
@@ -282,8 +282,8 @@
 
       $('body').simplicityState();
 
-      $('#nav :input[name="pageSize"]').simplicityInput();
-      $('#nav :input[name="renderParameters"]').simplicityInput({
+      $('#nav :input[name="pageSize"]').simplicityInputs();
+      $('#nav :input[name="renderParameters"]').simplicityInputs({
         supportsReset: false
       });
 
@@ -303,7 +303,7 @@
         placement: 'append-label'
       });
 
-      $('#nav :input[name="bed"]').simplicityInput();
+      $('#nav :input[name="bed"]').simplicityInputs();
       (function () {
         var display = function (evt, ui) {
           var label;
@@ -324,7 +324,7 @@
         });
       }());
 
-      $('#nav :input[name="bath"]').simplicityInput();
+      $('#nav :input[name="bath"]').simplicityInputs();
       (function () {
         var display = function (evt, ui) {
           var label;
@@ -345,8 +345,8 @@
         });
       }());
 
-      $('#nav :input[name="priceMin"]').simplicityInput();
-      $('#nav :input[name="priceMax"]').simplicityInput();
+      $('#nav :input[name="priceMin"]').simplicityInputs();
+      $('#nav :input[name="priceMax"]').simplicityInputs();
       (function () {
         var rangeDisplay = function (evt, ui) {
           var label;
@@ -378,8 +378,8 @@
         });
       }());
 
-      $('#nav :input[name="leaseMin"]').simplicityInput();
-      $('#nav :input[name="leaseMax"]').simplicityInput();
+      $('#nav :input[name="leaseMin"]').simplicityInputs();
+      $('#nav :input[name="leaseMax"]').simplicityInputs();
       (function () {
         var rangeDisplay = function (evt, ui) {
           var label;

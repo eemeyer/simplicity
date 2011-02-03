@@ -12,7 +12,7 @@ groups:
       - js/simplicity/simplicityState.js
       - js/simplicity/simplicityFromState.js
       - js/simplicity/simplicityToState.js
-      - js/simplicity/simplicityInput.js
+      - js/simplicity/simplicityInputs.js
       - js/simplicity/simplicityHistory.js
       - js/simplicity/simplicityDiscoverySearch.js
       - js/simplicity/simplicityEquiv.js
