@@ -152,6 +152,28 @@
             <input id="weightInputCopy" name="weight" />
             <div id="weightSliderCopy"></div>
           </fieldset>
+          <fieldset>
+            <legend>Standard Inputs</legend>
+            <label for="address">Address</label>
+            <input id="address" name="address" />
+            <br />
+            <label for="latitude">Latitude</label>
+            <input id="latitude" name="latitude" />
+            <br />
+            <label for="longitude">Longitude</label>
+            <input id="longitude" name="longitude" />
+          </fieldset>
+          <fieldset id="ungroupedInputs">
+            <legend>Quiet/Hot Inputs</legend>
+            <label for="addressQuiet">Address (quiet)</label>
+            <input id="addressQuiet" name="address" />
+            <br />
+            <label for="latitudeQuiet">Latitude (quiet)</label>
+            <input id="latitudeQuiet" name="latitude" />
+            <br />
+            <label for="longitudeHot">Longitude (hot)</label>
+            <input id="longitudeHot" name="longitude" />
+          </fieldset>
         </form>
       </div>
       <div id="main" class="yui3-u">
@@ -188,6 +210,7 @@
         });
 
         $('#nav :input,#nav2 :input,#nav3 :input').simplicityInput();
+        $('#addressQuiet, #latitudeQuiet').simplicityInput('option', 'quietStateChange', true);
 
         $('body').bind('simplicityStateChange', function (evt, state) {
           $('#stateParams').val(decodeURIComponent($.param(state, false)));

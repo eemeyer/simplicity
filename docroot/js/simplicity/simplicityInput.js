@@ -33,6 +33,7 @@
     options: {
       stateElement: 'body',
       changeEvent: 'change',
+      quietStateChange: false,
       exportStateOnCreate: true,
       supportsReset: true,
       debug: false
@@ -60,12 +61,11 @@
      * @private
      */
     _changeHandler: function (evt) {
-      if (this._ignoreChangeEvent) {
-        return;
+      if (!this._ignoreChangeEvent) {
+        var state = $(this.options.stateElement).simplicityState('state');
+        this.element.simplicityToState(state);
+        $(this.options.stateElement).simplicityState('state', state, this.options.quietStateChange ? false : undefined);
       }
-      var state = $(this.options.stateElement).simplicityState('state');
-      this.element.simplicityToState(state);
-      $(this.options.stateElement).simplicityState('state', state);
     },
     /**
      * Handler for simplicityStateChange events. When the associated
