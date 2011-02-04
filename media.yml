@@ -32,6 +32,7 @@ groups:
       - js/simplicity/simplicityYahooMap.js
       - js/simplicity/simplicityMapQuestMap.js
       # Geocoders
+      - js/simplicity/simplicityGoogleGeocoder.js
       - js/simplicity/simplicityMapQuestGeocoder.js
 
   - groupName: simplicity_css

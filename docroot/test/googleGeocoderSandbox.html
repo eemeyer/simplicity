@@ -54,8 +54,8 @@
             $.each(results, function (i, result) {
               items.push({
                 label: result.formatted_address,
-                latitude: result.geometry.location.xa,
-                longitude: result.geometry.location.za,
+                latitude: result.geometry.location.lat(),
+                longitude: result.geometry.location.lng(),
                 response: result
               });
             });
