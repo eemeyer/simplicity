@@ -5,22 +5,65 @@
 (function ($) {
   $.widget("ui.simplicityMapQuestGeocoder", {
     options : {
+      disambiguateResults: true,
+      debug: false,
+      geocodeOptions: {
+        thumbMaps: false
+      }
     },
     _create: function () {
       this.element.addClass('ui-simplicity-mapquest-geocoder');
     },
-    geocode: function (value, options, callback) {
-      MQA.Geocoder.geocode(value, options, null, $.proxy(function (response) {
-        var items = this.normalizeResults(response);
-        callback(items, response);
+    geocode: function (locations, callback) {
+      var geocodeRequest = {
+        locations: locations,
+        options: $.extend({}, this.options.geocodeOptions)
+      };
+      this._trigger('request', {}, geocodeRequest);
+      if (this.options.debug) {
+        console.log('simplicityMapQuestGeocoder: request', geocodeRequest);
+      }
+      MQA.Geocoder.geocode(geocodeRequest.locations, geocodeRequest.options, null, $.proxy(function (geocodeResponse) {
+        var items = this.normalizeResults(geocodeResponse);
+        var response = {
+          response: geocodeResponse,
+          items: items
+        };
+        this._trigger('response', {}, response);
+        if (this.options.debug) {
+          console.log('simplicityMapQuestGeocoder: response', response);
+        }
+        callback(response);
       }, this));
     },
-    autocompleteSource: function (options) {
+    autocompleteSource: function () {
       return $.proxy(function (request, responseCallback) {
-        this.geocode(request.term, options, function (items) {
-          responseCallback(items);
+        this.geocode(request.term, function (response) {
+          responseCallback(response.items);
         });
       }, this);
+    },
+    normalizeResults: function (response) {
+      var items = [];
+      if (response.info.statuscode === 0) {
+        $.each(response.results, $.proxy(function (i, result) {
+          $.each(result.locations, $.proxy(function (i, location) {
+            var value = this.normalizeAddress(location);
+            if (value !== '') {
+              items.push({
+                value: value,
+                latitude: location.latLng.lat,
+                longitude: location.latLng.lng,
+                response: location
+              });
+            }
+          }, this));
+        }, this));
+        if (this.options.disambiguateResults) {
+          items = this.disambiguateItems(items);
+        }
+      }
+      return items;
     },
     normalizeAddress: function (location) {
       var value = location.street;
@@ -49,28 +92,6 @@
         value += location.postalCode;
       }
       return value;
-    },
-    normalizeResults: function (response, noDisambiguate) {
-      var items = [];
-      if (response.info.statuscode === 0) {
-        $.each(response.results, $.proxy(function (i, result) {
-          $.each(result.locations, $.proxy(function (i, location) {
-            var value = this.normalizeAddress(location);
-            if (value !== '') {
-              items.push({
-                value: value,
-                latitude: location.latLng.lat,
-                longitude: location.latLng.lng,
-                response: location
-              });
-            }
-          }, this));
-        }, this));
-      }
-      if (!noDisambiguate) {
-        items = this.disambiguateItems(items);
-      }
-      return items;
     },
     disambiguateItems: function (items) {
       labelToItem = {};

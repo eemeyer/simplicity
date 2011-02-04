@@ -186,11 +186,15 @@
 
       $('#locationFields')
         .simplicityInputs()
-        .simplicityMapQuestGeocoder();
+        .simplicityMapQuestGeocoder({
+          geocodeOptions: {
+            maxResults: 10
+          }
+        });
       var selectCallback = function (evt, ui) {
         var latitude = '';
         var longitude = '';
-        if (ui.item !== null) {
+        if (ui.item) {
           latitude = ui.item.latitude;
           longitude = ui.item.longitude;
         }
@@ -198,14 +202,18 @@
         $('#longitude').val(longitude);
         $('#locationFields').change();
       };
-      var geocodeOptions = {
-          thumbMaps: false,
-          maxResults: 10
-      };
       $('#address').autocomplete({
-        source: $('#locationFields').simplicityMapQuestGeocoder('autocompleteSource', geocodeOptions),
+        minLength: 0,
+        source: $('#locationFields').simplicityMapQuestGeocoder('autocompleteSource'),
         select: selectCallback,
-        change: selectCallback
+        change: selectCallback,
+        search: function (evt, ui) {
+          if ($(evt.target).val() === '') {
+            selectCallback(evt, ui);
+            return false;
+          }
+          return true;
+        }
       });
 
       $('#paginationWidget').simplicityPagination();
