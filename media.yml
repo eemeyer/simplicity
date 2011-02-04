@@ -31,6 +31,8 @@ groups:
       - js/simplicity/simplicityBingMap.js
       - js/simplicity/simplicityYahooMap.js
       - js/simplicity/simplicityMapQuestMap.js
+      # Geocoders
+      - js/simplicity/simplicityMapQuestGeocoder.js
 
   - groupName: simplicity_css
     mediaType: css

@@ -107,6 +107,15 @@ if (array_key_exists("style", $_GET)) {
     );
 }
 
+if (array_key_exists("lat", $_GET) && array_key_exists("lon", $_GET)) {
+    $criteria[] = array(
+        "dimension" => "location",
+        "latitude" => $_GET["lat"],
+        "longitude" => $_GET["lon"],
+        "exactDistance" => 0.5,
+    );
+}
+
 $discoveryRequest = array(
     "startIndex" => $startIndex,
     "pageSize" => $pageSize,

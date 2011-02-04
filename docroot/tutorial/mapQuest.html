@@ -70,6 +70,16 @@
               <option value="sales">Sales</option>
             </select>
           </fieldset>
+          <fieldset id="locationFields">
+            <legend>Location</legend>
+            <input id="address" name="address" />
+            <br />
+            <label for="latitude">Latitude</label>
+            <input id="latitude" name="lat" />
+            <br />
+            <label for="longitude">Longitude</label>
+            <input id="longitude" name="lon" />
+          </fieldset>
         </div>
         <div id="main" class="yui3-u">
           <fieldset class="ui-widget ui-widget-content">
@@ -140,7 +150,10 @@
     <script type="text/javascript" src="../js/simplicity/simplicityRenderParamsSearchResults.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityFlyout.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMap.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapQuestGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
+      MQA.withModule("geocoder", 'zoomcontrol3', function() {
+
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
 
       $('#themeSwitcherButton').button().click(function (evt) {
@@ -170,6 +183,30 @@
       });
 
       $('#map').simplicityMapQuestMap();
+
+      $('#locationFields')
+        .simplicityInputs()
+        .simplicityMapQuestGeocoder();
+      var selectCallback = function (evt, ui) {
+        var latitude = '';
+        var longitude = '';
+        if (ui.item !== null) {
+          latitude = ui.item.latitude;
+          longitude = ui.item.longitude;
+        }
+        $('#latitude').val(latitude);
+        $('#longitude').val(longitude);
+        $('#locationFields').change();
+      };
+      var geocodeOptions = {
+          thumbMaps: false,
+          maxResults: 10
+      };
+      $('#address').autocomplete({
+        source: $('#locationFields').simplicityMapQuestGeocoder('autocompleteSource', geocodeOptions),
+        select: selectCallback,
+        change: selectCallback
+      });
 
       $('#paginationWidget').simplicityPagination();
 
@@ -226,6 +263,8 @@
           url: 'search_controller.php'
         })
         .simplicityDiscoverySearch('search');
+
+      });
     //]]>--></script>
   </body>
 </html>
