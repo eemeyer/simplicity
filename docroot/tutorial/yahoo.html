@@ -70,6 +70,16 @@
               <option value="sales">Sales</option>
             </select>
           </fieldset>
+          <fieldset id="locationFields">
+            <legend>Location</legend>
+            <input id="address" name="address" />
+            <br />
+            <label for="latitude">Latitude</label>
+            <input id="latitude" name="lat" />
+            <br />
+            <label for="longitude">Longitude</label>
+            <input id="longitude" name="lon" />
+          </fieldset>
         </div>
         <div id="main" class="yui3-u">
           <fieldset class="ui-widget ui-widget-content">
@@ -143,6 +153,7 @@
     <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMap.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityBingMap.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityYahooMap.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityYahooGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
 
@@ -173,6 +184,39 @@
       });
 
       $('#map').simplicityYahooMap();
+
+      $('#locationFields')
+        .simplicityInputs()
+        .simplicityYahooGeocoder({
+          url: '../test/yahooGeocoderProxy.php',
+          requestTemplate: {
+            apikey: 'YD-eQRpTl0_JX2E95l_xAFs5UwZUlNQhhn7lj1H'
+          }
+        });
+      var selectCallback = function (evt, ui) {
+        var latitude = '';
+        var longitude = '';
+        if (ui.item) {
+          latitude = ui.item.latitude;
+          longitude = ui.item.longitude;
+        }
+        $('#latitude').val(latitude);
+        $('#longitude').val(longitude);
+        $('#locationFields').change();
+      };
+      $('#address').autocomplete({
+        minLength: 0,
+        source: $('#locationFields').simplicityYahooGeocoder('autocompleteSource'),
+        select: selectCallback,
+        change: selectCallback,
+        search: function (evt, ui) {
+          if ($(evt.target).val() === '') {
+            selectCallback(evt, ui);
+            return false;
+          }
+          return true;
+        }
+      });
 
       $('#paginationWidget').simplicityPagination();
 
