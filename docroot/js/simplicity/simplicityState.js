@@ -1,21 +1,24 @@
 /**
  * @name $.ui.simplicityState
  * @namespace State widget used to gather current selection from multiple input elements
- *
- * <h2>Options</h2>
- * <dl>
- *   <dt>initialState</dt>
- *   <dd>
- *     The initial state of this widget. Defaults to <code>{}</code>.
- *   </dd>
- *   <dt>debug</dt>
- *   <dd>
- *     Enable logging of key events to console.log. Defaults to false.
- *   </dd>
- * </dl>
  */
 (function ($) {
   $.widget("ui.simplicityState", {
+    /**
+     * Widget options.
+     *
+     * <dl>
+     *   <dt>initialState</dt>
+     *   <dd>
+     *     The initial state of this widget. Defaults to <code>{}</code>.
+     *   </dd>
+     *   <dt>debug</dt>
+     *   <dd>
+     *     Enable logging of key events to console.log. Defaults to <code>false</code>.
+     *   </dd>
+     * </dl>
+     * @name $.ui.simplicityState.options
+     */
     options: {
       initialState: {},
       debug: false
