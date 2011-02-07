@@ -1,3 +1,26 @@
+/**
+ * @name $.fn.simplicityFromState
+ * @function
+ * @description
+ *
+ * Plugin to apply state to input elements.
+ * Apply this to input elements to change their state based on a state <code>Object</code>.
+ *
+ * @param state
+ *   The target <code>Object</code> to extract the state to.
+ * @param triggerChange
+ *   Optional argument, when <code>true</code> invokes <code>change()</code> on any elements
+ *   that were changed.
+ * @param debug
+ *   Optional argument, when <code>true</code> enables logging via <code>console.log</code>.
+ *
+ * @example
+ *   var state = {
+ *     "shape": "circle",
+ *     "size": ["small", "medium"]
+ *   };
+ *   $(':input').simplicityFromState(state);
+ */
 (function ($) {
   $.fn.simplicityFromState = function (state, triggerChange, debug) {
     return this.each(function () {

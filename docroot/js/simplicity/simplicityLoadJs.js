@@ -1,4 +1,8 @@
 /**
+ * @name $.simplicityLoadJs
+ * @function
+ * @description
+ *
  * Poor mans dynamic JavaScript injection. A lot of upstream vendors use document.write
  * in their script resources which prevents the scripts from being dynamically loaded. This
  * plugin tries to load the script and overrides the document.write and document.writeln functions
@@ -18,9 +22,12 @@
  *   </li>
  * </ul>
  *
- * @name $.simplicityLoadJs
- * @private
- * @namespace Dynamic JavaScript loader
+ * @param url
+ *   The URL to dynamically load.
+ * @param callback
+ *   Callback that is called after the JavaScript and any depedent scripts have all
+ *   been loaded. Called with no arguments.
+ *
  */
 (function ($) {
   var nestingCounter = 0;

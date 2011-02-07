@@ -1,3 +1,24 @@
+/**
+ * @name $.fn.simplicityToState
+ * @function
+ * @description
+ *
+ * Plugin to extract state from input elements.
+ * Apply this to input elements to extract their state into a dictionary.
+ *
+ * @param state
+ *   The target <code>Object</code> to extract the state to.
+ * @param trimValue
+ *   The state value will be trimmed if this is <code>true</code>.
+ * @param ignoreEmptyValues
+ *   The state value will be ignored if it is empty and this is <code>true</code>. Useful
+ *   for applying state on initial page load with multiple inputs mapped to the same fields.
+ *
+ * @example
+ *   var state = {};
+ *   $(':input').simplicityToState(state);
+ *   console.log(state);
+ */
 (function ($) {
   $.fn.simplicityToState = function (state, trimValue, ignoreEmptyValues) {
     return this.each(function () {

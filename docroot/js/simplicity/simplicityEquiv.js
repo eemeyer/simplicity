@@ -1,9 +1,15 @@
 /**
- * Ported from http://philrathe.com/articles/equiv.
- *
  * @name $.simplicityEquiv
- * @private
- * @namespace Deep object equality checker
+ * @function
+ * @description
+ *
+ * Deep equality checker.
+ *
+ * @see Ported from http://philrathe.com/articles/equiv.
+ *
+ * @param lhs The first object to be compared
+ * @param rhs The second object to be compared
+ *
  */
 (function ($) {
   // Determine what is o.
