@@ -39,6 +39,9 @@
       }
       return available;
     },
+    map: function () {
+      return this._map;
+    },
     loadMap: function () {
       if ('undefined' === typeof this._map) {
         if ('undefined' === typeof YMap) {
