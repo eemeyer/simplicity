@@ -1,29 +1,41 @@
 /**
  * @name $.ui.simplicityRenderParamsSearchResults
- * @namespace Widget that performs an AJAX request for rendered search results
- *
- * <h2>Options</h2>
- * <dl>
- *   <dt>searchElement</dt>
- *   <dd>
- *     The simplicityDiscoverySearch widget that this widget binds it's events to. Defaults to <code>'body'</code>.
- *   </dd>
- *   <dt>url</dt>
- *   <dd>
- *     The url from which to get the rendered results.
- *   </dd>
- * </dl>
+ * @namespace Widget that performs an AJAX request for rendered search results.
  */
 (function ($) {
   $.widget("ui.simplicityRenderParamsSearchResults", {
+    /**
+     * Widget options.
+     *
+     * <dl>
+     *   <dt>searchElement</dt>
+     *   <dd>
+     *     The simplicityDiscoverySearch widget that this widget binds it's events to. Defaults to <code>'body'</code>.
+     *   </dd>
+     *   <dt>url</dt>
+     *   <dd>
+     *     The url from which to get the rendered results.
+     *   </dd>
+     * </dl>
+     * @name $.ui.simplicityRenderParamsSearchResults.options
+     */
     options: {
-      stateElement: 'body',
+      searchElement: 'body',
       url: ''
     },
     _create : function () {
       this.element.addClass('ui-simplicity-render-params-search-results');
-      $(this.options.stateElement).bind('simplicitySearchResponse', $.proxy(this._searchResponseHandler, this));
+      $(this.options.searchElement).bind('simplicitySearchResponse', $.proxy(this._searchResponseHandler, this));
     },
+    /**
+     * Event handler for the <code>simplicitySearchResponse</code> event. Expects the given
+     * search response object to contain a <code>_discovery.response.renderParameters</code>
+     * field which it loads via <code>$.load</code> into the page.
+     *
+     * @name $.ui.simplicityRenderParamsSearchResults._searchResponseHandler
+     * @function
+     * @private
+     */
     _searchResponseHandler: function (evt, searchResponse) {
       var renderParameters = '';
       if (searchResponse && searchResponse._discovery && searchResponse._discovery.response) {
@@ -45,7 +57,7 @@
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-render-params-search-results');
-      $(this.options.stateElement).unbind('simplicitySearchResponse', this._searchResponseHandler);
+      $(this.options.searchElement).unbind('simplicitySearchResponse', this._searchResponseHandler);
       $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
