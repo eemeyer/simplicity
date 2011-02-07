@@ -50,7 +50,7 @@ module("simplicityInputs", {
 });
 
 test("simplicityInputs toggle single checkbox", function() {
-  //expect(55);
+  expect(55);
 
   this._squareCheckbox.checked = true;
   equal(this._squareCheckbox.checked, true, 'Check square');
@@ -169,4 +169,99 @@ test("simplicityInputs toggle multiple checkboxes", function() {
       $('#state').simplicityState('state'),
       {shape: 'triangle'},
       'State no longer includes circle');
+});
+
+test("simplicityInputs trimming enabled", function() {
+  expect(17);
+  var input = $('#trim');
+
+  input.val('trailing1 ');
+  input.change();
+  deepEqual(
+    $('#state').simplicityState('state'),
+    {trim: 'trailing1'},
+    'Trim true trailing1');
+
+  input.val('trailing2  ');
+  input.change();
+  deepEqual(
+    $('#state').simplicityState('state'),
+    {trim: 'trailing2'},
+    'Trim true trailing2');
+
+  input.val(' leading1');
+  input.change();
+  deepEqual(
+    $('#state').simplicityState('state'),
+    {trim: 'leading1'},
+    'Trim true leading1');
+
+  input.val('  leading2');
+  input.change();
+  deepEqual(
+    $('#state').simplicityState('state'),
+    {trim: 'leading2'},
+    'Trim true leading2');
+
+  input.val(' pad1 ');
+  input.change();
+  deepEqual(
+    $('#state').simplicityState('state'),
+    {trim: 'pad1'},
+    'Trim true pad1');
+
+  input.val(' ');
+  input.change();
+  deepEqual(
+    $('#state').simplicityState('state'),
+    {},
+    'Just whitespace');
+});
+
+test("simplicityInputs trimming disabled", function() {
+  expect(17);
+  var input = $('#trim');
+  input.simplicityInputs('option', 'trim', false);
+
+  input.val('trailing1 ');
+  input.change();
+  deepEqual(
+    $('#state').simplicityState('state'),
+    {trim: 'trailing1 '},
+    'Trim true trailing1');
+
+  input.val('trailing2  ');
+  input.change();
+  deepEqual(
+    $('#state').simplicityState('state'),
+    {trim: 'trailing2  '},
+    'Trim true trailing2');
+
+  input.val(' leading1');
+  input.change();
+  deepEqual(
+    $('#state').simplicityState('state'),
+    {trim: ' leading1'},
+    'Trim true leading1');
+
+  input.val('  leading2');
+  input.change();
+  deepEqual(
+    $('#state').simplicityState('state'),
+    {trim: '  leading2'},
+    'Trim true leading2');
+
+  input.val(' pad1 ');
+  input.change();
+  deepEqual(
+    $('#state').simplicityState('state'),
+    {trim: ' pad1 '},
+    'Trim true pad1');
+
+  input.val(' ');
+  input.change();
+  deepEqual(
+    $('#state').simplicityState('state'),
+    {trim: ' '},
+    'Just whitespace');
 });

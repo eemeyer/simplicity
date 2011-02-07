@@ -1,5 +1,5 @@
 (function ($) {
-  $.fn.simplicityToState = function (state, ignoreEmptyValues) {
+  $.fn.simplicityToState = function (state, trimValue, ignoreEmptyValues) {
     return this.each(function () {
       var element = $(this);
       var name = $.trim(element.attr('name'));
@@ -32,7 +32,9 @@
             }
           }
         } else if (element[0].nodeName === 'SELECT') {
-          value = value || [];
+          if ('undefined' === typeof value || value === '' || value === null) {
+            value = [];
+          }
           if (value.length > 0) {
             state[name] = value;
           } else if (!ignoreEmptyValues) {
@@ -42,7 +44,12 @@
           // Ignore change events from unchecked radio buttons
         } else {
           // Input other than checkbox or select
-          value = $.trim(value || '');
+          if ('undefined' === typeof value || value === null) {
+            value = '';
+          }
+          if (trimValue) {
+            value = $.trim(value);
+          }
           if (value !== '') {
             state[name] = value;
           } else if (!ignoreEmptyValues) {

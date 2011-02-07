@@ -37,6 +37,7 @@
       quietStateChange: false,
       exportStateOnCreate: true,
       supportsReset: true,
+      trim: true,
       debug: false
     },
     _create: function () {
@@ -51,7 +52,7 @@
       $(this.options.stateElement).bind('simplicityStateReset', $.proxy(this._stateResetHandler, this));
       if (this.options.exportStateOnCreate) {
         var state = $(this.options.stateElement).simplicityState('state');
-        this.element.simplicityToState(state, true);
+        this.element.simplicityToState(state, this.options.trim, true);
         $(this.options.stateElement).simplicityState('state', state, false);
       }
     },
@@ -67,7 +68,7 @@
     _changeHandler: function (evt) {
       if (!this._ignoreChangeEvent && evt.target === this.element[0]) {
         var state = $(this.options.stateElement).simplicityState('state');
-        this.inputs().simplicityToState(state);
+        this.inputs().simplicityToState(state, this.options.trim);
         $(this.options.stateElement).simplicityState('state', state, this.options.quietStateChange ? false : undefined);
       }
     },
