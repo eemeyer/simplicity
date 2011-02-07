@@ -1,12 +1,40 @@
 /**
  * @name $.ui.simplicityHistory
  * @namespace Ajax history widget for simplicityState
+ *
+ * This widget binds the simplicityState to the hash fragment of the URL making the
+ * state navigation (back and forward button) and bookmark sensitive.
+ * <p>
+ * This widget should be instantiated at most one time per page.
+ *
+ * @see Depends on the <a href="http://benalman.com/projects/jquery-bbq-plugin">jQuery BBQ plugin<a/>.
  */
 (function ($) {
   $.widget("ui.simplicityHistory", {
+    /**
+     * Widget options.
+     *
+     * <dl>
+     *   <dt>stateElement</dt>
+     *   <dd>
+     *     The location of the simplicityState widget. Defaults to <code>'body'</code>.
+     *   </dd>
+     *   <dt>noEscape</dt>
+     *   <dd>
+     *     Optional list of characters that should not be escaped. Defaults to <code>''</code>.
+     *     This is just a convenience that calls <code>$.param.fragment.noEscape</code> when
+     *     not the empty string.
+     *   </dd>
+     *   <dt>debug</dt>
+     *   <dd>
+     *     Enable logging of key events to <code>console.log</code>. Defaults to <code>false</code>.
+     *   </dd>
+     * </dl>
+     * @name $.ui.simplicityHistory.options
+     */
     options : {
-      stateController: 'body',
-      noEscape: '[]',
+      stateElement: 'body',
+      noEscape: '',
       debug: false
     },
     _create : function () {
@@ -16,7 +44,7 @@
         $.param.fragment.noEscape(this.options.noEscape);
       }
 
-      this.initialState = $(this.options.stateController).simplicityState('state');
+      this.initialState = $(this.options.stateElement).simplicityState('state');
       if (this.options.debug) {
         console.log('simplicityHistory: Initial state is', this.initialState);
       }
@@ -32,12 +60,20 @@
           if (this.options.debug) {
             console.log('simplicityHistory: Restoring hash state', state);
           }
-          $(this.options.stateController).simplicityState('state', state);
+          $(this.options.stateElement).simplicityState('state', state);
         }
       }
       $(window).bind('hashchange', $.proxy(this._hashChangeHandler, this));
-      $(this.options.stateController).bind('simplicityStateChange', $.proxy(this._stateChangeHandler, this));
+      $(this.options.stateElement).bind('simplicityStateChange', $.proxy(this._stateChangeHandler, this));
     },
+    /**
+     * Event handler for the <code>hashchange<code> event. Applies the new hash state to the
+     * simplicityState.
+     *
+     * @name $.ui.simplicityHistory._hashChangeHandler
+     * @function
+     * @private
+     */
     _hashChangeHandler: function (evt) {
       var state;
       if ('' === evt.fragment) {
@@ -53,11 +89,19 @@
       }
       try {
         this._ignoreStateChange = true;
-        $(this.options.stateController).simplicityState('state', state);
+        $(this.options.stateElement).simplicityState('state', state);
       } finally {
         this._ignoreStateChange = false;
       }
     },
+    /**
+     * Event handler for the <code>simplicityStateChange<code> event. Applies the state to
+     * the browser history (hash fragment).
+     *
+     * @name $.ui.simplicityHistory._stateChangeHandler
+     * @function
+     * @private
+     */
     _stateChangeHandler: function (evt, state) {
       if (!this._ignoreStateChange) {
         var fragment = $.param.fragment();
@@ -89,7 +133,7 @@
     destroy: function () {
       this.element.removeClass('ui-simplicity-history');
       $(window).bind('hashchange', this._hashChangeHandler);
-      $(this.options.stateController).unbind('simplicityStateChange', this._stateChangeHandler);
+      $(this.options.stateElement).unbind('simplicityStateChange', this._stateChangeHandler);
       $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
