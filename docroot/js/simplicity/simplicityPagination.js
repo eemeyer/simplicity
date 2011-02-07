@@ -1,9 +1,61 @@
 /**
  * @name $.ui.simplicityPagination
- * @namespace Pagination widget for simplicityDiscoverySearch
+ * @namespace Pagination widget for simplicityDiscoverySearch.
+ * <p>
+ * Pagination widget bound to the <code>simplicityResultSet</code> event.
+ * <p>
+ * The current page can be bind either via an <code>input</code> element or
+ * directly to the <code>simplicityState</code>.
+ *
+ * @example
+ *   // Bound directly to simplicityState
+ *   &lt;div id="pagination">&lt;/div>
+ *   &lt;script type="text/javascript">
+ *     $('#pagination').simplicityPagination();
+ *   &lt;/script>
+ *
+ * @example
+ *   // Bound to an input
+ *   &lt;input id="page" name="page" />
+ *   &lt;div id="pagination">&lt;/div>
+ *   &lt;script type="text/javascript">
+ *     $('#page').simplicityInputs();
+ *     $('#pagination').simplicityPagination({
+ *       input: '#page'
+ *     });
+ *   &lt;/script>
  */
 (function ($) {
   $.widget("ui.simplicityPagination", {
+    /**
+     * Widget options.
+     *
+     * <dl>
+     *   <dt>stateElement</dt>
+     *   <dd>
+     *     The location of the simplicityState widget. Defaults to <code>'body'</code>.
+     *   </dd>
+     *   <dt>searchElement</dt>
+     *   <dd>
+     *     The location of the simplicityDiscoverySearch widget. Defaults to <code>'body'</code>.
+     *   </dd>
+     *   <dt>pageParam</dt>
+     *   <dd>
+     *     Used when binding directly to the <code>simplicityState</code> and determins which
+     *     field the state holds the current page number. Defaults to <code>'page'</code>.
+     *   </dd>
+     *   <dt>input</dt>
+     *     When set binds the current page to an <code>input</code> element instead of directly
+     *     to the state via <code>pageParam</code>. Defaults to <code>''</code>.
+     *   <dd>
+     *   </dd>
+     *   <dt>debug</dt>
+     *   <dd>
+     *     Enable logging of key events to <code>console.log</code>. Defaults to <code>false</code>.
+     *   </dd>
+     * </dl>
+     * @name $.ui.simplicityPagination.options
+     */
     options : {
       stateElement: 'body',
       searchElement: 'body',
@@ -16,6 +68,14 @@
       $(this.options.searchElement).bind('simplicityResultSet', $.proxy(this._resultSetHandler, this));
       $(this.options.stateElement).bind('simplicityStateReset', $.proxy(this._stateResetHandler, this));
     },
+    /**
+     * Event handler for the <code>simplicityResultSet</code> event. Recreates
+     * the pagination widget to reflect the current search response.
+     *
+     * @name $.ui.simplicityPagination._resultSetHandler
+     * @function
+     * @private
+     */
     _resultSetHandler: function (evt, resultSet) {
       var target = $('<div/>');
       var numItems = resultSet.totalSize;
@@ -39,6 +99,14 @@
         this._ignoreCallback = false;
       }
     },
+    /**
+     * Callback for the upstream pagination widget that gets called when a page change action
+     * has been taken.
+     *
+     * @name $.ui.simplicityPagination._paginationCallback
+     * @function
+     * @private
+     */
     _paginationCallback: function (page) {
       if (!this._ignoreCallback) {
         if (this.options.input !== '') {
@@ -59,6 +127,14 @@
       }
       return false;
     },
+    /**
+     * Event handler for the <code>simplicityStateReset</code> event. Resets the current page
+     * if the <code>pageParam</code> option is set.
+     *
+     * @name $.ui.simplicityPagination._stateResetHandler
+     * @function
+     * @private
+     */
     _stateResetHandler: function (evt, state) {
       if (this.options.input === '') {
         if (this.options.debug) {
