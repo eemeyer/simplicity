@@ -1,6 +1,19 @@
 /**
  * @name $.ui.simplicityDiscoverySearch
  * @namespace Performs a search against the Discovery Search Engine
+ *
+ * @example
+ *   $('body').simplicityState();
+ *   // Create all simplicityInputs widgets
+ *   $('body')
+ *     .simplicityState('mergeQueryParams')
+ *     .simplicityHistory()
+ *     .simplicityState('triggerChangeEvent')
+ *     .simplicityPageSnapBack()
+ *     <b>.simplicityDiscoverySearch({
+ *       url: 'search_controller.php'
+ *     })</b>
+ *     <b>.simplicityDiscoverySearch('search');</b>
  */
 (function ($) {
   $.widget("ui.simplicityDiscoverySearch", {
@@ -104,7 +117,7 @@
      * <code>search</code> on success or failure).
      *
      * In processing mode, this method triggers a <code>simplicitySearchResponse</code>
-     * event and then calls <code>bucketCounts</code> and <code>resultSet<code>.
+     * event and then calls <code>bucketCounts</code> and <code>resultSet</code>.
      *
      *
      * @param searchResponse

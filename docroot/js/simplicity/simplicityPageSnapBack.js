@@ -1,25 +1,45 @@
 /**
  * @name $.ui.simplicityPageSnapBack
- * @namespace Widget that causes the current page to reset to the first when the search state changes
+ * @namespace Widget that causes the current page to reset to the first when the search state changes.
+ * <p>
+ * This widget listens for the <code>simplicityStateChanging</code> event and uses it to determine
+ * if anything other than the page changed in the state. If it did then the page parameter is removed
+ * effectively snapping the page back to page one.
  *
- * <h2>Options</h2>
- * <dl>
- *   <dt>stateElement</dt>
- *   <dd>
- *     The simplicityState widget that this widget binds it's events to. Defaults to <code>'body'</code>.
- *   </dd>
- *   <dt>pageParam</dt>
- *   <dd>
- *     The parameter in the state where the current page is stored. Defaults to <code>'page'</code>.
- *   </dd>
- *   <dt>debug</dt>
- *   <dd>
- *     Enable logging of key events to console.log. Defaults to <code>false</code>.
- *   </dd>
- * </dl>
+ * @example
+ *   $('body').simplicityState();
+ *   // Create all simplicityInputs widgets
+ *   $('body')
+ *     .simplicityState('mergeQueryParams')
+ *     .simplicityHistory()
+ *     .simplicityState('triggerChangeEvent')
+ *     <b>.simplicityPageSnapBack()</b>
+ *     .simplicityDiscoverySearch({
+ *       url: 'search_controller.php'
+ *     })
+ *     .simplicityDiscoverySearch('search');
  */
 (function ($) {
   $.widget("ui.simplicityPageSnapBack", {
+    /**
+     * Widget options.
+     *
+     * <dl>
+     *   <dt>stateElement</dt>
+     *   <dd>
+     *     The simplicityState widget that this widget binds it's events to. Defaults to <code>'body'</code>.
+     *   </dd>
+     *   <dt>pageParam</dt>
+     *   <dd>
+     *     The parameter in the state where the current page is stored. Defaults to <code>'page'</code>.
+     *   </dd>
+     *   <dt>debug</dt>
+     *   <dd>
+     *     Enable logging of key events to console.log. Defaults to <code>false</code>.
+     *   </dd>
+     * </dl>
+     * @name $.ui.simplicityPageSnapBack.options
+     */
     options: {
       stateElement: 'body',
       pageParam: 'page',
@@ -29,6 +49,15 @@
       this.element.addClass('ui-simplicity-page-snap-back');
       $(this.options.stateElement).bind('simplicityStateChanging', $.proxy(this._stateChangingHandler, this));
     },
+    /**
+     * Event handler for the <code>simplicityStateChanging</code> event. Removes the page parameter,
+     * resetting the state to the first page if the new state changes anything other than
+     * the page parameter.
+     *
+     * @name $.ui.simplicityPageSnapBack._stateChangingHandler
+     * @function
+     * @private
+     */
     _stateChangingHandler: function (evt, prevState, newState) {
       var pageParam = 'page';
       var prevCopy = JSON.parse(JSON.stringify(prevState));

@@ -1,6 +1,19 @@
 /**
  * @name $.ui.simplicityState
  * @namespace State widget used to gather current selection from multiple input elements
+ *
+ * @example
+ *   <b>$('body').simplicityState();</b>
+ *   // Create all simplicityInputs widgets
+ *   $('body')
+ *     <b>.simplicityState('mergeQueryParams')</b>
+ *     .simplicityHistory()
+ *     <b>.simplicityState('triggerChangeEvent')</b>
+ *     .simplicityPageSnapBack()
+ *     .simplicityDiscoverySearch({
+ *       url: 'search_controller.php'
+ *     })
+ *     .simplicityDiscoverySearch('search');
  */
 (function ($) {
   $.widget("ui.simplicityState", {

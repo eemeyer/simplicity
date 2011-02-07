@@ -14,7 +14,7 @@
  *     &lt;option value="medium">Medium&lt;/option>
  *     &lt;option value="large">Large&lt;/option>
  *   &lt;/select>
- *   &lt;script type="text/javascript>
+ *   &lt;script type="text/javascript">
  *     $('#size option[value="small"]').simplicityBucketCount({
  *       dimension: 'Size',
  *       bucketId: 'S'
@@ -25,7 +25,7 @@
  * @example
  *   &lt;input type="checkbox" id="large" name="size" value="large" />
  *   &lt;label for="large">Large (&lt;span id="largeCount">&lt;/span>)&lt;/label>
- *   &lt;script type="text/javascript>
+ *   &lt;script type="text/javascript">
  *     $('#largeCount').simplicityBucketCount({
  *       dimension: 'Size',
  *       bucketId: 'L'
@@ -56,7 +56,7 @@
      *   </dd>
      *   <dt>optionTemplate</dt>
      *   <dd>
-     *     Template used when bound to an <code>OPTION</code> element.
+     *     Template used when bound to an <code>option</code> element.
      *     Defaults to <code>'{option} {count}'</code>.
      *   </dd>
      *   <dt>numberFormatter</dt>
@@ -92,7 +92,7 @@
       $(this.options.searchElement).bind('simplicityBucketCounts', $.proxy(this._bucketCountsHandler, this));
     },
     /**
-     * Event handler for the <code>simplicityBucketCounts<code> event.
+     * Event handler for the <code>simplicityBucketCounts</code> event.
      * Extracts the configured bucket count and displays it.
      *
      * @name $.ui.simplicityBucketCount._bucketCountsHandler

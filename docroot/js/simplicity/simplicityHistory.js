@@ -7,7 +7,20 @@
  * <p>
  * This widget should be instantiated at most one time per page.
  *
- * @see Depends on the <a href="http://benalman.com/projects/jquery-bbq-plugin">jQuery BBQ plugin<a/>.
+ * @see Depends on the <a href="http://benalman.com/projects/jquery-bbq-plugin">jQuery BBQ plugin</a>.
+ *
+ * @example
+ *   $('body').simplicityState();
+ *   // Create all simplicityInputs widgets
+ *   $('body')
+ *     .simplicityState('mergeQueryParams')
+ *     <b>.simplicityHistory()</b>
+ *     .simplicityState('triggerChangeEvent')
+ *     .simplicityPageSnapBack()
+ *     .simplicityDiscoverySearch({
+ *       url: 'search_controller.php'
+ *     })
+ *     .simplicityDiscoverySearch('search');
  */
 (function ($) {
   $.widget("ui.simplicityHistory", {
@@ -67,7 +80,7 @@
       $(this.options.stateElement).bind('simplicityStateChange', $.proxy(this._stateChangeHandler, this));
     },
     /**
-     * Event handler for the <code>hashchange<code> event. Applies the new hash state to the
+     * Event handler for the <code>hashchange</code> event. Applies the new hash state to the
      * simplicityState.
      *
      * @name $.ui.simplicityHistory._hashChangeHandler
@@ -95,7 +108,7 @@
       }
     },
     /**
-     * Event handler for the <code>simplicityStateChange<code> event. Applies the state to
+     * Event handler for the <code>simplicityStateChange</code> event. Applies the state to
      * the browser history (hash fragment).
      *
      * @name $.ui.simplicityHistory._stateChangeHandler
