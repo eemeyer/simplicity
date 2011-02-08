@@ -152,7 +152,7 @@
     <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMap.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityMapQuestGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
-      MQA.withModule("geocoder", 'zoomcontrol3', function() {
+      MQA.withModule('mapinit', 'geocoder', 'zoomcontrol3', function() {
 
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
 
@@ -183,6 +183,8 @@
       });
 
       $('#map').simplicityMapQuestMap();
+      var map = $('#map').simplicityMapQuestMap('map');
+      map.addControl(new MQA.LargeZoomControl3(), new MQA.MapCornerPlacement(MQA.MapCorner.TOP_LEFT));
 
       $('#locationFields')
         .simplicityInputs()

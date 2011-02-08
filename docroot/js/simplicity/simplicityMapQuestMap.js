@@ -89,8 +89,9 @@
         } else {
           mapOptions = this.options.mapOptions;
         }
+        var mapInit = new MQA.MapInit();
         this._map = new MQA.TileMap(this.element[0],
-          this.options.zoom, this.options.center, this.options.mapType);
+          this.options.zoom, this.options.center, this.options.mapType, mapInit);
         available = true;
       }
       return available;
@@ -156,8 +157,7 @@
       if (this._initWhenAvailable()) {
         this._map.removeAllShapes();
         if (resultSet.rows.length > 0) {
-          var bounds = MQA.RectLL();
-          var minLat = null, maxLat = null, minLng = null, maxLng = null;
+          var pois = new MQA.ShapeCollection();
           $.each(resultSet.rows, $.proxy(function (idx, row) {
             var properties = row.properties;
             if ('undefined' !== typeof properties) {
@@ -167,71 +167,14 @@
                 latitude = Number(latitude);
                 longitude = Number(longitude);
                 var poi = new MQA.Poi({lat: latitude, lng: longitude});
-                this._map.addShape(poi);
-                if (minLat === null || latitude < minLat) {
-                  minLat = latitude;
-                }
-                if (maxLat === null || latitude > maxLat) {
-                  maxLat = latitude;
-                }
-                if (minLng === null || longitude < minLng) {
-                  minLng = longitude;
-                }
-                if (maxLng === null || longitude > maxLng) {
-                  maxLng = longitude;
-                }
+                pois.add(poi);
               }
             }
           }, this));
-          this._map.setZoomLevel(this._calculateZoomLevel(minLat, minLng, maxLat, maxLng));
-          this._map.setCenter({lat: (maxLat + minLat) / 2, lng: (maxLng + minLng) / 2});
+          this._map.addShapeCollection(pois);
+          this._map.bestFit();
         }
       }
-    },
-    /**
-     * Calculates the best zoom level for a bounding box.
-     * <p>
-     * Ported from <a href="http://www.widgetsandburritos.com/technical/programming/mapquest-api/">this blog post</a>.
-     *
-     * @name $.ui.simplicityMapQuestMap._calculateZoomLevel
-     * @function
-     * @private
-     */
-    _calculateZoomLevel: function (minLat, minLng, maxLat, maxLng) {
-      var mapWidth = this.element.width();
-      var mapHeight = this.element.height();
-      var mapScaleInPixels = 77;
-      // This array contains the number of kilometers, the standard scale on mapquest contains at each zoom factor.
-      var zoomRanges = [1840, 630, 210, 71, 32, 14, 7, 3.2, 1.6, 0.8, 0.4, 0.2, 0.1, 0.05, 0.03, 0.02];
-      // This is an implementation of the Haversine Formula that calculates distance in Kilometers between
-      //  (lat1, lon1) and (lat2, lon2).
-      var calculate_distance_km = function (lat1, lon1, lat2, lon2) {
-        return (3958 * 3.14159265 * Math.sqrt((lat2 - lat1) * (lat2 - lat1) +
-          Math.cos(lat2 / 57.29578) * Math.cos(lat1 / 57.29578) * (lon2 - lon1) * (lon2 - lon1)) / 180);
-      };
-      // calculate the change in X and Y coordinates separately
-      deltaX = calculate_distance_km(minLat, minLng, maxLat, minLng);
-      deltaY = calculate_distance_km(minLat, minLng, minLat, maxLng);
-      // calculate the best zoom factor on the X-axis
-      var bestX;
-      for (bestX = 0; bestX < zoomRanges.length; bestX += 1) {
-        // calculate the width of the total map in kilometers
-        totalWidthKm = mapWidth * zoomRanges[bestX] / mapScaleInPixels;
-        if (totalWidthKm < deltaX) {
-          break;
-        }
-      }
-      // calculate the best zoom factor on the Y-axis
-      var bestY;
-      for (bestY = 0; bestY < zoomRanges.length; bestY += 1) {
-        // calculate the height of the total map in kilometers
-        totalHeightKm = mapHeight * zoomRanges[bestY] / mapScaleInPixels;
-        if (totalHeightKm < deltaY) {
-          break;
-        }
-      }
-      // we want to take the minimum value, because we don’t want to zoom in too far.
-      return Math.min(bestX, bestY);
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-mapquest-map');
