@@ -29,7 +29,7 @@
         margin-top: 6px;
         margin-bottom: 6px;
       }
-      .ui-simplicity-bucket-count {
+      .ui-simplicity-facet-count {
         float: right;
       }
       #styleCheckboxes ul {
@@ -111,8 +111,8 @@
             </div>
             <div class="yui3-u-1-4">
               <fieldset class="ui-widget ui-widget-content">
-                <legend>Bucket Counts</legend>
-                <textarea id="searchBucketCounts" cols="24" rows="30"></textarea>
+                <legend>Facet Counts</legend>
+                <textarea id="searchFacetCounts" cols="24" rows="30"></textarea>
               </fieldset>
             </div>
             <div class="yui3-u-1-4">
@@ -144,7 +144,7 @@
     <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityInputs.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicitySlider.js" charset="utf-8"></script>
-    <script type="text/javascript" src="../js/simplicity/simplicityBucketCount.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFacetCount.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityFacetedInput.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityPagination.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityPageSnapBack.js" charset="utf-8"></script>
@@ -238,12 +238,12 @@
         $('body').simplicityState('state', JSON.parse($(evt.target).val()));
       });
 
-      // DEBUG: Bucket Counts text area
-      $('body').bind('simplicityBucketCounts', function (evt, bucketCounts) {
-        $('#searchBucketCounts').text(JSON.stringify(bucketCounts, null, '  '));
+      // DEBUG: Facet Counts text area
+      $('body').bind('simplicityFacetCounts', function (evt, facetCounts) {
+        $('#searchFacetCounts').text(JSON.stringify(facetCounts, null, '  '));
       });
-      $('#searchBucketCounts').change(function (evt, ui) {
-        $('body').simplicityDiscoverySearch('bucketCounts', JSON.parse($(evt.target).val()));
+      $('#searchFacetCounts').change(function (evt, ui) {
+        $('body').simplicityDiscoverySearch('facetCounts', JSON.parse($(evt.target).val()));
       });
 
       // DEBUG: Result Set text area

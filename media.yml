@@ -21,7 +21,7 @@ groups:
       - js/simplicity/simplicityRenderParamsSearchResults.js
       - js/simplicity/simplicityPagination.js
       - js/simplicity/simplicityPageSnapBack.js
-      - js/simplicity/simplicityBucketCount.js
+      - js/simplicity/simplicityFacetCount.js
       - js/simplicity/simplicityFacetedInput.js
       # UI only
       - js/simplicity/simplicitySlider.js

@@ -61,7 +61,7 @@
      * Runs a search. The search happens asynchronously and will trigger multiple events.
      * <ul>
      *   <li>simplicitySearchResponse (original response)</li>
-     *   <li>simplicityBucketCounts</li>
+     *   <li>simplicityFacetCounts</li>
      *   <li>simplicityResultSet</li>
      * </ul>
      *
@@ -117,7 +117,7 @@
      * <code>search</code> on success or failure).
      *
      * In processing mode, this method triggers a <code>simplicitySearchResponse</code>
-     * event and then calls <code>bucketCounts</code> and <code>resultSet</code>.
+     * event and then calls <code>facetCounts</code> and <code>resultSet</code>.
      *
      *
      * @param searchResponse
@@ -151,37 +151,37 @@
       }
       var discoveryResponse = searchResponse._discovery || {};
       discoveryResponse = discoveryResponse.response || {};
-      this.bucketCounts(this.extractBucketCounts(discoveryResponse), triggerEvent);
+      this.facetCounts(this.extractFacetCounts(discoveryResponse), triggerEvent);
       this.resultSet(this.extractResultSet(discoveryResponse), triggerEvent);
     },
     /**
-     * Get the or set the bucket counts. Called with no arguments for get behavior.
-     * Triggers a <code>simplicityBucketCounts</code> event on set.
+     * Get the or set the facet counts. Called with no arguments for get behavior.
+     * Triggers a <code>simplicityFacetCounts</code> event on set.
      *
-     * @param bucketCounts
-     *   The bucket counts to store.
+     * @param facetCounts
+     *   The facet counts to store.
      * @param triggerEvent
      *   Optional parameter, set it to <code>false</code> to prevent triggering of events.
      *   Defaults to <code>true</code> if not specified.
      *
-     * @name $.ui.simplicityDiscoverySearch.bucketCounts
+     * @name $.ui.simplicityDiscoverySearch.facetCounts
      * @function
      */
-    bucketCounts: function (bucketCounts, triggerEvent) {
+    facetCounts: function (facetCounts, triggerEvent) {
       if (arguments.length === 0) {
-        return JSON.parse(this._bucketCounts);
+        return JSON.parse(this._facetCounts);
       }
-      this._bucketCounts = JSON.stringify(bucketCounts);
+      this._facetCounts = JSON.stringify(facetCounts);
       if (triggerEvent !== false) {
-        this.element.triggerHandler('simplicityBucketCounts', [JSON.parse(this._bucketCounts)]);
+        this.element.triggerHandler('simplicityFacetCounts', [JSON.parse(this._facetCounts)]);
       }
     },
     /**
      * Get the or set the resultset. Called with no arguments for get behavior.
      * Triggers a <code>simplicityResultSet</code> event on set.
      *
-     * @param bucketCounts
-     *   The bucket counts to store.
+     * @param resultSet
+     *   The resultset to store.
      * @param triggerEvent
      *   Optional parameter, set it to <code>false</code> to prevent triggering of events.
      *   Defaults to <code>true</code> if not specified.
@@ -199,7 +199,7 @@
       }
     },
     /**
-     * Converts the search response to a bucket counts object.
+     * Converts the search response to a facet counts object.
      *
      * @example
      *   Input
@@ -224,15 +224,15 @@
      *   }
      *
      * @param discoveryResponse
-     * @name $.ui.simplicityDiscoverySearch.extractBucketCounts
+     * @name $.ui.simplicityDiscoverySearch.extractFacetCounts
      * @function
      */
-    extractBucketCounts: function (discoveryResponse) {
-      var bucketCounts = {};
+    extractFacetCounts: function (discoveryResponse) {
+      var facetCounts = {};
       if ($.isArray(discoveryResponse.drillDown)) {
         $.each(discoveryResponse.drillDown, function (idx, elem) {
-          var dimFacetCounts = bucketCounts[elem.dimension] || {};
-          bucketCounts[elem.dimension] = dimFacetCounts;
+          var dimFacetCounts = facetCounts[elem.dimension] || {};
+          facetCounts[elem.dimension] = dimFacetCounts;
           var exactCounts = dimFacetCounts.exact || {};
           dimFacetCounts.exact = exactCounts;
           var fuzzyCounts = dimFacetCounts.fuzzy || {};
@@ -243,7 +243,7 @@
           });
         });
       }
-      return bucketCounts;
+      return facetCounts;
     },
     /**
      * Converts the search response to a resultset object.

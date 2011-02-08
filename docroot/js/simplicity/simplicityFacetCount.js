@@ -1,9 +1,9 @@
 /**
- * @name $.ui.simplicityBucketCount
- * @namespace Displays a single bucket count based on the search results.
+ * @name $.ui.simplicityFacetCount
+ * @namespace Displays a single facet count based on the search results.
  *
- * Listens for simplicityBucketCounts events and updates element HTML with a templatized
- * bucket count. Also supports injecting the bucket count into a select input.
+ * Listens for simplicityFacetCounts events and updates element HTML with a templatized
+ * facet count. Also supports injecting the facet count into a select input.
  * <p>
  * This widget is generally used as a building block, you probably want to use
  * <code>simplicityFacetedInput</code> directly.
@@ -15,9 +15,9 @@
  *     &lt;option value="large">Large&lt;/option>
  *   &lt;/select>
  *   &lt;script type="text/javascript">
- *     $('#size option[value="small"]').simplicityBucketCount({
+ *     $('#size option[value="small"]').simplicityFacetCount({
  *       dimension: 'Size',
- *       bucketId: 'S'
+ *       facetId: 'S'
  *     });
  *     // etc.
  *   &lt;/script>
@@ -26,14 +26,14 @@
  *   &lt;input type="checkbox" id="large" name="size" value="large" />
  *   &lt;label for="large">Large (&lt;span id="largeCount">&lt;/span>)&lt;/label>
  *   &lt;script type="text/javascript">
- *     $('#largeCount').simplicityBucketCount({
+ *     $('#largeCount').simplicityFacetCount({
  *       dimension: 'Size',
- *       bucketId: 'L'
+ *       facetId: 'L'
  *     });
  *   &lt;/script>
  */
 (function ($) {
-  $.widget("ui.simplicityBucketCount", {
+  $.widget("ui.simplicityFacetCount", {
     /**
      * Widget options.
      *
@@ -44,15 +44,15 @@
      *   </dd>
      *   <dt>missingText</dt>
      *   <dd>
-     *     Text to use when there is no associated bucket count. Defaults to <code>'?'</code>.
+     *     Text to use when there is no associated facet count. Defaults to <code>'?'</code>.
      *   </dd>
      *   <dt>dimension</dt>
      *   <dd>
-     *     Mandatory dimension from which the bucket counts should be used.
+     *     Mandatory dimension from which the facet counts should be used.
      *   </dd>
-     *   <dt>bucketId</dt>
+     *   <dt>facetId</dt>
      *   <dd>
-     *     Mandatory id of the bucket whose count should be bound to this widget.
+     *     Mandatory id of the facet whose count should be bound to this widget.
      *   </dd>
      *   <dt>optionTemplate</dt>
      *   <dd>
@@ -61,25 +61,25 @@
      *   </dd>
      *   <dt>numberFormatter</dt>
      *   <dd>
-     *     Optional function that can be called with the bucket count and is expected
+     *     Optional function that can be called with the facet count and is expected
      *     to return a string.
      *   </dd>
      * </dl>
-     * @name $.ui.simplicityBucketCount.options
+     * @name $.ui.simplicityFacetCount.options
      */
     options : {
       searchElement: 'body',
       missingText: '?',
       dimension: '',
-      bucketId: '',
+      facetId: '',
       optionTemplate: '{option} {count}',
       numberFormatter: ''
     },
     _create : function () {
-      if (this.options.bucketId === '') {
+      if (this.options.facetId === '') {
         return;
       }
-      this.element.addClass('ui-simplicity-bucket-count');
+      this.element.addClass('ui-simplicity-facet-count');
       if (this.element[0].nodeName === 'OPTION') {
         // If the option has no value attribute, create one so the
         // value doesn't change when we update the text.
@@ -89,22 +89,22 @@
           this.element.attr('value', val);
         }
       }
-      $(this.options.searchElement).bind('simplicityBucketCounts', $.proxy(this._bucketCountsHandler, this));
+      $(this.options.searchElement).bind('simplicityFacetCounts', $.proxy(this._facetCountsHandler, this));
     },
     /**
-     * Event handler for the <code>simplicityBucketCounts</code> event.
-     * Extracts the configured bucket count and displays it.
+     * Event handler for the <code>simplicityFacetCounts</code> event.
+     * Extracts the configured facet count and displays it.
      *
-     * @name $.ui.simplicityBucketCount._bucketCountsHandler
+     * @name $.ui.simplicityFacetCount._facetCountsHandler
      * @function
      * @private
      */
-    _bucketCountsHandler: function (event, dimFacetCounts) {
+    _facetCountsHandler: function (event, dimFacetCounts) {
       var result = undefined;
       var facetCounts = dimFacetCounts[this.options.dimension];
       if (facetCounts) {
         var counts = facetCounts.exact;
-        result = counts[this.options.bucketId];
+        result = counts[this.options.facetId];
       }
       if ('undefined' === typeof result) {
         result = this.options.missingText;
@@ -123,12 +123,12 @@
       }
     },
     destroy : function () {
-      this.element.removeClass('ui-simplicity-bucket-count');
+      this.element.removeClass('ui-simplicity-facet-count');
       if (this.element[0].nodeName === 'OPTION') {
         this.element.text(this._optionText);
         delete this._optionText;
       }
-      $(this.options.searchElement).unbind('simplicityBucketCounts', this._bucketCountsHandler);
+      $(this.options.searchElement).unbind('simplicityFacetCounts', this._facetCountsHandler);
       $.Widget.prototype.destroy.apply(this, arguments);
     }
   });

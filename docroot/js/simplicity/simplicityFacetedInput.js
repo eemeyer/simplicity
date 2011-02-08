@@ -1,12 +1,12 @@
 /**
  * @name $.ui.simplicityFacetedInput
- * @namespace Combines simplicityInputs and simplicityBucketCount.
+ * @namespace Combines simplicityInputs and simplicityFacetCount.
  * <p>
- * Convenience wrapper around <code>simplicityInputs</code> and <code>simplicityBucketCount</code>.
+ * Convenience wrapper around <code>simplicityInputs</code> and <code>simplicityFacetCount</code>.
  * <p>
  * The options for this widget are passed through to both of the contained widgets.
- * Additionally, the option <code>bucketId</code> is automatically created for the
- * <code>simplicityBucketCount</code> widget from attributes on the wrapped input.
+ * Additionally, the option <code>facetId</code> is automatically created for the
+ * <code>simplicityFacetCount</code> widget from attributes on the wrapped input.
  */
 (function ($) {
   $.widget("ui.simplicityFacetedInput", {
@@ -16,19 +16,19 @@
      * <dl>
      *   <dt>dimension</dt>
      *   <dd>
-     *     Mandatory option, used to determine which dimension is used for bucket counts.
+     *     Mandatory option, used to determine which dimension is used for facet counts.
      *     Defaults to <code>''</code>.
      *   </dd>
      *   <dt>template</dt>
      *   <dd>
      *     For when this widget is bound to an <code>input</code> other than <code>select</code>.
-     *     Is used as the element for the <code>simplicityBucketCounts</code> widget.
+     *     Is used as the element for the <code>simplicityFacetCounts</code> widget.
      *     Defaults to <code>&lt;span/></code>.
      *   </dd>
      *   <dt>placement</dt>
      *   <dd>
      *     For when this widget is bound to an <code>input</code> other than <code>select</code>.
-     *     Determines where to place the automatically created <code>simplicityBucketCounts</code>
+     *     Determines where to place the automatically created <code>simplicityFacetCounts</code>
      *     widget. Defaults to <code>after-label</code>. Possible options are
      *     <dl>
      *       <dt>before-input</dt>
@@ -100,14 +100,14 @@
       if (this.element[0].nodeName === 'SELECT') {
         var options = this.element.find('option');
         this.element.find('option').each($.proxy(function (i, option) {
-          $(option).simplicityBucketCount($.extend({}, this.options, {
-            bucketId: $(option).val()
+          $(option).simplicityFacetCount($.extend({}, this.options, {
+            facetId: $(option).val()
           }));
         }, this));
       } else {
         var countElement = $(this.options.template);
-        countElement.simplicityBucketCount($.extend({}, this.options, {
-          bucketId: this.element.val()
+        countElement.simplicityFacetCount($.extend({}, this.options, {
+          facetId: this.element.val()
         }));
         if (this.options.placement === 'before-input') {
           this.element.before(countElement);
