@@ -126,7 +126,9 @@
               src = src + '?key=' + this.options.apiKey;
             }
             $.simplicityLoadJs(src, $.proxy(function () {
-              this.refreshMap();
+              MQA.withModule('mapinit', $.proxy(function() {
+                this.refreshMap();
+              }, this));
             }, this));
           }
         }
