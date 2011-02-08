@@ -1,18 +1,108 @@
 /**
  * @name $.ui.simplicityBingGeocoder
- * @namespace A Bing geocoder
+ * @namespace A Bing geocoder.
+ * <p>
+ * Bing geocoder widget that wraps the provides standardized
+ * callbacks across vendors and normalized results. Also provides
+ * a jQueri UI autocomplete source.
+ * <p>
+ * Requires a server side proxy to work around the same-origin policy of the browser.
+ * <p>
+ * Example PHP proxy:
+ * <pre>
+ * &lt;?php
+ *   $url = 'http://dev.virtualearth.net/REST/v1/Locations?' . $_SERVER['QUERY_STRING'];
+ *   $c = curl_init($url);
+ *   curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+ *   curl_setopt($c, CURLOPT_FAILONERROR,true);
+ *   $response = curl_exec($c);
+ *   echo $response;
+ * ?>
+ * </pre>
+ *
+ * <p>
+ * See the Bing Maps REST Services <a href="http://msdn.microsoft.com/en-us/library/ff701713.aspx">documentation</a>.
  */
 (function ($) {
   $.widget("ui.simplicityBingGeocoder", {
+    /**
+     * Widget options.
+     *
+     * <dl>
+     *   <dt>url</dt>
+     *   <dd>
+     *     Mandatory option, URL of the proxied geocoding service.
+     *   </dd>
+     *   <dt>requestTemplate</dt>
+     *   <dd>
+     *     Template that the <code>geocodeRequest</code> is merged with. Used
+     *     to supply any credentials that are shared across all requests.
+     *     <p>
+     *     Example:
+     *     <pre>
+     *     {
+     *       key: 'YOUR_API_KEY_GOES_HERE'
+     *     }
+     *     </pre>
+     *     Defaults to <code>{}</code>.
+     *   </dd>
+     *   <dt>debug</dt>
+     *   <dd>
+     *     Enable logging of key events to console.log. Defaults to <code>false</code>.
+     *   </dd>
+     * </dl>
+     * @name $.ui.simplicityBingGeocoder.options
+     */
     options : {
-      debug: false,
       url: '',
       requestTemplate: {
-      }
+      },
+      debug: false
     },
     _create: function () {
       this.element.addClass('ui-simplicity-bing-geocoder');
     },
+    /**
+     * Perform geocoding of the <code>geocodeRequest</code> calling the
+     * <code>callback</code> on completion.
+     * <p>
+     * Triggers two events.
+     * <dl>
+     *   <dt><code>request</code></dt>
+     *   <dd>
+     *     Final step before sending the geocode request, it is passed
+     *     as the custom object to this event to allow for manipulation.
+     *   </dd>
+     *   <dt><code>response</code></dt>
+     *   <dd>
+     *     Final step before calling the <code>callback</code> with the
+     *     geocode response to allow for manipulaton.
+     *     Triggered after any normalization phase.
+     *     <p>
+     *     The custom object passed to this event looks like so:
+     *     <pre>
+     *     {
+     *       response: {
+     *         // Original vendor response
+     *       },
+     *       items: [
+     *         // Array of normalized items, see <code>normalizeResults</code>.
+     *       ]
+     *     }
+     *     </pre>
+     *   </dd>
+     * </dl>
+     *
+     * @param geocodeRequest
+     *   The request as expected by the upstream geocode vendor.
+     * @param callback
+     *   The callback triggered at geocode completion. Is give one
+     *   argument which is the same as custom <code>Object</code>
+     *   passed to the <code>response</code> event.
+     *
+     * @name $.ui.simplicityBingGeocoder.geocode
+     * @function
+     */
     geocode: function (geocodeRequest, callback) {
       geocodeRequest = $.extend({}, this.options.requestTemplate, geocodeRequest);
       this._trigger('request', {}, geocodeRequest);
@@ -46,6 +136,13 @@
         }
       });
     },
+    /**
+     * Create an autocomplete source function that returns normalized
+     * geocoded addresses.
+     *
+     * @name $.ui.simplicityBingGeocoder.autocompleteSource
+     * @function
+     */
     autocompleteSource: function () {
       return $.proxy(function (request, responseCallback) {
         this.geocode({query: request.term}, function (response) {
@@ -53,6 +150,26 @@
         });
       }, this);
     },
+    /**
+     * Normalize the geocoder response. Returns an array of items.
+     * <pre>
+     *   Example output
+     *   [
+     *     {
+     *       value: 'Statue of Liberty, New York, NY 11231, USA',
+     *       latitude: 40.6892437,
+     *       longitude: -74.0445142,
+     *       response: {
+     *         // Upstream vendor response for this single location
+     *       }
+     *     }
+     *   ]
+     * </pre>
+     *
+     * @name $.ui.simplicityBingGeocoder.normalizeResults
+     * @function
+     * @private
+     */
     normalizeResults: function (response) {
       var items = [];
       if (response && response.response && response.response.statusCode === 200) {
@@ -72,6 +189,14 @@
       }
       return items;
     },
+    /**
+     * Normalize a single geocoded address. This gets injected
+     * as the <code>value</code> of the <code>item</code> object.
+     *
+     * @name $.ui.simplicityBingGeocoder.normalizeAddress
+     * @function
+     * @private
+     */
     normalizeAddress: function (result) {
       return result.address.formattedAddress;
     },
