@@ -71,7 +71,8 @@
      * @name $.ui.simplicityYahooMap._initWhenAvailable
      * @function
      * @private
-     */    _initWhenAvailable: function () {
+     */
+    _initWhenAvailable: function () {
       var available = false;
       if ('undefined' !== typeof this._map) {
         available = true;
