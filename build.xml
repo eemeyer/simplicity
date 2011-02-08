@@ -24,6 +24,7 @@
       <arg value="-e=UTF-8"/>
       <arg value="-d=docroot/jsdoc/"/>
       <arg value="-t=tools/jsdoc-toolkit-2.4.0/templates/jsdoc"/>
+      <arg value="--private"/>
       <arg value="docroot/js/simplicity/"/>
     </java>
     <echo message="JavaScript documentation now available at docroot/jsdoc/index.html"/>
