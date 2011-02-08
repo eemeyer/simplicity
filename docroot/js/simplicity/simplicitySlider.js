@@ -1,9 +1,78 @@
 /**
  * @name $.ui.simplicitySlider
- * @namespace Slider bound to an input per handle
+ * @namespace Slider bound to an input per handle.
+ * <p>
+ * Creates a progressive enhanced jQuery UI slider that is backed by one <code>input</code> element
+ * per handle.
+ * <p>
+ * The widget options are passed through to the created slider. For more information see the
+ * jQuery UI slider <a href="http://jqueryui.com/demos/slider/">documentation</a>.
+ *
+ * @example
+ *   Single-handled slider
+ *   &lt;input id="weight" name="w" />
+ *   &lt;div id="weightSlider">&lt;/div>
+ *   &lt;script type="text/javascript">
+ *     $('#weightSlider').simplicitySlider({
+ *       input: '#weight',
+ *       min: 0,
+ *       max: 10,
+ *       any: 0
+ *     });
+ *   &lt;/script>
+ *
+ * @example
+ *   Double-handled slider
+ *   &lt;input id="minPrice" name="minP" />
+ *   &lt;input id="maxPrice" name="maxP" />
+ *   &lt;div id="priceSlider">&lt;/div>
+ *   &lt;script type="text/javascript">
+ *     $('#priceSlider').simplicitySlider({
+ *       input: ['#minPrice', '#maxPrice'],
+ *       min: 0,
+ *       max: 100,
+ *       values: [0, 100],
+ *       any: [0, 100]
+ *     });
+ *   &lt;/script>
  */
 (function ($) {
   $.widget("ui.simplicitySlider", {
+    /**
+     * Widget options.
+     *
+     * <dl>
+     *   <dt>input</dt>
+     *   <dd>
+     *     A single <code>input</code> or an array of two <code>input</code>s to associate the
+     *     slider handles with.
+     *   </dd>
+     *   <dt>changeOnSlide</dt>
+     *   <dd>
+     *      Set this to <code>true</code> to cause <code>slide</code> events to change the
+     *      bound <code>input</code>. Defaults to <code>false</code>.
+     *   </dd>
+     *   <dt>any</dt>
+     *   <dd>
+     *     Single value (or array of two values for a double-handled slider) which represents
+     *     slider values that are mapped to the empty string (not selected). Usually one end
+     *     of the slider acts in this manner.
+     *   </dd>
+     *   <dt>handleToInput</dt>
+     *   <dd>
+     *     Optional callback used to map the handle value to the <code>input</code> value.
+     *   </dd>
+     *   <dt>inputToHandle</dt>
+     *   <dd>
+     *     Optional callback used to map the <code>input</code> value to the handle value.
+     *   </dd>
+     *   <dt>sliderImpl</dt>
+     *   <dd>
+     *     Widget to use for the slider, defaults to <code>'slider'</code>.
+     *   </dd>
+     * </dl>
+     * @name $.ui.simplicitySlider.options
+     */
     options : {
       input: [],
       changeOnSlide: false,
@@ -39,7 +108,17 @@
         }, this));
       }
     },
-    // Double handled slider
+    /**
+     * Event handler factory for the <code>change</code> event on an <code>input</code>
+     * bound to a double-handled slider.
+     * Updates the slider with the new value.
+     *
+     * @param valIdx
+     *   The slider handle number. <code>0</code> for the left handle and <code>1</code> or the right one.
+     * @name $.ui.simplicitySlider._inputValuesChangeHandlerFactory
+     * @function
+     * @private
+     */
     _inputValuesChangeHandlerFactory: function (valIdx) {
       return $.proxy(function (evt, ui) {
         if (!this._ignoreChangeEvent) {
@@ -57,7 +136,15 @@
         }
       }, this);
     },
-    // Single handled slider;
+    /**
+     * Event handler for the <code>change</code> event on an <code>input</code> bound to a
+     * single-handled slider.
+     * Updates the slider with the new value.
+     *
+     * @name $.ui.simplicitySlider._inputValueChangeHandler
+     * @function
+     * @private
+     */
     _inputValueChangeHandler: function (evt, ui) {
       if (!this._ignoreChangeEvent) {
         var value = this.element.slider('option', 'value');
@@ -70,6 +157,17 @@
         }
       }
     },
+    /**
+     * Event handler for the <code>slidechange</code> and <code>slide</code> events.
+     * Updates the associated <code>input</code> elements with the new slider values.
+     * <p>
+     * This handler calls <code>change()</code> on the <code>input</code> elements
+     * immediately after changing their values.
+     *
+     * @name $.ui.simplicitySlider._sliderChangeHandler
+     * @function
+     * @private
+     */
     _sliderChangeHandler: function (evt, ui) {
       try {
         this._ignoreChangeEvent = true;
