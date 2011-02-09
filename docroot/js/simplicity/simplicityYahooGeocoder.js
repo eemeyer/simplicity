@@ -2,9 +2,7 @@
  * @name $.ui.simplicityYahooGeocoder
  * @namespace A Yahoo geocoder.
  * <p>
- * Yahoo! geocoder widget that wraps the provides standardized
- * callbacks across vendors and normalized results. Also provides
- * a jQueri UI autocomplete source.
+ * Yahoo! geocoder. Also provides a jQueri UI autocomplete source.
  * <p>
  * Requires a server side proxy to work around the same-origin policy of the browser.
  * <p>

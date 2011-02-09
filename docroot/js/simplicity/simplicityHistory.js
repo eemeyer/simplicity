@@ -2,10 +2,13 @@
  * @name $.ui.simplicityHistory
  * @namespace Ajax history widget for simplicityState
  *
- * This widget binds the simplicityState to the hash fragment of the URL making the
- * state navigation (back and forward button) and bookmark sensitive.
+ * This widget binds the simplicityState to the hash fragment of the URL making it possible
+ * to use the browser's forward/backward buttons or create a bookmark to a specific
+ * search page. The simplicityHistory widget also enables users to search
+ * for results, then use the back button to restore/refine the criteria used to
+ * perform the search.
  * <p>
- * This widget should be instantiated at most one time per page.
+ * This widget should be instantiated no more than one time per page.
  *
  * @see Depends on the <a href="http://benalman.com/projects/jquery-bbq-plugin">jQuery BBQ plugin</a>.
  *

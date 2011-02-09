@@ -4,7 +4,7 @@
  * <p>
  * Pagination widget bound to the <code>simplicityResultSet</code> event.
  * <p>
- * The current page can be bind either via an <code>input</code> element or
+ * The current page can be bound either via an <code>input</code> element or
  * directly to the <code>simplicityState</code>.
  *
  * @example

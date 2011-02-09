@@ -1,6 +1,6 @@
 /**
  * @name $
- * @namespace jQuery: See <a href="http://docs.jquery.com">external documentation</a>
+ * @namespace jQuery: See <a href="http://docs.jquery.com">jQuery external documentation</a>
  */
 
 /**
@@ -11,12 +11,12 @@
  * @name $.ui
  * @namespace jQuery UI Widgets
  *
- * See <a href="http://docs.jquery.com">external documentation</a>
+ * See <a href="http://docs.jquery.com">jQuery UI external documentation</a>
  */
 
 /**
  * @name $.fn
  * @namespace jQuery Plugins
  *
- * See <a href="http://docs.jquery.com">external documentation</a>
+ * See <a href="http://docs.jquery.com">jQuery UI Plugins external documentation</a>
  */

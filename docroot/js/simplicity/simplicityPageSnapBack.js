@@ -1,10 +1,12 @@
 /**
  * @name $.ui.simplicityPageSnapBack
  * @namespace Widget that causes the current page to reset to the first when the search state changes.
+ * Without  simplicityPageSnapBack, the current search page will not change when executing a
+ * new search.
  * <p>
  * This widget listens for the <code>simplicityStateChanging</code> event and uses it to determine
  * if anything other than the page changed in the state. If it did then the page parameter is removed
- * effectively snapping the page back to page one.
+ * effectively snapping the page back to the first page of the results.
  *
  * @example
  *   $('body').simplicityState();

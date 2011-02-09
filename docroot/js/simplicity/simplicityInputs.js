@@ -3,7 +3,10 @@
  * @namespace An input element that has 2-way state sync support.
  *
  * This widget should either be applied directly to an input or to any DOM element
- * that contains inputs.
+ * that contains inputs. Most Simplicity widgets that gather or record user selections
+ * require to be bound to a simplicity widget.
+ *
+ * The values of the bound simplicityInputs are managed by a simplicityState widget.
  */
 (function ($) {
   var invalidInputSelector = ':button,:image,:file,:reset,:submit,:password';

@@ -2,9 +2,7 @@
  * @name $.ui.simplicityGoogleGeocoder
  * @namespace A Google geocoder.
  * <p>
- * Google geocoder widget that wraps the provides standardized
- * callbacks across vendors and normalized results. Also provides
- * a jQueri UI autocomplete source.
+ * Google geocoder widget. Also provides a jQueri UI autocomplete source.
  * <p>
  * See the Google Maps JavaScript API v3 <a href="http://code.google.com/apis/maps/documentation/javascript/services.html#Geocoding">documentation</a>.
  */

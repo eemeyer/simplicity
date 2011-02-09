@@ -1,7 +1,12 @@
 /**
  * @name $.ui.simplicityRenderParamsSearchResults
- * @namespace Widget that performs an AJAX request for rendered search results.
- */
+ * @namespace Widget that performs an AJAX request for rendered search results. This
+ * widget is useful for configurations that require a second round trip to a server
+ * to fetch the formatted result sets.
+ * <p>
+ * For optimal search performance, if your search controller can inject the search
+ * results as HTML into it's response then consider using <code>simplicitySearchResults</code> instead.
+*/
 (function ($) {
   $.widget("ui.simplicityRenderParamsSearchResults", {
     /**
