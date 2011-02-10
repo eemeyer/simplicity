@@ -1,0 +1,36 @@
+#!/bin/sh
+set -e
+
+# Simple build script, should get replaced with an ant target at some point
+
+if [ $# -ne 1 ]; then
+  echo >&2 "Usage: $2 engine-port"
+  exit 1
+fi
+PORT="$1"
+
+ant clean compress-media
+
+TMP_DIR=/tmp/tutorial-$$
+echo >&2 "Staging demo at $TMP_DIR"
+mkdir $TMP_DIR $TMP_DIR/docroot
+
+cp util.php $TMP_DIR/
+cp -r docroot/tutorial/* $TMP_DIR/docroot
+cp -r docroot/js docroot/css $TMP_DIR/docroot
+sed -i .bak -e 's#\.\./js/#js/#g' $TMP_DIR/docroot/*.html
+sed -i .bak -e 's#\.\./css/#css/#g' $TMP_DIR/docroot/*.html
+sed -i .bak -e 's#\.\./images/#images/#g' $TMP_DIR/docroot/*.html
+sed -i .bak -e 's#\.\./\.\./util\.php#../util.php#g' $TMP_DIR/docroot/*.php
+sed -i .bak -e 's#\.\./\.\./web\.config\.ini#../web.config.ini#g' $TMP_DIR/docroot/*.php
+rm $TMP_DIR/docroot/*.bak
+
+cat >$TMP_DIR/web.config.ini <<EOF
+[Application]
+discoveryEngineUrl=http://localhost:$PORT
+EOF
+
+env COPYFILE_DISABLE=true tar -C $TMP_DIR -c . | gzip -9 >tutorial-$PORT.tar.gz
+
+rm -rf $TMP_DIR
+echo tutorial-$PORT.tar.gz

@@ -29,7 +29,7 @@ $discoveryRequest = array(
 $error = false;
 try {
   $webConfig = parse_ini_file("../../web.config.ini",  true);
-  $engineUrl = $webConfig["tutorial"]["discoveryEngineUrl"];
+  $engineUrl = $webConfig["Application"]["discoveryEngineUrl"];
   $itemsUrl = $engineUrl . "/ws/items";
   $discoveryResponse = json_post($itemsUrl, $discoveryRequest);
 }

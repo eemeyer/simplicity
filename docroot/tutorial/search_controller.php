@@ -137,7 +137,7 @@ if (!empty($drillDown)) {
 $error = false;
 try {
   $webConfig = parse_ini_file("../../web.config.ini",  true);
-  $engineUrl = $webConfig["tutorial"]["discoveryEngineUrl"];
+  $engineUrl = $webConfig["Application"]["discoveryEngineUrl"];
   $queryUrl = $engineUrl . "/json/query";
   $discoveryResponse = json_post($queryUrl, $discoveryRequest);
 }
