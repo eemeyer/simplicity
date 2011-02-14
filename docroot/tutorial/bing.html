@@ -96,32 +96,7 @@
             <legend>Search Results</legend>
             <div id="searchResults"></div>
           </fieldset>
-          <div class="yui3-g">
-            <div class="yui3-u-1-4">
-              <fieldset class="ui-widget ui-widget-content">
-                <legend>Search State</legend>
-                <textarea id="searchState" cols="24" rows="30"></textarea>
-              </fieldset>
-            </div>
-            <div class="yui3-u-1-4">
-              <fieldset class="ui-widget ui-widget-content">
-                <legend>Result Set</legend>
-                <textarea id="searchResultSet" cols="24" rows="30"></textarea>
-              </fieldset>
-            </div>
-            <div class="yui3-u-1-4">
-              <fieldset class="ui-widget ui-widget-content">
-                <legend>Facet Counts</legend>
-                <textarea id="searchFacetCounts" cols="24" rows="30"></textarea>
-              </fieldset>
-            </div>
-            <div class="yui3-u-1-4">
-              <fieldset class="ui-widget ui-widget-content">
-                <legend>Search Response</legend>
-                <textarea id="searchResponse" cols="24" rows="30"></textarea>
-              </fieldset>
-            </div>
-          </div>
+          <div id="debug" class="yui3-g"></div>
         </div>
       </div>
     </form>
@@ -143,6 +118,7 @@
     <script type="text/javascript" src="../js/simplicity/simplicityHistory.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityInputs.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityDebug.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicitySlider.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityFacetCount.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityFacetedInput.js" charset="utf-8"></script>
@@ -230,37 +206,7 @@
         evt.stopPropagation();
       });
 
-      // DEBUG: Search State text area
-      $('body').bind('simplicityStateChange', function (evt, state) {
-        $('#searchState').val(JSON.stringify(state, null, '  '));
-      });
-      $('#searchState').change(function (evt) {
-        $('body').simplicityState('state', JSON.parse($(evt.target).val()));
-      });
-
-      // DEBUG: Facet Counts text area
-      $('body').bind('simplicityFacetCounts', function (evt, facetCounts) {
-        $('#searchFacetCounts').text(JSON.stringify(facetCounts, null, '  '));
-      });
-      $('#searchFacetCounts').change(function (evt, ui) {
-        $('body').simplicityDiscoverySearch('facetCounts', JSON.parse($(evt.target).val()));
-      });
-
-      // DEBUG: Result Set text area
-      $('body').bind('simplicityResultSet', function (evt, resultSet) {
-        $('#searchResultSet').text(JSON.stringify(resultSet, null, '  '));
-      });
-      $('#searchResultSet').change(function (evt, ui) {
-        $('body').simplicityDiscoverySearch('resultSet', JSON.parse($(evt.target).val()));
-      });
-
-      // DEBUG: Search Response text area
-      $('body').bind('simplicitySearchResponse', function (evt, response) {
-        $('#searchResponse').text(JSON.stringify(response, null, '  '));
-      });
-      $('#searchResponse').change(function (evt) {
-        $('body').simplicityDiscoverySearch('searchResponse', JSON.parse($(evt.target).val()));
-      });
+      $('#debug').simplicityDebug();
 
       // Rendered search results
       $('#searchResults').simplicitySearchResults();
