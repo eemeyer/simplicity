@@ -81,7 +81,7 @@
      *     The custom object passed to this event looks like so:
      *     <pre>
      *     {
-     *       response: {
+     *       vendor: {
      *         // Original vendor response
      *       },
      *       items: [
@@ -129,7 +129,7 @@
         },
         success: function (data, status, xhr) {
           ajaxHandler({
-            response: data,
+            vendor: data,
             status: status
           });
         }
@@ -158,7 +158,7 @@
      *       value: 'Statue of Liberty, New York, NY 11231, USA',
      *       latitude: 40.6892437,
      *       longitude: -74.0445142,
-     *       response: {
+     *       vendor: {
      *         // Upstream vendor response for this single location
      *       }
      *     }
@@ -171,15 +171,15 @@
      */
     normalizeResults: function (response) {
       var items = [];
-      if (response && response.response && response.response.ResultSet && response.response.ResultSet.Error === 0) {
-        $.each(response.response.ResultSet.Results, $.proxy(function (i, result) {
+      if (response && response.vendor && response.vendor.ResultSet && response.vendor.ResultSet.Error === 0) {
+        $.each(response.vendor.ResultSet.Results, $.proxy(function (i, result) {
           var value = this.normalizeAddress(result);
           if (value !== '') {
             items.push({
               value: value,
               latitude: Number(result.latitude),
               longitude: Number(result.longitude),
-              response: result
+              vendor: result
             });
           }
         }, this));

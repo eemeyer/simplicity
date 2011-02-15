@@ -60,7 +60,7 @@
      *     The custom object passed to this event looks like so:
      *     <pre>
      *     {
-     *       response: {
+     *       vendor: {
      *         // Original vendor response
      *       },
      *       items: [
@@ -93,7 +93,7 @@
       MQA.Geocoder.geocode(geocodeRequest.locations, geocodeRequest.options, null, $.proxy(function (geocodeResponse) {
         var items = this.normalizeResults(geocodeResponse);
         var response = {
-          response: geocodeResponse,
+          vendor: geocodeResponse,
           items: items
         };
         this._trigger('response', {}, response);
@@ -126,7 +126,7 @@
      *       value: 'Statue of Liberty, New York, NY 11231, USA',
      *       latitude: 40.6892437,
      *       longitude: -74.0445142,
-     *       response: {
+     *       vendor: {
      *         // Upstream vendor response for this single location
      *       }
      *     }
@@ -148,7 +148,7 @@
                 value: value,
                 latitude: location.latLng.lat,
                 longitude: location.latLng.lng,
-                response: location
+                vendor: location
               });
             }
           }, this));
@@ -201,17 +201,17 @@
         var suggestionLabel = item.value;
         var duplicateItem = labelToItem[suggestionLabel];
         if (typeof duplicateItem === 'undefined') {
-          if (item.response.geocodeQuality === 'STATE') {
-            if (item.response.adminArea1 === 'US') {
+          if (item.vendor.geocodeQuality === 'STATE') {
+            if (item.vendor.adminArea1 === 'US') {
               suggestionLabel = 'State of ' + suggestionLabel;
             }
           }
           labelToItem[suggestionLabel] = item;
         } else {
           // Duplicate label -- disambiguate via County
-          suggestionLabel += ' (' + item.response.adminArea4 + ')';
+          suggestionLabel += ' (' + item.vendor.adminArea4 + ')';
           var labelToDisambiguate = duplicateItem.label;
-          labelToDisambiguate += ' (' + duplicateItem.response.adminArea4 + ')';
+          labelToDisambiguate += ' (' + duplicateItem.vendor.adminArea4 + ')';
           duplicateItem.label = labelToDisambiguate;
         }
         item.label = suggestionLabel;

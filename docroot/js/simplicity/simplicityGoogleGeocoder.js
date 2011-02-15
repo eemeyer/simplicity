@@ -46,7 +46,7 @@
      *     The custom object passed to this event looks like so:
      *     <pre>
      *     {
-     *       response: {
+     *       vendor: {
      *         // Original vendor response
      *       },
      *       items: [
@@ -75,7 +75,7 @@
       this._geocoder.geocode(geocodeRequest, $.proxy(function (results, status) {
         var items = this.normalizeResults(results, status);
         var response = {
-          response: results,
+          vendor: results,
           status: status,
           items: items
         };
@@ -109,7 +109,7 @@
      *       value: 'Statue of Liberty, New York, NY 11231, USA',
      *       latitude: 40.6892437,
      *       longitude: -74.0445142,
-     *       response: {
+     *       vendor: {
      *         // Upstream vendor response for this single location
      *       }
      *     }
@@ -130,7 +130,7 @@
               value: value,
               latitude: result.geometry.location.lat(),
               longitude: result.geometry.location.lng(),
-              response: result
+              vendor: result
             });
           }
         }, this));
