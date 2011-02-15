@@ -179,6 +179,13 @@
                 value: value,
                 latitude: result.point.coordinates[0],
                 longitude: result.point.coordinates[1],
+                bounds: {
+                  vendor: result.bbox,
+                  south: result.bbox[0],
+                  west: result.bbox[1],
+                  north: result.bbox[2],
+                  east: result.bbox[3]
+                },
                 vendor: result
               });
             }

@@ -179,6 +179,13 @@
               value: value,
               latitude: Number(result.latitude),
               longitude: Number(result.longitude),
+              bounds: {
+                vendor: result.boundingbox,
+                south: Number(result.boundingbox.south),
+                west: Number(result.boundingbox.west),
+                north: Number(result.boundingbox.north),
+                east: Number(result.boundingbox.east)
+              },
               vendor: result
             });
           }

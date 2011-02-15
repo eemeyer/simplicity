@@ -130,6 +130,13 @@
               value: value,
               latitude: result.geometry.location.lat(),
               longitude: result.geometry.location.lng(),
+              bounds: {
+                vendor: result.geometry.bounds,
+                south: result.geometry.bounds.getSouthWest().lat(),
+                west: result.geometry.bounds.getSouthWest().lng(),
+                north: result.geometry.bounds.getNorthEast().lat(),
+                east: result.geometry.bounds.getNorthEast().lng()
+              },
               vendor: result
             });
           }
