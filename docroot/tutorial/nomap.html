@@ -32,7 +32,8 @@
       .ui-simplicity-facet-count {
         float: right;
       }
-      #styleCheckboxes ul {
+      #styleCheckboxes ul,
+      #styleCheckboxesFlyout ul {
         list-style-type: none;
         padding-left: 1em;
       }
@@ -180,8 +181,65 @@
                   </li>
                 </ul>
               </li>
+              <li class="row">
+                <a id="styleCheckboxesMore" href="#" onclick="return false;">More</a>
+              </li>
             </ul>
           </fieldset>
+          <div id="styleCheckboxesFlyout" class="ui-widget ui-helper-hidden-accessible">
+            <div class="ui-widget-content">
+              <div>
+                Style Flyout
+                <a href='#' onclick='return false;' class='flyout-close'>close</a>
+              </div>
+              <ul>
+                <li class="row">
+                  <input type="checkbox" id="style_flyout_multi-family" name="style" value="multi-family" />
+                  <label for="style_flyout_multi-family">Multi Family</label>
+                  <ul>
+                    <li class="row">
+                      <input type="checkbox" id="style_flyout_apartment" name="style" value="apartment" />
+                      <label for="style_flyout_apartment">Apartment</label>
+                    </li>
+                    <li class="row">
+                      <input type="checkbox" id="style_flyout_condo" name="style" value="condo" />
+                      <label for="style_flyout_condo">Condo</label>
+                    </li>
+                    <li class="row">
+                      <input type="checkbox" id="style_flyout_co-op" name="style" value="co-op" />
+                      <label for="style_flyout_co-op">Co-op</label>
+                    </li>
+                    <li class="row">
+                      <input type="checkbox" id="style_flyout_townhome" name="style" value="townhome" />
+                      <label for="style_flyout_townhome">Townhome</label>
+                    </li>
+                  </ul>
+                </li>
+                <li class="row">
+                  <input type="checkbox" id="style_flyout_single-family" name="style" value="single-family" />
+                  <label for="style_flyout_single-family">Single Family</label>
+                  <ul>
+                    <li class="row">
+                      <input type="checkbox" id="style_flyout_colonial" name="style" value="colonial" />
+                      <label for="style_flyout_colonial">Colonial</label>
+                    </li>
+                    <li class="row">
+                      <input type="checkbox" id="style_flyout_classical" name="style" value="classical" />
+                      <label for="style_flyout_classical">Classical</label>
+                    </li>
+                    <li class="row">
+                      <input type="checkbox" id="style_flyout_victorian" name="style" value="victorian" />
+                      <label for="style_flyout_victorian">Victorian</label>
+                    </li>
+                    <li class="row">
+                      <input type="checkbox" id="style_flyout_contemporary" name="style" value="contemporary" />
+                      <label for="style_flyout_contemporary">Contemporary</label>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
         <div id="main" class="yui3-u">
           <fieldset class="ui-widget ui-widget-content">
@@ -409,6 +467,20 @@
       $('#styleCheckboxes :checkbox').simplicityFacetedInput({
         dimension: 'style',
         placement: 'append-label'
+      });
+
+      $('#styleCheckboxesFlyout :checkbox').simplicityFacetedInput({
+        dimension: 'style',
+        placement: 'append-label'
+      });
+
+      $('#styleCheckboxesFlyout').simplicityFlyout({
+        positionSelector: '#styleCheckboxes',
+        width: '200px'
+      });
+      $('#styleCheckboxesMore').click(function (evt, ui) {
+        $('#styleCheckboxesFlyout').simplicityFlyout('toggle');
+        return false;
       });
 
       $('#paginationWidget').simplicityPagination();
