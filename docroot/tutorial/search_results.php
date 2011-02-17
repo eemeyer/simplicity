@@ -49,7 +49,7 @@ if (!$error) {
         $item = $items[$i];
         $itemId = $item["_id"];
         $exactMatch = $exactMatches[$i]; ?>
-    <div class="result-row <?php echo $exactMatch ? 'ui-state-active' : 'ui-priority-secondary' ?> ui-widget-content ui-corner-all">
+    <div  id="result-<?php echo $itemId ?>" class="result-row <?php echo $exactMatch ? 'ui-state-active' : 'ui-priority-secondary' ?> ui-widget-content ui-corner-all">
       <div class="info1">
         <span class="itemId"><?php echo $itemId ?></span>
         <span class="match"><?php echo $exactMatch ? 'exact' : 'close' ?></span>

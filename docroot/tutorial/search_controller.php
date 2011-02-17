@@ -107,6 +107,20 @@ if (array_key_exists("style", $_GET)) {
     );
 }
 
+if (array_key_exists("n", $_GET) && array_key_exists("e", $_GET) && array_key_exists("s", $_GET) && array_key_exists("w", $_GET)) {
+    $north = $_GET["n"];
+    $east = $_GET["e"];
+    $south = $_GET["s"];
+    $west = $_GET["w"];
+    $criteria[] = array(
+        "dimension" => "location",
+        "shapes" => array(
+          array(
+            // ne, nw, sw, se, ne
+            "latitude" => array($north, $north, $south, $south, $north),
+            "longitude" => array($east, $west, $west, $east, $east))));
+}
+
 if (array_key_exists("lat", $_GET) && array_key_exists("lon", $_GET)) {
     $criteria[] = array(
         "dimension" => "location",
@@ -167,7 +181,7 @@ if (!$error) {
           $properties = $discoveryResponse['properties'][$i];
           $exactMatch = $discoveryResponse['exactMatches'][$i];
           $relevance = $discoveryResponse['relevanceValues'][$i];
-          $resultsHtml .= '<div class="result-row ' . ($exactMatch ? 'ui-state-active' : 'ui-priority-secondary') .' ui-widget-content ui-corner-all">';
+          $resultsHtml .= '<div id="result-' . $itemId . '" class="result-row ' . ($exactMatch ? 'ui-state-active' : 'ui-priority-secondary') .' ui-widget-content ui-corner-all">';
           $resultsHtml .= '  <div class="info1">';
           $resultsHtml .= '    <span class="itemId">' . $itemId . '</span>';
           $resultsHtml .= '    <span class="match">' . ($exactMatch ? 'exact' : 'close') . '</span>';
