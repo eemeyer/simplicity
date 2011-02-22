@@ -42,7 +42,7 @@
     <div id="themeSwitcher" class="ui-helper-clearfix">
       <button id="themeSwitcherButton">Theme</button>
     </div>
-    <h1><a href="../index.html">home</a> | Tutorial Search with Yahoo</h1>
+    <h1><a href="index.html">home</a> | Tutorial Search with Yahoo</h1>
     <form id="myForm" onsubmit="return false;">
       <div class="yui3-g">
         <div id="nav" class="yui3-u">
@@ -70,6 +70,29 @@
               <option value="sales">Sales</option>
             </select>
           </fieldset>
+          <fieldset id="conditionCheckboxes">
+            <legend>Condition</legend>
+            <div class="row">
+              <input type="checkbox" id="condition_0" name="condition" value="0" />
+              <label for="condition_0">Money pit</label>
+            </div>
+            <div class="row">
+              <input type="checkbox" id="condition_1" name="condition" value="1" />
+              <label for="condition_1">Fixer-upper</label>
+            </div>
+            <div class="row">
+              <input type="checkbox" id="condition_2" name="condition" value="2" />
+              <label for="condition_2">Needs work</label>
+            </div>
+            <div class="row">
+              <input type="checkbox" id="condition_3" name="condition" value="3" />
+              <label for="condition_3">Good shape</label>
+            </div>
+            <div class="row">
+              <input type="checkbox" id="condition_4" name="condition" value="4" />
+              <label for="condition_4">Excellent condition</label>
+            </div>
+          </fieldset>
           <fieldset id="locationFields">
             <legend>Location</legend>
             <input id="address" name="address" />
@@ -80,12 +103,38 @@
             <label for="longitude">Longitude</label>
             <input id="longitude" name="lon" />
           </fieldset>
+          <fieldset id="locationFields2">
+            <legend>Location</legend>
+            <input id="address2" name="a" />
+            <br />
+            <label for="north">North</label>
+            <input id="north" name="n" />
+            <br />
+            <label for="east">East</label>
+            <input id="east" name="e" />
+            <br />
+            <label for="south">South</label>
+            <input id="south" name="s" />
+            <br />
+            <label for="west">West</label>
+            <input id="west" name="w" />
+          </fieldset>
         </div>
         <div id="main" class="yui3-u">
-          <fieldset class="ui-widget ui-widget-content">
-            <legend>Map</legend>
-            <div id="map" style="width: 738px; height: 300px;"></div>
-          </fieldset>
+          <div class="yui3-g">
+            <div class="yui3-u-1-2">
+              <fieldset class="ui-widget ui-widget-content">
+                <legend>Map created manually</legend>
+                <div id="map1" style="width: 349px; height: 300px;"></div>
+              </fieldset>
+            </div>
+            <div class="yui3-u-1-2">
+              <fieldset class="ui-widget ui-widget-content">
+                <legend>Map created by widget</legend>
+                <div id="map2" style="width: 349px; height: 300px;"></div>
+              </fieldset>
+            </div>
+          </div>
           <fieldset class="ui-widget ui-widget-content">
             <legend>Pagination</legend>
             <div id="paginationWidget"></div>
@@ -159,14 +208,53 @@
         }
       });
 
-      $('#map').simplicityYahooMap();
+      $('#conditionCheckboxes :checkbox').simplicityFacetedInput({
+        dimension: 'condition',
+        placement: 'append-label'
+      });
+
+      (function () {
+        var map = new YMap($('#map1')[0]);
+        map.addPanControl();
+        map.addZoomShort();
+        map.setMapType(YAHOO_MAP_REG);
+        map.drawZoomAndCenter(new YGeoPoint(0, 0), 16);
+        $('#map1').simplicityYahooMap({
+          map: map
+        });
+      }());
+
+      (function () {
+        $('#map2').simplicityYahooMap({
+          fitOnResultSet: false
+        });
+        var map = $('#map2').simplicityYahooMap('map');
+        map.addPanControl();
+        map.addZoomShort();
+      }());
+
+      $('#map1,#map2').bind('simplicityyahoomapmarker', function (evt, ui) {
+        var marker = ui.marker;
+        var properties = ui.row.properties;
+        marker.changeImage(new YImage('images/markers/yahoo/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png'));
+        if (properties.type === 'rentals') {
+          marker.addAutoExpand('$' + properties.lease);
+        } else {
+          marker.addAutoExpand('$' + properties.price);
+        }
+        YEvent.Capture(marker, EventsList.MouseClick, function (evt) {
+          $('#result-' + ui.row.id).effect("highlight", {}, 3000);
+        });
+      });
+
+      var apikey = 'YD-eQRpTl0_JX2E95l_xAFs5UwZUlNQhhn7lj1H';
 
       $('#locationFields')
         .simplicityInputs()
         .simplicityYahooGeocoder({
           url: '../test/yahooGeocoderProxy.php',
           requestTemplate: {
-            apikey: 'YD-eQRpTl0_JX2E95l_xAFs5UwZUlNQhhn7lj1H'
+            apikey: apikey
           }
         });
       var selectCallback = function (evt, ui) {
@@ -183,6 +271,51 @@
       $('#address').autocomplete({
         minLength: 0,
         source: $('#locationFields').simplicityYahooGeocoder('autocompleteSource'),
+        select: selectCallback,
+        change: selectCallback,
+        search: function (evt, ui) {
+          if ($(evt.target).val() === '') {
+            selectCallback(evt, ui);
+            return false;
+          }
+          return true;
+        }
+      });
+
+      $('#locationFields2')
+        .simplicityInputs()
+        .simplicityYahooGeocoder({
+          url: '../test/yahooGeocoderProxy.php',
+          requestTemplate: {
+            apikey: apikey
+          }
+        });
+      // Position the map based on geocoded address
+      var selectCallback = function (evt, ui) {
+        if (ui.item && ui.item.bounds) {
+          var map = $('#map2').simplicityYahooMap('map');
+          var bounds = ui.item.bounds;
+          var best = map.getBestZoomAndCenter([
+            new YGeoPoint(bounds.north, bounds.west),
+            new YGeoPoint(bounds.north, bounds.east),
+            new YGeoPoint(bounds.south, bounds.east),
+            new YGeoPoint(bounds.south, bounds.west)
+          ]);
+          map.drawZoomAndCenter(best.YGeoPoint, best.zoomLevel);
+        }
+      };
+      // Drive search from current map position
+      $('#map2').bind('simplicityyahoomapbounds', function (evt, ui) {
+        $('#north').val(ui.bounds.north);
+        $('#east').val(ui.bounds.east);
+        $('#south').val(ui.bounds.south);
+        $('#west').val(ui.bounds.west);
+        $('#locationFields2').change();
+      });
+      // Autocomplete based geocoder
+      $('#address2').autocomplete({
+        minLength: 0,
+        source: $('#locationFields2').simplicityYahooGeocoder('autocompleteSource'),
         select: selectCallback,
         change: selectCallback,
         search: function (evt, ui) {
