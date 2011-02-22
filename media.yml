@@ -28,6 +28,7 @@ groups:
       - js/simplicity/simplicitySlider.js
       - js/simplicity/simplicityFlyout.js
       # Maps
+      - js/simplicity/simplicityHaversineDistance.js
       - js/simplicity/simplicityGoogleMap.js
       - js/simplicity/simplicityBingMap.js
       - js/simplicity/simplicityYahooMap.js
