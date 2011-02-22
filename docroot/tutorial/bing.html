@@ -42,7 +42,7 @@
     <div id="themeSwitcher" class="ui-helper-clearfix">
       <button id="themeSwitcherButton">Theme</button>
     </div>
-    <h1><a href="../index.html">home</a> | Tutorial Search with Bing</h1>
+    <h1><a href="index.html">home</a> | Tutorial Search with Bing</h1>
     <form id="myForm" onsubmit="return false;">
       <div class="yui3-g">
         <div id="nav" class="yui3-u">
@@ -70,6 +70,29 @@
               <option value="sales">Sales</option>
             </select>
           </fieldset>
+          <fieldset id="conditionCheckboxes">
+            <legend>Condition</legend>
+            <div class="row">
+              <input type="checkbox" id="condition_0" name="condition" value="0" />
+              <label for="condition_0">Money pit</label>
+            </div>
+            <div class="row">
+              <input type="checkbox" id="condition_1" name="condition" value="1" />
+              <label for="condition_1">Fixer-upper</label>
+            </div>
+            <div class="row">
+              <input type="checkbox" id="condition_2" name="condition" value="2" />
+              <label for="condition_2">Needs work</label>
+            </div>
+            <div class="row">
+              <input type="checkbox" id="condition_3" name="condition" value="3" />
+              <label for="condition_3">Good shape</label>
+            </div>
+            <div class="row">
+              <input type="checkbox" id="condition_4" name="condition" value="4" />
+              <label for="condition_4">Excellent condition</label>
+            </div>
+          </fieldset>
           <fieldset id="locationFields">
             <legend>Location</legend>
             <input id="address" name="address" />
@@ -80,14 +103,42 @@
             <label for="longitude">Longitude</label>
             <input id="longitude" name="lon" />
           </fieldset>
+          <fieldset id="locationFields2">
+            <legend>Location</legend>
+            <input id="address2" name="a" />
+            <br />
+            <label for="north">North</label>
+            <input id="north" name="n" />
+            <br />
+            <label for="east">East</label>
+            <input id="east" name="e" />
+            <br />
+            <label for="south">South</label>
+            <input id="south" name="s" />
+            <br />
+            <label for="west">West</label>
+            <input id="west" name="w" />
+          </fieldset>
         </div>
         <div id="main" class="yui3-u">
-          <fieldset class="ui-widget ui-widget-content">
-            <legend>Map</legend>
-            <div style="width: 738px; height: 300px">
-              <div id="map" style="position: absolute; width: 738px; height: 300px;"></div>
+          <div class="yui3-g">
+            <div class="yui3-u-1-2">
+              <fieldset class="ui-widget ui-widget-content">
+                <legend>Map created manually</legend>
+                <div style="width: 349px; height: 300px">
+                  <div id="map1" style="position: absolute; width: 349px; height: 300px;"></div>
+                </div>
+              </fieldset>
             </div>
-          </fieldset>
+            <div class="yui3-u-1-2">
+              <fieldset class="ui-widget ui-widget-content">
+                <legend>Map created by widget</legend>
+                <div style="width: 349px; height: 300px">
+                  <div id="map2" style="position: absolute; width: 349px; height: 300px;"></div>
+                </div>
+              </fieldset>
+            </div>
+          </div>
           <fieldset class="ui-widget ui-widget-content">
             <legend>Pagination</legend>
             <div id="paginationWidget"></div>
@@ -127,6 +178,7 @@
     <script type="text/javascript" src="../js/simplicity/simplicitySearchResults.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityRenderParamsSearchResults.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityFlyout.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityHaversineDistance.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityBingMap.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityBingGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
@@ -158,8 +210,39 @@
         }
       });
 
-      $('#map').simplicityBingMap({
-        credentials: 'AqsWuHqZWoV942yySq7z7YZcyz7skrvFfPX_if4OmK5FyHkyJDmQSvX17Z7ymtok'
+      $('#conditionCheckboxes :checkbox').simplicityFacetedInput({
+        dimension: 'condition',
+        placement: 'append-label'
+      });
+
+      var credentials = 'AqsWuHqZWoV942yySq7z7YZcyz7skrvFfPX_if4OmK5FyHkyJDmQSvX17Z7ymtok';
+
+      (function () {
+        var map = new Microsoft.Maps.Map($('#map1')[0], {
+          credentials: credentials,
+          center: new Microsoft.Maps.Location(0, 0),
+          zoom: 1,
+          mapTypeId: Microsoft.Maps.MapTypeId.road
+        });
+        $('#map1').simplicityBingMap({
+          map: map
+        });
+      }());
+
+      $('#map2').simplicityBingMap({
+        credentials: credentials,
+        fitOnResultSet: false
+      });
+
+      $('#map1,#map2').bind('simplicitybingmapmarker', function (evt, ui) {
+        var pin = ui.marker;
+        var properties = ui.row.properties;
+        pin.setOptions({
+          icon: 'images/markers/bing/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png'
+        });
+        Microsoft.Maps.Events.addHandler(pin, 'click', function (evt) {
+          $('#result-' + ui.row.id).effect("highlight", {}, 3000);
+        });
       });
 
       $('#locationFields')
@@ -167,7 +250,7 @@
         .simplicityBingGeocoder({
           url: '../test/bingGeocoderProxy.php',
           requestTemplate: {
-            key: 'AqsWuHqZWoV942yySq7z7YZcyz7skrvFfPX_if4OmK5FyHkyJDmQSvX17Z7ymtok'
+            key: credentials
           }
         });
       var selectCallback = function (evt, ui) {
@@ -184,6 +267,47 @@
       $('#address').autocomplete({
         minLength: 0,
         source: $('#locationFields').simplicityBingGeocoder('autocompleteSource'),
+        select: selectCallback,
+        change: selectCallback,
+        search: function (evt, ui) {
+          if ($(evt.target).val() === '') {
+            selectCallback(evt, ui);
+            return false;
+          }
+          return true;
+        }
+      });
+
+      $('#locationFields2')
+        .simplicityInputs()
+        .simplicityBingGeocoder({
+          url: '../test/bingGeocoderProxy.php',
+          requestTemplate: {
+            key: credentials
+          }
+        });
+      // Position the map based on geocoded address
+      var selectCallback = function (evt, ui) {
+        if (ui.item && ui.item.bounds) {
+          var map = $('#map2').simplicityBingMap('map');
+          var bounds = ui.item.bounds;
+          map.setView({
+            bounds: Microsoft.Maps.LocationRect.fromEdges(bounds.north, bounds.west, bounds.south, bounds.east)
+          });
+        }
+      };
+      // Drive search from current map position
+      $('#map2').bind('simplicitybingmapbounds', function (evt, ui) {
+        $('#north').val(ui.bounds.north);
+        $('#east').val(ui.bounds.east);
+        $('#south').val(ui.bounds.south);
+        $('#west').val(ui.bounds.west);
+        $('#locationFields2').change();
+      });
+      // Autocomplete based geocoder
+      $('#address2').autocomplete({
+        minLength: 0,
+        source: $('#locationFields2').simplicityBingGeocoder('autocompleteSource'),
         select: selectCallback,
         change: selectCallback,
         search: function (evt, ui) {
