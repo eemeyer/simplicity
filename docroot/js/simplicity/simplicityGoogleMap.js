@@ -33,6 +33,16 @@
      *     Field to find the longitude of the result item in the <code>simplicityResultSet</code>
      *     item properties. Defaults to <code>'longitude'</code>.
      *   </dd>
+     *   <dt>map</dt>
+     *   <dd>
+     *     Optional map instance, if not provided one will be created. Defaults to <code>''</code>.
+     *   </dd>
+     *   <dt>fitOnResultSet<dt>
+     *   <dd>
+     *     When true the map is panned and zoomed to best fit the search
+     *     results that are added as part of the <code>simplicityResultSet</code>
+     *     event handler. Defaults to <code>true</code>.
+     *   </dd>
      *   <dt>mapOptions</dt>
      *   <dd>
      *     Options used when creating the map. Defaults to <code>''</code> which is expanded at
@@ -53,6 +63,8 @@
       searchElement: 'body',
       latitudeField: 'latitude',
       longitudeField: 'longitude',
+      map: '',
+      fitOnResultSet: true,
       mapOptions: '',
       // The following options are for internal use only
       apiKey: '',
@@ -61,6 +73,8 @@
     },
     _create: function () {
       this.element.addClass('ui-simplicity-google-map');
+      this._markers = [];
+      this._boundsShapes = [];
       this._initWhenAvailable();
       $(this.options.searchElement).bind('simplicityResultSet', $.proxy(this._resultSetHandler, this));
     },
@@ -74,27 +88,35 @@
      * @private
      */
     _initWhenAvailable: function () {
-      var available = false;
-      if ('undefined' !== typeof this._map) {
-        available = true;
+      var wasAvailable = 'undefined' !== typeof this._map;
+      if (wasAvailable) {
+        // Already available, do nothing
+      } else if (this.options.map !== '') {
+        this._map = this.options.map;
       } else if ('undefined' !== typeof google && 'undefined' !== typeof google.maps) {
+        var defaultMapOptions = {
+          center: new google.maps.LatLng(0, 0),
+          zoom: 1,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
         var mapOptions;
         if (this.options.mapOptions === '') {
-          mapOptions = {
-            center: new google.maps.LatLng(0, 0),
-            zoom: 1,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
+          mapOptions = defaultMapOptions;
         } else if ($.isFunction(this.options.mapOptions)) {
-          mapOptions = this.options.mapOptions.call(this);
+          mapOptions = $.extend(defaultMapOptions, this.options.mapOptions.call(this));
         } else {
-          mapOptions = this.options.mapOptions;
+          mapOptions = $.extend(defaultMapOptions, this.options.mapOptions);
         }
         this._map = new google.maps.Map(this.element[0], mapOptions);
-        this._markers = [];
-        available = true;
+        this._trigger('create', {}, {
+          map: this._map
+        });
       }
-      return available;
+      var isAvailable = 'undefined' !== typeof this._map;
+      if (!wasAvailable && isAvailable) {
+        this._boundsChangeListener = google.maps.event.addListener(this._map, 'idle', $.proxy(this._mapBoundsChangeHandler, this));
+      }
+      return isAvailable;
     },
     /**
      * Return the actual map object.
@@ -156,12 +178,36 @@
      */
     _resultSetHandler: function (evt, resultSet) {
       if (this._initWhenAvailable()) {
+        this.removeMarkers();
+        this.addMarkers(resultSet);
+      }
+    },
+    /**
+     * Removes any markers that were added to the map by <code>addMarkers</code>.
+     *
+     * @name $.ui.simplicityGoogleMap.removeMarkers
+     * @function
+     * @private
+     */
+    removeMarkers: function () {
+      if (this._initWhenAvailable()) {
         $.each(this._markers, function (idx, marker) {
           marker.setMap(null);
         });
         this._markers.length = 0;
+      }
+    },
+    /**
+     * Adds any markers that can be extracted from the given <code>resultSet</code>.
+     *
+     * @name $.ui.simplicityGoogleMap.addMarkers
+     * @function
+     * @private
+     */
+    addMarkers: function (resultSet) {
+      if (this._initWhenAvailable()) {
         if (resultSet.rows.length > 0) {
-          var bounds = new google.maps.LatLngBounds();
+          var bounds = this.options.fitOnResultSet ? new google.maps.LatLngBounds() : null;
           $.each(resultSet.rows, $.proxy(function (idx, row) {
             var properties = row.properties;
             if ('undefined' !== typeof properties) {
@@ -169,21 +215,172 @@
               var longitude = properties[this.options.longitudeField];
               if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
                 var point = new google.maps.LatLng(latitude, longitude);
-                this._markers.push(new google.maps.Marker({
-                  position: point,
-                  map: this._map
-                }));
-                bounds.extend(point);
+                var marker = new google.maps.Marker({
+                  position: point
+                });
+                var markerEvent = {
+                  row: row,
+                  map: this._map,
+                  marker: marker
+                };
+                this._trigger('marker', {}, markerEvent);
+                marker = markerEvent.marker;
+                if ('undefined' !== typeof marker) {
+                  marker.setMap(this._map);
+                  this._markers.push(marker);
+                  if (bounds !== null) {
+                    bounds.extend(point);
+                  }
+                }
               }
             }
           }, this));
-          this._map.fitBounds(bounds);
+          if (bounds !== null && !bounds.isEmpty()) {
+            this._map.fitBounds(bounds);
+          }
         }
       }
+    },
+    _mapBoundsChangeHandler: function () {
+      var bounds = this.bounds();
+      if (this.options.debug) {
+        console.log('simplicityGoogleMap: Bounds changed', bounds);
+      }
+      this._trigger('bounds', {}, bounds);
+    },
+    /**
+     * Returns the normalized bounds for this map.
+     *
+     * @name $.ui.simplicityGoogleMap.bounds
+     * @function
+     */
+    bounds: function () {
+      return this.normalizeBounds(this._map.getBounds(), this._map.getCenter());
+    },
+    /**
+     * Normalizes the bounds for this map.
+     *
+     * @param bounds in vendor supplied format
+     * @param center point in vendor supplied format
+     * @name $.ui.simplicityGoogleMap.normalizeBounds
+     * @function
+     * @private
+     */
+    normalizeBounds: function (bounds, center) {
+      var result = {
+        map: this._map,
+        bounds: {
+          vendor: bounds,
+          north: bounds.getNorthEast().lat(),
+          east: bounds.getNorthEast().lng(),
+          south: bounds.getSouthWest().lat(),
+          west: bounds.getSouthWest().lng()
+        },
+        center: {
+          vendor: center,
+          latitude: center.lat(),
+          longitude: center.lng()
+        }
+      };
+      var radiusMeters1;
+      var radiusMeters2;
+      if ('undefined' !== typeof google.maps.geometry) {
+        radiusMeters1 = google.maps.geometry.spherical.computeDistanceBetween(
+            center, new google.maps.LatLng(center.lat(), bounds.getNorthEast().lng()));
+        radiusMeters2 = google.maps.geometry.spherical.computeDistanceBetween(
+            center, new google.maps.LatLng(bounds.getNorthEast().lat(), center.lng()));
+      } else {
+        radiusMeters1 = $.simplicityHaversineDistanceKm(
+            center.lat(), center.lng(), center.lat(), bounds.getNorthEast().lng()) * 1000.0;
+        radiusMeters2 = $.simplicityHaversineDistanceKm(
+            center.lat(), center.lng(), bounds.getNorthEast().lat(), center.lng()) * 1000.0;
+      }
+      var minMeters = Math.min(radiusMeters1, radiusMeters2);
+      var maxMeters = Math.max(radiusMeters1, radiusMeters2);
+      $.extend(result, {
+        minRadius: {
+          meters: minMeters,
+          feet: minMeters * 3.2808399,
+          miles:  minMeters / 1609.344,
+          km: minMeters / 1000
+        },
+        maxRadius: {
+          meters: maxMeters,
+          feet: maxMeters * 3.2808399,
+          miles:  maxMeters / 1609.344,
+          km: maxMeters / 1000
+        }
+      });
+      return result;
+    },
+    /**
+     * Removes the bounds from the map.
+     *
+     * @name $.ui.simplicityGoogleMap.hideBounds
+     * @function
+     * @private
+     */
+    hideBounds: function () {
+      $.each(this._boundsShapes, function (idx, shape) {
+        shape.setMap(null);
+      });
+      this._boundsShapes.length = 0;
+    },
+    /**
+     * Adds an overlay for the bounds on the map.
+     *
+     * @param bounds Optional bounds to display, if missing the current bounds are used.
+     * @name $.ui.simplicityGoogleMap.showBounds
+     * @function
+     * @private
+     */
+    showBounds: function (bounds) {
+      if ('undefined' === typeof bounds) {
+        bounds = this.bounds();
+      }
+      var shapes = {
+        boundsRect: new google.maps.Rectangle({
+          bounds: bounds.bounds.vendor,
+          fillOpacity: 0
+        }),
+        minCircle: new google.maps.Circle({
+          center: bounds.center.vendor,
+          radius: bounds.minRadius.meters,
+          fillOpacity: 0
+        }),
+        maxCircle: new google.maps.Circle({
+          center: bounds.center.vendor,
+          radius: bounds.maxRadius.meters,
+          fillOpacity: 0
+        }),
+        centerLatitude: centerLat = new google.maps.Polyline({
+          path: [
+            new google.maps.LatLng(bounds.center.latitude, bounds.bounds.east),
+            new google.maps.LatLng(bounds.center.latitude, bounds.bounds.west)
+          ],
+          strokeWeight: 1
+        }),
+        centerLongitude: new google.maps.Polyline({
+          path: [
+            new google.maps.LatLng(bounds.bounds.north, bounds.center.longitude),
+            new google.maps.LatLng(bounds.bounds.south, bounds.center.longitude)
+          ],
+          strokeWeight: 1
+        })
+      };
+      this._trigger('boundsshapes', {}, shapes);
+      $.each(shapes, $.proxy(function (name, shape) {
+        shape.setMap(this._map);
+        this._boundsShapes.push(shape);
+      }, this));
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-google-map');
       $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
+      if ('undefined' !== typeof this._boundsChangeListener) {
+        google.maps.event.removeListener(this._boundsChangeListener);
+        delete this._boundsChangeListener;
+      }
       delete this._map;
       $.Widget.prototype.destroy.apply(this, arguments);
     }
