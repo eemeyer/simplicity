@@ -42,7 +42,7 @@
     <div id="themeSwitcher" class="ui-helper-clearfix">
       <button id="themeSwitcherButton">Theme</button>
     </div>
-    <h1><a href="../index.html">home</a> | Tutorial Search with MapQuest</h1>
+    <h1><a href="index.html">home</a> | Tutorial Search with MapQuest</h1>
     <form id="myForm" onsubmit="return false;">
       <div class="yui3-g">
         <div id="nav" class="yui3-u">
@@ -70,6 +70,29 @@
               <option value="sales">Sales</option>
             </select>
           </fieldset>
+          <fieldset id="conditionCheckboxes">
+            <legend>Condition</legend>
+            <div class="row">
+              <input type="checkbox" id="condition_0" name="condition" value="0" />
+              <label for="condition_0">Money pit</label>
+            </div>
+            <div class="row">
+              <input type="checkbox" id="condition_1" name="condition" value="1" />
+              <label for="condition_1">Fixer-upper</label>
+            </div>
+            <div class="row">
+              <input type="checkbox" id="condition_2" name="condition" value="2" />
+              <label for="condition_2">Needs work</label>
+            </div>
+            <div class="row">
+              <input type="checkbox" id="condition_3" name="condition" value="3" />
+              <label for="condition_3">Good shape</label>
+            </div>
+            <div class="row">
+              <input type="checkbox" id="condition_4" name="condition" value="4" />
+              <label for="condition_4">Excellent condition</label>
+            </div>
+          </fieldset>
           <fieldset id="locationFields">
             <legend>Location</legend>
             <input id="address" name="address" />
@@ -80,12 +103,38 @@
             <label for="longitude">Longitude</label>
             <input id="longitude" name="lon" />
           </fieldset>
+          <fieldset id="locationFields2">
+            <legend>Location</legend>
+            <input id="address2" name="a" />
+            <br />
+            <label for="north">North</label>
+            <input id="north" name="n" />
+            <br />
+            <label for="east">East</label>
+            <input id="east" name="e" />
+            <br />
+            <label for="south">South</label>
+            <input id="south" name="s" />
+            <br />
+            <label for="west">West</label>
+            <input id="west" name="w" />
+          </fieldset>
         </div>
         <div id="main" class="yui3-u">
-          <fieldset class="ui-widget ui-widget-content">
-            <legend>Map</legend>
-            <div id="map" style="width: 738px; height: 300px;"></div>
-          </fieldset>
+          <div class="yui3-g">
+            <div class="yui3-u-1-2">
+              <fieldset class="ui-widget ui-widget-content">
+                <legend>Map created manually</legend>
+                <div id="map1" style="width: 349px; height: 300px;"></div>
+              </fieldset>
+            </div>
+            <div class="yui3-u-1-2">
+              <fieldset class="ui-widget ui-widget-content">
+                <legend>Map created by widget</legend>
+                <div id="map2" style="width: 349px; height: 300px;"></div>
+              </fieldset>
+            </div>
+          </div>
           <fieldset class="ui-widget ui-widget-content">
             <legend>Pagination</legend>
             <div id="paginationWidget"></div>
@@ -128,7 +177,7 @@
     <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMap.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityMapQuestGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
-      MQA.withModule('mapinit', 'geocoder', 'zoomcontrol3', function() {
+      MQA.withModule('mapinit', 'geocoder', 'shapes', 'zoomcontrol3', function() {
 
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
 
@@ -158,9 +207,41 @@
         }
       });
 
-      $('#map').simplicityMapQuestMap();
-      var map = $('#map').simplicityMapQuestMap('map');
-      map.addControl(new MQA.LargeZoomControl3(), new MQA.MapCornerPlacement(MQA.MapCorner.TOP_LEFT));
+      $('#conditionCheckboxes :checkbox').simplicityFacetedInput({
+        dimension: 'condition',
+        placement: 'append-label'
+      });
+
+      (function () {
+        var map = new MQA.TileMap($('#map1')[0], 1, {lat: 0, lng: 0}, 'map', new MQA.MapInit());
+        map.addControl(new MQA.LargeZoomControl3(), new MQA.MapCornerPlacement(MQA.MapCorner.TOP_LEFT));
+        $('#map1').simplicityMapQuestMap({
+          map: map
+        });
+      }());
+
+      (function () {
+        $('#map2').simplicityMapQuestMap({
+          fitOnResultSet: false
+        });
+        var map = $('#map2').simplicityMapQuestMap('map');
+        map.addControl(new MQA.LargeZoomControl3(), new MQA.MapCornerPlacement(MQA.MapCorner.TOP_RIGHT));
+      }());
+
+      $('#map1,#map2').bind('simplicitymapquestmapmarker', function (evt, ui) {
+        var poi = ui.marker;
+        var properties = ui.row.properties;
+        var icon = new MQA.Icon('images/markers/mapquest/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png', 30, 30);
+        poi.setIcon(icon)
+        if (properties.type === 'rentals') {
+          poi.setRolloverContent('$' + properties.lease);
+        } else {
+          poi.setRolloverContent('$' + properties.price);
+        }
+        MQA.EventManager.addListener(poi, 'click', function (evt) {
+          $('#result-' + ui.row.id).effect("highlight", {}, 3000);
+        });
+      });
 
       $('#locationFields')
         .simplicityInputs()
@@ -183,6 +264,55 @@
       $('#address').autocomplete({
         minLength: 0,
         source: $('#locationFields').simplicityMapQuestGeocoder('autocompleteSource'),
+        select: selectCallback,
+        change: selectCallback,
+        search: function (evt, ui) {
+          if ($(evt.target).val() === '') {
+            selectCallback(evt, ui);
+            return false;
+          }
+          return true;
+        }
+      });
+
+      $('#locationFields2')
+        .simplicityInputs()
+        .simplicityMapQuestGeocoder();
+      var mapQuestQualityZoomLevels = {
+        'POINT': 14,
+        'ADDRESS': 14,
+        'INTERSECTION': 13,
+        'STREET': 13,
+        'ZIP': 10,
+        'ZIP_EXTENDED': 11,
+        'CITY': 9,
+        'COUNTY': 7,
+        'STATE': 3,
+        'COUNTRY': 2
+      };
+      // Position the map based on geocoded address
+      var selectCallback = function (evt, ui) {
+        if (ui.item) {
+          var map = $('#map2').simplicityMapQuestMap('map');
+          var zoomLevel = mapQuestQualityZoomLevels[ui.item.vendor.geocodeQuality];
+          if (zoomLevel) {
+            map.setZoomLevel(zoomLevel);
+          }
+          map.setCenter({lat: ui.item.latitude, lng: ui.item.longitude});
+        }
+      };
+      // Drive search from current map position
+      $('#map2').bind('simplicitymapquestmapbounds', function (evt, ui) {
+        $('#north').val(ui.bounds.north);
+        $('#east').val(ui.bounds.east);
+        $('#south').val(ui.bounds.south);
+        $('#west').val(ui.bounds.west);
+        $('#locationFields2').change();
+      });
+      // Autocomplete based geocoder
+      $('#address2').autocomplete({
+        minLength: 0,
+        source: $('#locationFields2').simplicityMapQuestGeocoder('autocompleteSource'),
         select: selectCallback,
         change: selectCallback,
         search: function (evt, ui) {
