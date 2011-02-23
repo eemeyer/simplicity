@@ -105,7 +105,11 @@
      * @private
      */
     _changeHandler: function (evt) {
-      if (!this._ignoreChangeEvent && evt.target === this.element[0]) {
+      if (evt.target !== this.element[0]) {
+        // Change event from a child element, stop it
+        evt.stopImmediatePropagation();
+        evt.preventDefault();
+      } else if (!this._ignoreChangeEvent) {
         var state = $(this.options.stateElement).simplicityState('state');
         this.inputs().simplicityToState(state, this.options.trim);
         $(this.options.stateElement).simplicityState('state', state, this.options.quietStateChange ? false : undefined);
