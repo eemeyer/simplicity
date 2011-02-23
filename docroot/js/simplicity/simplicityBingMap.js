@@ -62,6 +62,12 @@
      *     </pre>
      *     Can be either an <code>Object</code> or a <code>function</code>.
      *   </dd>
+     *   <dt>mapMoveEvents</dt>
+     *   <dd>
+     *     Provides an override of which vendor specific map events are used to determine
+     *     when the position of the map changes. Expects a comma separated list of event names.
+     *     Defaults to <code>'viewchangeend'</code>.
+     *   </dd>
      * </dl>
      * @name $.ui.simplicityBingMap.options
      */
@@ -73,6 +79,7 @@
       fitOnResultSet: true,
       credentials: '',
       mapOptions: '',
+      mapMoveEvents: 'viewchangeend',
       eventThrottleInterval: '',
       // The following options are for internal use only
       mapVersion: '7.0'
@@ -81,6 +88,7 @@
       this.element.addClass('ui-simplicity-bing-map');
       this._markers = [];
       this._boundsShapes = [];
+      this._boundsChangeListeners = {};
       this._initWhenAvailable();
       $(this.options.searchElement).bind('simplicityResultSet', $.proxy(this._resultSetHandler, this));
     },
@@ -121,11 +129,18 @@
       }
       var isAvailable = 'undefined' !== typeof this._map;
       if (!wasAvailable && isAvailable) {
-        if (this.options.eventThrottleInterval === '') {
-          this._boundsChangeListener = Microsoft.Maps.Events.addHandler(this._map, 'viewchangeend', $.proxy(this._mapBoundsChangeHandler, this));
-        } else {
-          this._boundsChangeListener = Microsoft.Maps.Events.addThrottledHandler(this._map, 'viewchangeend', $.proxy(this._mapBoundsChangeHandler, this), this.options.eventThrottleInterval);
-        }
+        $.each(this.options.mapMoveEvents.split(','), $.proxy(function (idx, eventName) {
+          eventName = $.trim(eventName);
+          if (eventName !== '') {
+            var listener;
+            if (this.options.eventThrottleInterval === '') {
+              listener = Microsoft.Maps.Events.addHandler(this._map, eventName, $.proxy(this._mapBoundsChangeHandler, this));
+            } else {
+              listener = Microsoft.Maps.Events.addThrottledHandler(this._map, eventName, $.proxy(this._mapBoundsChangeHandler, this), this.options.eventThrottleInterval);
+            }
+            this._boundsChangeListeners[eventName] = listener;
+          }
+        }, this));
       }
       return isAvailable;
     },
@@ -371,10 +386,10 @@
     destroy: function () {
       this.element.removeClass('ui-simplicity-bing-map');
       $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
-      if ('undefined' !== typeof this._boundsChangeListener) {
-        Microsoft.Maps.Events.removeHandler(this._boundsChangeListener);
-        delete this._boundsChangeListener;
-      }
+      $.each(this._boundsChangeListeners, $.proxy(function (eventName, listener) {
+        Microsoft.Maps.Events.removeHandler(listener);
+      }, this));
+      this._boundsChangeListeners = {};
       delete this._map;
       $.Widget.prototype.destroy.apply(this, arguments);
     }

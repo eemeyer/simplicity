@@ -56,6 +56,12 @@
      *     </pre>
      *     Can be either an <code>Object</code> or a <code>function</code>.
      *   </dd>
+     *   <dt>mapMoveEvents</dt>
+     *   <dd>
+     *     Provides an override of which vendor specific map events are used to determine
+     *     when the position of the map changes. Expects a comma separated list of event names.
+     *     Defaults to <code>'moveend,zoomend'</code>.
+     *   </dd>
      * </dl>
      * @name $.ui.simplicityMapQuestMap.options
      */
@@ -66,12 +72,14 @@
       map: '',
       fitOnResultSet: true,
       mapOptions: '',
+      mapMoveEvents: 'moveend,zoomend',
       // The following options are for internal use only
       apiKey: '',
       mapVersion: '6.0.0'
     },
     _create: function () {
       this.element.addClass('ui-simplicity-mapquest-map');
+      this._boundsChangeListeners = {};
       this._initWhenAvailable();
       $(this.options.searchElement).bind('simplicityResultSet', $.proxy(this._resultSetHandler, this));
     },
@@ -113,9 +121,14 @@
       }
       var isAvailable = 'undefined' !== typeof this._map;
       if (!wasAvailable && isAvailable) {
-        this._boundsChangeListener = $.proxy(this._mapBoundsChangeHandler, this);
-        MQA.EventManager.addListener(this._map, 'moveend', this._boundsChangeListener);
-        MQA.EventManager.addListener(this._map, 'zoomend', this._boundsChangeListener);
+        $.each(this.options.mapMoveEvents.split(','), $.proxy(function (idx, eventName) {
+          eventName = $.trim(eventName);
+          if (eventName !== '') {
+            var listener = $.proxy(this._mapBoundsChangeHandler, this);
+            MQA.EventManager.addListener(this._map, eventName, listener);
+            this._boundsChangeListeners[eventName] = listener;
+          }
+        }, this));
       }
       return isAvailable;
     },
@@ -381,11 +394,10 @@
     destroy: function () {
       this.element.removeClass('ui-simplicity-mapquest-map');
       $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
-      if ('undefined' !== typeof this._boundsChangeListener) {
-        MQA.EventManager.removeListener(this._map, 'moveend', this._boundsChangeListener);
-        MQA.EventManager.removeListener(this._map, 'zoomend', this.__boundsChangeListener);
-        delete this._boundsChangeListener;
-      }
+      $.each(this._boundsChangeListeners, $.proxy(function (eventName, listener) {
+        MQA.EventManager.removeListener(this._map, eventName, listener);
+      }, this));
+      this._boundsChangeListeners = {};
       delete this._map;
       $.Widget.prototype.destroy.apply(this, arguments);
     }

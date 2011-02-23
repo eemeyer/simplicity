@@ -56,6 +56,12 @@
      *     </pre>
      *     Can be either an <code>Object</code> or a <code>function</code>.
      *   </dd>
+     *   <dt>mapMoveEvents</dt>
+     *   <dd>
+     *     Provides an override of which vendor specific map events are used to determine
+     *     when the position of the map changes. Expects a comma separated list of event names.
+     *     Defaults to <code>'idle'</code>.
+     *   </dd>
      * </dl>
      * @name $.ui.simplicityGoogleMap.options
      */
@@ -66,6 +72,7 @@
       map: '',
       fitOnResultSet: true,
       mapOptions: '',
+      mapMoveEvents: 'idle',
       // The following options are for internal use only
       apiKey: '',
       mapVersion: '3',
@@ -75,6 +82,7 @@
       this.element.addClass('ui-simplicity-google-map');
       this._markers = [];
       this._boundsShapes = [];
+      this._boundsChangeListeners = {};
       this._initWhenAvailable();
       $(this.options.searchElement).bind('simplicityResultSet', $.proxy(this._resultSetHandler, this));
     },
@@ -114,7 +122,13 @@
       }
       var isAvailable = 'undefined' !== typeof this._map;
       if (!wasAvailable && isAvailable) {
-        this._boundsChangeListener = google.maps.event.addListener(this._map, 'idle', $.proxy(this._mapBoundsChangeHandler, this));
+        $.each(this.options.mapMoveEvents.split(','), $.proxy(function (idx, eventName) {
+          eventName = $.trim(eventName);
+          if (eventName !== '') {
+            var listener = google.maps.event.addListener(this._map, eventName, $.proxy(this._mapBoundsChangeHandler, this));
+            this._boundsChangeListeners[eventName] = listener;
+          }
+        }, this));
       }
       return isAvailable;
     },
@@ -377,10 +391,10 @@
     destroy: function () {
       this.element.removeClass('ui-simplicity-google-map');
       $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
-      if ('undefined' !== typeof this._boundsChangeListener) {
-        google.maps.event.removeListener(this._boundsChangeListener);
-        delete this._boundsChangeListener;
-      }
+      $.each(this._boundsChangeListeners, $.proxy(function (eventName, listener) {
+        google.maps.event.removeListener(listener);
+      }, this));
+      this._boundsChangeListeners = {};
       delete this._map;
       $.Widget.prototype.destroy.apply(this, arguments);
     }

@@ -56,6 +56,12 @@
      *     </pre>
      *     Can be either an <code>Object</code> or a <code>function</code>.
      *   </dd>
+     *   <dt>mapMoveEvents</dt>
+     *   <dd>
+     *     Provides an override of which vendor specific map events are used to determine
+     *     when the position of the map changes. Expects a comma separated list of event names.
+     *     Defaults to <code>'endPan,endAutoPan,changeZoom'</code>.
+     *   </dd>
      * </dl>
      * @name $.ui.simplicityYahooMap.options
      */
@@ -66,6 +72,7 @@
       map: '',
       fitOnResultSet: true,
       mapOptions: '',
+      mapMoveEvents: 'endPan,endAutoPan,changeZoom',
       // The following options are for internal use only
       apiKey: '',
       mapVersion: '3.8'
@@ -115,9 +122,12 @@
       }
       var isAvailable = 'undefined' !== typeof this._map;
       if (!wasAvailable && isAvailable) {
-        YEvent.Capture(this._map, 'endPan', $.proxy(this._mapBoundsChangeHandler, this));
-        YEvent.Capture(this._map, 'endAutoPan', $.proxy(this._mapBoundsChangeHandler, this));
-        YEvent.Capture(this._map, 'changeZoom', $.proxy(this._mapBoundsChangeHandler, this));
+        $.each(this.options.mapMoveEvents.split(','), $.proxy(function (idx, eventName) {
+          eventName = $.trim(eventName);
+          if (eventName !== '') {
+            YEvent.Capture(this._map, eventName, $.proxy(this._mapBoundsChangeHandler, this));
+          }
+        }, this));
       }
       return isAvailable;
     },
@@ -357,6 +367,7 @@
     destroy: function () {
       this.element.removeClass('ui-simplicity-yahoo-map');
       $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
+      delete this._map;
       $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
