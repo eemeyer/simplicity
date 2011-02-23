@@ -157,6 +157,7 @@
     <script type="text/javascript" src="../js/lib/jquery.bgiframe-2.1.2.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/lib/jquery.numberformatter-1.1.0.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.ui.autocomplete.selectFirst-2010-10-25.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
 
     <script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
@@ -254,12 +255,15 @@
           }
         });
       var selectCallback = function (evt, ui) {
+        var address = '';
         var latitude = '';
         var longitude = '';
         if (ui.item) {
+          address = ui.item.value;
           latitude = ui.item.latitude;
           longitude = ui.item.longitude;
         }
+        $('#address').val(address);
         $('#latitude').val(latitude);
         $('#longitude').val(longitude);
         $('#locationFields').change();
@@ -275,7 +279,8 @@
             return false;
           }
           return true;
-        }
+        },
+        selectFirst: true
       });
 
       $('#locationFields2')
@@ -316,7 +321,8 @@
             return false;
           }
           return true;
-        }
+        },
+        selectFirst: true
       });
 
       $('#paginationWidget').simplicityPagination();
