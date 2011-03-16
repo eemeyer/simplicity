@@ -37,12 +37,14 @@
         </div>
       </div>
     </form>
+    <table id="jqGrid"></table>
     <script type="text/javascript" src="../js/lib/jquery-1.4.4.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/lib/jquery-ui-1.8.7.custom.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityDebug.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./jquery.jqGrid-3.8.2/js/jquery.jqGrid.min.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('fieldset').addClass("ui-widget ui-widget-content");
 
@@ -80,6 +82,29 @@
       $('body').bind('simplicitySearchResponse', function (evt, ui) {
         // TODO: handle engine error case where there is no _discovery or _discovery.response
         $('#response').val(JSON.stringify(ui._discovery.response, null, '  '));
+        if ($.isArray(ui._discovery.response.properties) && ui._discovery.response.properties.length > 0) {
+          var items = ui._discovery.response.properties;
+          var colNames = [];
+          var colModel = [];
+          var empty = {}
+          for (var k in items[0]) {
+            if (!empty[k]) {
+              colNames.push(k);
+              colModel.push({name: k,index:k, resizable: true, sortable:false});
+            }
+          }
+          console.log(colNames, colModel, items);
+          $('#jqGrid').jqGrid({
+            datatype: 'local',
+            height: 250,
+              colNames:colNames,
+              colModel:colModel,
+              caption: 'Results'
+          });
+          $.each(items, function (idx, item) {
+            $('#jqGrid').jqGrid('addRowData', idx + 1, item);
+          });
+        }
       });
     //]]>--></script>
   </body>
