@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>JSON Query Tool</title>
+    <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/jquery-ui-1.8.7.custom.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="../images/favicon.jpg"/>
+    <style>
+      body {
+        margin: auto; /* center in viewport */
+        width: 960px;
+        font-size:62.5%;
+      }
+  </style>
+  </head>
+  <body>
+    <form id="myForm" onsubmit="return false;">
+      <div id="main" class="yui3-u">
+        <div class="yui3-g">
+          <div class="yui3-u-1-2">
+            <fieldset class="ui-widget">
+              <legend>Request</legend>
+              <textarea rows="10" cols="68" id="request"></textarea>
+            </fieldset>
+            <div id="requestMsg"></div>
+          </div>
+          <div class="yui3-u-1-2">
+            <fieldset class="ui-widget">
+              <legend>Response</legend>
+              <textarea rows="10" cols="68" id="response"></textarea>
+            </fieldset>
+          </div>
+        </div>
+        <div class="yui3-g">
+          <div id="debug"></div>
+        </div>
+      </div>
+    </form>
+    <script type="text/javascript" src="../js/lib/jquery-1.4.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.7.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityDebug.js" charset="utf-8"></script>
+    <script type="text/javascript"><!--//<![CDATA[
+      $('fieldset').addClass("ui-widget ui-widget-content");
+
+      $('#debug').simplicityDebug();
+
+      $('body')
+        .simplicityDiscoverySearch({
+          url: 'query_proxy.php'
+        });
+      // json request widget
+      $('#request').bind('focus', function (evt, ui) {
+        $('#requestMsg').hide(500);
+      });
+
+      $('#request').bind('change', function (evt, ui) {
+        var raw =  $(evt.target).val();
+        var validJson = false;
+        try
+        {
+          var pretty = JSON.stringify(JSON.parse(raw), null, '  ');
+          validJson = true;
+        }
+        catch (e)
+        {
+          $('#requestMsg').text('Invalid JSON').show(500);
+        }
+        if (validJson)
+        {
+          $(evt.target).val(pretty);
+          $('body').simplicityDiscoverySearch('query', raw);
+        }
+      });
+
+      // json response widget
+      $('body').bind('simplicitySearchResponse', function (evt, ui) {
+        // TODO: handle engine error case where there is no _discovery or _discovery.response
+        $('#response').val(JSON.stringify(ui._discovery.response, null, '  '));
+      });
+    //]]>--></script>
+  </body>
+</html>
