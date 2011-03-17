@@ -16,6 +16,14 @@
   </head>
   <body>
     <form id="myForm" onsubmit="return false;">
+      <div>
+        <table id="resultsTable">
+          <thead>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
       <div id="main" class="yui3-u">
         <div class="yui3-g">
           <div class="yui3-u-1-2">
@@ -80,6 +88,37 @@
       $('body').bind('simplicitySearchResponse', function (evt, ui) {
         // TODO: handle engine error case where there is no _discovery or _discovery.response
         $('#response').val(JSON.stringify(ui._discovery.response, null, '  '));
+        if ($.isArray(ui._discovery.response.properties) && ui._discovery.response.properties.length > 0) {
+          var items = ui._discovery.response.properties;
+          var colNames = [];
+          var empty = {}
+          for (var k in items[0]) {
+            if (!empty[k]) {
+              colNames.push(k);
+            }
+          }
+          //colNames.sort();
+
+          var table = $('#resultsTable');
+          table.find('thead,tbody').children().remove();
+          var theadTr = $('<tr/>');
+          $.each(colNames, function (idx, name) {
+            var th = $('<th/>');
+            th.text(name);
+            theadTr.append(th);
+          });
+          table.find('thead').append(theadTr);
+
+          $.each(items, function (idx, item) {
+            var tr = $('<tr/>');
+            $.each(colNames, function (idx, name) {
+              var td = $('<td/>');
+              td.text(item[name]);
+              tr.append(td);
+            });
+            table.find('tbody').append(tr);
+          });
+        }
       });
     //]]>--></script>
   </body>
