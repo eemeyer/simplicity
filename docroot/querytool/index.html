@@ -91,6 +91,10 @@
       });
 
       // json response properties widget
+      // change to bind with resultset event simplicityResultSet
+      $('body').bind('simplicityResultSet', function (evt, ui) {
+        console.log(arguments);
+      });
       $('body').bind('simplicitySearchResponse', function (evt, ui) {
         var table = $('#resultsTable');
         table.find('thead,tbody').children().remove();
