@@ -86,9 +86,12 @@
 
       // json response widget
       $('body').bind('simplicitySearchResponse', function (evt, ui) {
-        // TODO: handle engine error case where there is no _discovery or _discovery.response
         $('#response').val(JSON.stringify(ui._discovery.response, null, '  '));
-        if ($.isArray(ui._discovery.response.properties) && ui._discovery.response.properties.length > 0) {
+      });
+
+      // json response properties widget
+      $('body').bind('simplicitySearchResponse', function (evt, ui) {
+      if ($.isArray(ui._discovery.response.properties)) {
           var items = ui._discovery.response.properties;
           var colNames = [];
           var empty = {}
