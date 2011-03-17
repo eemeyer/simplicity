@@ -102,6 +102,7 @@
           var items = ui._discovery.response.properties;
           var colNames = [];
           var empty = {}
+	  // TODO: really need to get the union of all property names across all items returned, since each item can have different properties.
           for (var k in items[0]) {
             if (!empty[k]) {
               colNames.push(k);
