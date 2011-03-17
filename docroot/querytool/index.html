@@ -91,7 +91,9 @@
 
       // json response properties widget
       $('body').bind('simplicitySearchResponse', function (evt, ui) {
-      if ($.isArray(ui._discovery.response.properties)) {
+        var table = $('#resultsTable');
+        table.find('thead,tbody').children().remove();
+        if ($.isArray(ui._discovery.response.properties)) {
           var items = ui._discovery.response.properties;
           var colNames = [];
           var empty = {}
@@ -100,10 +102,6 @@
               colNames.push(k);
             }
           }
-          //colNames.sort();
-
-          var table = $('#resultsTable');
-          table.find('thead,tbody').children().remove();
           var theadTr = $('<tr/>');
           $.each(colNames, function (idx, name) {
             var th = $('<th/>');
@@ -111,7 +109,6 @@
             theadTr.append(th);
           });
           table.find('thead').append(theadTr);
-
           $.each(items, function (idx, item) {
             var tr = $('<tr/>');
             $.each(colNames, function (idx, name) {
