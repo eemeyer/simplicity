@@ -5,6 +5,7 @@
     <title>JSON Query Tool</title>
     <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
     <link href="../css/lib/jquery-ui-1.8.7.custom.css" rel="stylesheet" type="text/css" />
+    <link href="dragtable-b6c340.css" rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" href="../images/favicon.jpg"/>
     <style>
       body {
@@ -51,6 +52,7 @@
     <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityDebug.js" charset="utf-8"></script>
+    <script type="text/javascript" src="jquery.dragtable-b6c340.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('fieldset').addClass("ui-widget ui-widget-content");
 
@@ -121,6 +123,7 @@
             });
             table.find('tbody').append(tr);
           });
+          table.dragtable();
         }
       });
     //]]>--></script>
