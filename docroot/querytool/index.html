@@ -30,6 +30,7 @@
             <fieldset class="ui-widget">
               <legend>Request</legend>
               <textarea rows="10" cols="68" id="request"></textarea>
+              <button name="search" type="button">Search</button>
             </fieldset>
             <div id="requestMsg"></div>
           </div>
@@ -65,12 +66,14 @@
         $('#requestMsg').hide(500);
       });
 
-      $('#request').bind('change', function (evt, ui) {
-        var raw =  $(evt.target).val();
+      $('button[name="search"]').bind('click', function (evt, ui) {
+        var input = $('#request');
+        var raw =  input.val();
         var validJson = false;
         try
         {
-          var pretty = JSON.stringify(JSON.parse(raw), null, '  ');
+          var search = JSON.parse(raw)
+          var pretty = JSON.stringify(search, null, '  ');
           validJson = true;
         }
         catch (e)
@@ -79,9 +82,13 @@
         }
         if (validJson)
         {
-          $(evt.target).val(pretty);
+          input.val(pretty);
+          $('button[name="search"]').attr('disabled', 'disabled');
           $('body').simplicityDiscoverySearch('query', raw);
         }
+      });
+      $('body').bind('simplicitySearchResponse', function (evt, ui) {
+        $('button[name="search"]').removeAttr('disabled');
       });
 
       // json response widget
