@@ -65,10 +65,6 @@
         $('#requestMsg').hide(500);
       });
 
-      $('#request').bind('focus', function (evt, ui) {
-        $('#requestMsg').hide(500);
-      });
-
       $('#request').bind('change', function (evt, ui) {
         var raw =  $(evt.target).val();
         var validJson = false;
