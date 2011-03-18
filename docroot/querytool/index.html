@@ -48,6 +48,7 @@
     <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
+    <script type="text/javascript" src="jquery.shorten.min-2cf9f9.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('fieldset').addClass("ui-widget ui-widget-content");
 
@@ -131,6 +132,7 @@
             tr.append(td);
           });
         table.find('tbody').append(tr);
+        table.find('td').shorten({width: 100});
         });
       });
     //]]>--></script>
