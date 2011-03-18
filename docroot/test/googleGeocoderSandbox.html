@@ -68,11 +68,13 @@
             marker.setMap(null);
           });
           markers.length = 0;
-          map.fitBounds(ui.item.response.geometry.viewport);
-          markers.push(new google.maps.Marker({
-            position: new google.maps.LatLng(ui.item.latitude, ui.item.longitude),
-            map: map
-          }));
+          if (ui.item) {
+            map.fitBounds(ui.item.response.geometry.viewport);
+            markers.push(new google.maps.Marker({
+              position: new google.maps.LatLng(ui.item.latitude, ui.item.longitude),
+              map: map
+            }));
+          }
         };
         $('#geocodeGlobal').autocomplete({
           source: function (request, responseCallback) {
