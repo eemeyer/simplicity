@@ -171,7 +171,7 @@
      */
     normalizeResults: function (response) {
       var items = [];
-      if (response && response.vendor && response.vendor.ResultSet && response.vendor.ResultSet.Error === 0) {
+      if (response && response.vendor && response.vendor.ResultSet && response.vendor.ResultSet.Error === 0 && response.vendor.ResultSet.Results) {
         $.each(response.vendor.ResultSet.Results, $.proxy(function (i, result) {
           var value = this.normalizeAddress(result);
           if (value !== '') {
