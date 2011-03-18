@@ -52,28 +52,32 @@
           if (response.ResultSet.Error !== 0) {
             items.push(response.ResultSet.ErrorMessage);
           } else {
-            $.each(response.ResultSet.Results, function (i, result) {
-              items.push({
-                label: result.line1 + ' ' + result.line2,
-                latitude: Number(result.latitude),
-                longitude: Number(result.longitude),
-                response: result
+            if (response.ResultSet.Results) {
+              $.each(response.ResultSet.Results, function (i, result) {
+                items.push({
+                  label: result.line1 + ' ' + result.line2,
+                  latitude: Number(result.latitude),
+                  longitude: Number(result.longitude),
+                  response: result
+                });
               });
-            });
-            responseCallback(items);
+              responseCallback(items);
+            }
           }
         };
         var selectCallback = function (evt, ui) {
           map.removeMarkersAll();
-          var point = new YGeoPoint(ui.item.latitude, ui.item.longitude);
-          map.addOverlay(new YMarker(point));
-          var bb = ui.item.response.boundingbox;
-          var ul = new YGeoPoint(bb.north, bb.west);
-          var ur = new YGeoPoint(bb.north, bb.east);
-          var ll = new YGeoPoint(bb.south, bb.west);
-          var lr = new YGeoPoint(bb.south, bb.east);
-          var bounds = map.getBestZoomAndCenter([ul, ur, ll, lr]);
-          map.drawZoomAndCenter(bounds.YGeoPoint, bounds.zoomLevel);
+          if (ui.item) {
+            var point = new YGeoPoint(ui.item.latitude, ui.item.longitude);
+            map.addOverlay(new YMarker(point));
+            var bb = ui.item.response.boundingbox;
+            var ul = new YGeoPoint(bb.north, bb.west);
+            var ur = new YGeoPoint(bb.north, bb.east);
+            var ll = new YGeoPoint(bb.south, bb.west);
+            var lr = new YGeoPoint(bb.south, bb.east);
+            var bounds = map.getBestZoomAndCenter([ul, ur, ll, lr]);
+            map.drawZoomAndCenter(bounds.YGeoPoint, bounds.zoomLevel);
+          }
         };
         $('#geocodeGlobal').autocomplete({
           source: function (request, responseCallback) {
