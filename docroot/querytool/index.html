@@ -5,6 +5,9 @@
     <title>JSON Query Tool</title>
     <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
     <link href="../css/lib/jquery-ui-1.8.7.custom.css" rel="stylesheet" type="text/css" />
+    <link href="slickgrid-df064f/slick.grid.css" rel="stylesheet" type="text/css" />
+    <link href="slickgrid-df064f/controls/slick.pager.css" rel="stylesheet" type="text/css" />
+    <link href="slickgrid-df064f/controls/slick.columnpicker.css" rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" href="../images/favicon.jpg"/>
     <style>
       body {
@@ -16,20 +19,23 @@
   </head>
   <body>
     <form id="myForm" onsubmit="return false;">
-      <div>
-        <table id="resultsTable">
-          <thead>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
+      <div id="results" style="width:100%;height:300px;display:none;">
       </div>
       <div id="main" class="yui3-u">
         <div class="yui3-g">
           <div class="yui3-u-1-2">
             <fieldset class="ui-widget">
               <legend>Request</legend>
-              <textarea rows="10" cols="68" id="request"></textarea>
+              <textarea rows="10" cols="68" id="request">
+{
+  "criteria": [
+    {
+    }
+  ],
+  "properties": [],
+  "pageSize": 10
+}
+              </textarea>
               <button name="search" type="button">Search</button>
             </fieldset>
             <div id="requestMsg"></div>
@@ -47,6 +53,11 @@
     <script type="text/javascript" src="../js/lib/jquery-ui-1.8.7.custom.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+    <script type="text/javascript" src="slickgrid-df064f/lib/jquery.event.drag-2.0.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="slickgrid-df064f/slick.core.js" charset="utf-8"></script>
+    <script type="text/javascript" src="slickgrid-df064f/slick.dataview.js" charset="utf-8"></script>
+    <script type="text/javascript" src="slickgrid-df064f/slick.grid.js" charset="utf-8"></script>
+    <script type="text/javascript" src="slickgrid-df064f/controls/slick.columnpicker.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('fieldset').addClass("ui-widget ui-widget-content");
@@ -90,6 +101,8 @@
         $('#response').val(JSON.stringify(ui._discovery.response, null, '  '));
       });
 
+      var options = {enableCellNavigation: true, forceFitColumns: true};
+      var grid = new Slick.Grid($('#results'), [], [], options);
       // json response properties widget
       $('body').bind('simplicityResultSet', function (evt, result) {
         // TODO: display top level result properties: datasetSize, exactSize, numRows, pageSize.
@@ -109,29 +122,24 @@
           }
         });
         delete colNamesMap;
-        var table = $('#resultsTable');
-        table.find('thead,tbody').children().remove();
-        var theadTr = $('<tr/>');
+        var columns = [];
         $.each($.merge($.merge([], rowPropNames), colNames), function (idx, name) {
-          var th = $('<th/>');
-          th.text(name);
-          theadTr.append(th);
+          columns.push({id: name, name: name, field: name, resizable: true, selectable: false, behavior: 'selectAndMove'})
         });
-        table.find('thead').append(theadTr);
+
+        var data = [];
         $.each(rows, function (idx, row) {
-          var tr = $('<tr/>');
-          $.each(rowPropNames, function (idx, name) {
-            var td = $('<td/>');
-            td.text(row[name]);
-            tr.append(td);
-          });
-          $.each(colNames, function (idx, name) {
-            var td = $('<td/>');
-            td.text(row.properties[name]);
-            tr.append(td);
-          });
-        table.find('tbody').append(tr);
+          var item = $.extend({}, row);
+          delete item.properties;
+          $.extend(item, row.properties);
+          data.push(item);
         });
+        grid.destroy();
+        $(results).show();
+        grid = new Slick.Grid($('#results'), data, columns, options);
+        // TODO: remember column reorder
+        // grid.onColumnsReordered.subscribe()
+        // TODO: remember which columns displayed
       });
     //]]>--></script>
   </body>
