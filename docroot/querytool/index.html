@@ -55,8 +55,9 @@
     <script type="text/javascript" src="slickgrid-df064f/lib/jquery.event.drag-2.0.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="slickgrid-df064f/slick.core.js" charset="utf-8"></script>
     <script type="text/javascript" src="slickgrid-df064f/slick.grid.js" charset="utf-8"></script>
-    <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
+    <script type="text/javascript" src="slickgrid-df064f/controls/slick.columnpicker.js" charset="utf-8"></script>
     <script type="text/javascript" src="simplicityLargeContentViewer.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('fieldset').addClass("ui-widget ui-widget-content");
 
@@ -136,6 +137,7 @@
         $(results).show();
         var options = {enableCellNavigation: true, forceFitColumns: true, editable: true};
         grid = new Slick.Grid($('#results'), data, columns, options);
+        new Slick.Controls.ColumnPicker(columns, grid, {});
         // TODO: remember column reorder
         // grid.onColumnsReordered.subscribe()
         // TODO: remember which columns displayed
