@@ -53,6 +53,13 @@ groups:
     sourceFileNames:
       - js/simplicity/simplicityLoadJs.js
 
+  - groupName: simplicity_querytool_js
+    mediaType: js
+    outputFileName: js/build/simplicity-quertool.js
+    outputFileNameMinified: js/build/simplicity-quertool.min.js
+    sourceFileNames:
+      - querytool/simplicityLargeContentViewer.js
+
   - groupName: jquery_ui_css
     mediaType: css
     outputFileName: css/build/jquery-ui-1.8.7.custom.css

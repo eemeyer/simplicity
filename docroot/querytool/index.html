@@ -56,8 +56,8 @@
     <script type="text/javascript" src="slickgrid-df064f/lib/jquery.event.drag-2.0.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="slickgrid-df064f/slick.core.js" charset="utf-8"></script>
     <script type="text/javascript" src="slickgrid-df064f/slick.grid.js" charset="utf-8"></script>
-    <script type="text/javascript" src="slickgrid-df064f/slick.editors.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
+    <script type="text/javascript" src="simplicityLargeContentViewer.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('fieldset').addClass("ui-widget ui-widget-content");
 
@@ -123,8 +123,7 @@
         var columns = [];
         $.each($.merge($.merge([], rowPropNames), colNames), function (idx, name) {
           columns.push({id: name, name: name, field: name, resizable: true, selectable: false,
-              //behavior: 'selectAndMove',
-            editor:LongTextCellEditor})
+            editor:simplicityLargeContentViewer})
         });
 
         var data = [];
