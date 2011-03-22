@@ -36,6 +36,7 @@
 }
               </textarea>
               <button name="search" type="button">Search</button>
+              <input type="checkbox" id="keepColumns"/> <label for="keepColumns">Keep column names and order</label>
             </fieldset>
             <div id="requestMsg"></div>
           </div>
@@ -120,11 +121,6 @@
           }
         });
         delete colNamesMap;
-        var columns = [];
-        $.each($.merge($.merge([], rowPropNames), colNames), function (idx, name) {
-          columns.push({id: name, name: name, field: name, resizable: true, selectable: false,
-            editor:simplicityLargeContentViewer})
-        });
 
         var data = [];
         $.each(rows, function (idx, row) {
@@ -133,14 +129,21 @@
           $.extend(item, row.properties);
           data.push(item);
         });
+
+        var columns = grid.getColumns();
+        if ($('#keepColumns').is(':not(:checked)') || columns.length === 0)
+        {
+          columns = [];
+          $.each($.merge($.merge([], rowPropNames), colNames), function (idx, name) {
+            columns.push({id: name, name: name, field: name, resizable: true, selectable: false,
+              editor:simplicityLargeContentViewer})
+          });
+        }
         grid.destroy();
         $(results).show();
         var options = {enableCellNavigation: true, forceFitColumns: true, editable: true};
         grid = new Slick.Grid($('#results'), data, columns, options);
         new Slick.Controls.ColumnPicker(columns, grid, {});
-        // TODO: remember column reorder
-        // grid.onColumnsReordered.subscribe()
-        // TODO: remember which columns displayed
       });
     //]]>--></script>
   </body>
