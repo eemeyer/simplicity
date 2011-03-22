@@ -70,7 +70,7 @@ function simplicityLargeContentViewer(args) {
   };
 
   this.serializeValue = function () {
-    return item[args.column.field];
+    return $input.val();
   };
 
   this.isValueChanged = function () {
