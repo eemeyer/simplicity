@@ -15,15 +15,7 @@
   </style>
   </head>
   <body>
-    <form id="myForm" onsubmit="return false;">
-      <div>
-        <table id="resultsTable">
-          <thead>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </div>
+    <form onsubmit="return false;">
       <div id="main" class="yui3-u">
         <div class="yui3-g">
           <div class="yui3-u-1-2">
@@ -96,47 +88,8 @@
         $('#response').val(JSON.stringify(ui._discovery.response, null, '  '));
       });
 
-      // json response properties widget
-      $('body').bind('simplicityResultSet', function (evt, result) {
-        // TODO: display top level result properties: datasetSize, exactSize, numRows, pageSize.
-        var rows = result.rows
-        var colNamesMap = {};
-        var colNames = [];
-        // could derive this while looping, but this way we control the order.
-        var rowPropNames = ['id', 'score', 'exact'];
-        $.each(rows, function (idx, row) {
-          if (row.properties) {
-            $.each(row.properties, function (propName, propValue) {
-              if (!colNamesMap[propName]) {
-                colNames.push(propName);
-                colNamesMap[propName] = 1;
-              }
-            });
           }
-        });
-        delete colNamesMap;
-        var table = $('#resultsTable');
-        table.find('thead,tbody').children().remove();
-        var theadTr = $('<tr/>');
-        $.each($.merge($.merge([], rowPropNames), colNames), function (idx, name) {
-          var th = $('<th/>');
-          th.text(name);
-          theadTr.append(th);
-        });
-        table.find('thead').append(theadTr);
-        $.each(rows, function (idx, row) {
-          var tr = $('<tr/>');
-          $.each(rowPropNames, function (idx, name) {
-            var td = $('<td/>');
-            td.text(row[name]);
-            tr.append(td);
           });
-          $.each(colNames, function (idx, name) {
-            var td = $('<td/>');
-            td.text(row.properties[name]);
-            tr.append(td);
-          });
-        table.find('tbody').append(tr);
         });
       });
     //]]>--></script>
