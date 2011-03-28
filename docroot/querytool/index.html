@@ -62,7 +62,10 @@
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityDebug.js" charset="utf-8"></script>
-    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapOriginal.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMap.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapResults.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapCriteria.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapBoundsCoordinator.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityHaversineDistance.js" charset="utf-8"></script>
     <script type="text/javascript" src="GeoJSON-abbd27.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
@@ -109,53 +112,23 @@
         $('#response').val(JSON.stringify(ui._discovery.response, null, '  '));
       });
 
-      $('#map').simplicityGoogleMapOriginal({
-        latitudeField: 'Latitude',
-        longitudeField: 'Longitude',
-        fitOnResultSet: false,
-        mapOptions: {
-          mapTypeControlOptions: {
-            position: google.maps.ControlPosition.TOP_LEFT
-          },
-          zoomControlOptions: {
-            position: google.maps.ControlPosition.TOP_RIGHT
-          }
-        }
-      });
-
-      $('body').bind('simplicitySearchResponse', function (evt, ui) {
-        var placemarks = [];
-        if ($.isArray(ui._discovery.response.explanation)) {
-          $.each(ui._discovery.response.explanation, function (idx, exp) {
-            if (exp.criterionValue && $.isArray(exp.criterionValue.placemarks)) {
-              $.merge(placemarks, exp.criterionValue.placemarks);
+      $('#map')
+        .simplicityGoogleMap({
+          mapOptions: {
+            mapTypeControlOptions: {
+              position: google.maps.ControlPosition.TOP_LEFT
+            },
+            zoomControlOptions: {
+              position: google.maps.ControlPosition.TOP_RIGHT
             }
-          });
-        }
-        var map = $('#map').simplicityGoogleMapOriginal('map');
-        var bounds = new google.maps.LatLngBounds();
-        $.each(placemarks, function (idx, pm) {
-          var poly = GeoJSON(pm, {map: map});
-          if (poly.getBounds) {
-            bounds = poly.getBounds();
-          } else if (poly.getPaths) {
-            $.each(poly.getPaths().getArray(), function (idx, path) {
-              $.each(path.getArray(), function (idx2, latlng) {
-                bounds.extend(latlng);
-              });
-            });
-          } else if (poly.getPath) {
-            $.each(poly.getPath().getArray(), function (idx, latlng) {
-              bounds.extend(latlng);
-            });
-          } else if (poly.getPosition) {
-            bounds.extend(poly.getPosition());
           }
-        });
-        if (bounds !== null && !bounds.isEmpty()) {
-          map.fitBounds(bounds);
-        }
-      });
+        })
+        .simplicityGoogleMapResults({
+          latitudeField: 'Latitude',
+          longitudeField: 'Longitude'
+        })
+        .simplicityGoogleMapCriteria()
+        .simplicityGoogleMapBoundsCoordinator();
     //]]>--></script>
   </body>
 </html>
