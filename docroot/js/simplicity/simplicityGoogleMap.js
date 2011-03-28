@@ -2,7 +2,8 @@
  * @name $.ui.simplicityGoogleMap
  * @namespace A Google map.
  * <p>
- * Google Map widget.
+ * Google Map widget. Wraps a Google map as a jquery ui widget. Will optionally create a google map, or a map can be
+ * passed in using the widget options.
  *
  * @example
  *   &lt;div id="map" style="width: 300px; height: 300px;">&lt;/div>

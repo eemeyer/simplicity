@@ -2,7 +2,10 @@
  * @name $.ui.simplicityGoogleMapBoundsCoordinator
  * @namespace A Google map.
  * <p>
- * Google Map widget.
+ * An invisible jquery ui widget which coordinates the updating of a Google Map's bounds after a discovery search
+ * response is parsed and dispatched (the simplicitySearchResponseHandled event from the simplicityDiscoverySearch
+ * widget. Triggers a simplicitygooglemapboundscoordinatorcalculatebounds event which other components can use to
+ * modify the map bounds.
  *
  * @example
  *   &lt;div id="map" style="width: 300px; height: 300px;">&lt;/div>
@@ -21,6 +24,10 @@
      *   <dt>map</dt>
      *   <dd>
      *     Optional map instance, if not provided one will be looked up. Defaults to <code>''</code>.
+     *   </dd>
+     *   <dt>searchElement</dt>
+     *   <dd>
+     *     The simplicityDiscoverySearch widget that this widget binds it's events to. Defaults to <code>'body'</code>.
      *   </dd>
      * </dl>
      * @name $.ui.simplicityGoogleMapBoundsCoordinator.options
@@ -47,6 +54,14 @@
     _handler: function (evt) {
       this.updateBounds();
     },
+    /**
+     * Triggers a simplicitygooglemapboundscoordinatorcalculatebounds event. Handlers for that event receive a ui
+     * object with a bounds member. They can update, replace or delete that variable. ui.bounds is defined and non-empty
+     * after the event is handled, then this component will update the google maps to fit the bounds.
+     *
+     * @name $.ui.simplicityGoogleMapBoundsCoordinator.updateBounds
+     * @function
+     */
     updateBounds: function () {
       var bounds = new google.maps.LatLngBounds();
       var ui = {
