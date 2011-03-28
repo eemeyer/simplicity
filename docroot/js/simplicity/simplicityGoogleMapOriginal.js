@@ -79,7 +79,7 @@
       mapParams: 'sensor=false'
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-google-map');
+      this.element.addClass('ui-simplicity-google-map-original');
       this._markers = [];
       this._boundsShapes = [];
       this._boundsChangeListeners = {};
@@ -389,7 +389,7 @@
       }, this));
     },
     destroy: function () {
-      this.element.removeClass('ui-simplicity-google-map');
+      this.element.removeClass('ui-simplicity-google-map-original');
       $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
       $.each(this._boundsChangeListeners, $.proxy(function (eventName, listener) {
         google.maps.event.removeListener(listener);

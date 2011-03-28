@@ -30,6 +30,9 @@ groups:
       # Maps
       - js/simplicity/simplicityHaversineDistance.js
       - js/simplicity/simplicityGoogleMapOriginal.js
+      - js/simplicity/simplicityGoogleMap.js
+      - js/simplicity/simplicityGoogleMapResults.js
+      - js/simplicity/simplicityGoogleMapLoader.js
       - js/simplicity/simplicityBingMap.js
       - js/simplicity/simplicityYahooMap.js
       - js/simplicity/simplicityMapQuestMap.js

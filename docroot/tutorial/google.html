@@ -177,6 +177,8 @@
     <script type="text/javascript" src="../js/simplicity/simplicityFlyout.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityHaversineDistance.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapOriginal.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMap.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapResults.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
@@ -218,9 +220,11 @@
           zoom: 1,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         });
-        $('#map1').simplicityGoogleMapOriginal({
-          map: map
-        });
+        $('#map1')
+          .simplicityGoogleMap({
+            map: map
+          })
+          .simplicityGoogleMapResults();
       }());
 
       $('#map2').simplicityGoogleMapOriginal({
@@ -235,7 +239,7 @@
         }
       });
 
-      $('#map1,#map2').bind('simplicityGoogleMapOriginalmarker', function (evt, ui) {
+      $('#map1,#map2').bind('simplicityGoogleMapOriginalmarker simplicityGoogleMapmarker', function (evt, ui) {
         var marker = ui.marker;
         var properties = ui.row.properties;
         marker.setIcon('images/markers/google/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png')
