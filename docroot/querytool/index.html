@@ -94,7 +94,7 @@
       $('#map').simplicityGoogleMap({
         latitudeField: 'Latitude',
         longitudeField: 'Longitude',
-        fitOnResultSet: true,
+        fitOnResultSet: false,
         mapOptions: {
           mapTypeControlOptions: {
             position: google.maps.ControlPosition.TOP_LEFT
@@ -115,11 +115,11 @@
           });
         }
         var map = $('#map').simplicityGoogleMap('map');
-        var bounds = map.getBounds();
+        var bounds = new google.maps.LatLngBounds();
         $.each(placemarks, function (idx, pm) {
           var poly = GeoJSON(pm, {map: map});
           if (poly.getBounds) {
-            bounds.extend(poly.getBounds());
+            bounds = poly.getBounds();
           } else if (poly.getPaths) {
             $.each(poly.getPaths().getArray(), function (idx, path) {
               $.each(path.getArray(), function (idx2, latlng) {
@@ -135,7 +135,7 @@
           }
         });
         if (bounds !== null && !bounds.isEmpty()) {
-          //map.fitBounds(bounds);
+          map.fitBounds(bounds);
         }
       });
     //]]>--></script>
