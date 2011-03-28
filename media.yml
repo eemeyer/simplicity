@@ -29,7 +29,7 @@ groups:
       - js/simplicity/simplicityFlyout.js
       # Maps
       - js/simplicity/simplicityHaversineDistance.js
-      - js/simplicity/simplicityGoogleMap.js
+      - js/simplicity/simplicityGoogleMapOriginal.js
       - js/simplicity/simplicityBingMap.js
       - js/simplicity/simplicityYahooMap.js
       - js/simplicity/simplicityMapQuestMap.js

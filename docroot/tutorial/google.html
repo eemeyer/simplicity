@@ -176,7 +176,7 @@
     <script type="text/javascript" src="../js/simplicity/simplicityRenderParamsSearchResults.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityFlyout.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityHaversineDistance.js" charset="utf-8"></script>
-    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMap.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapOriginal.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
@@ -218,12 +218,12 @@
           zoom: 1,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         });
-        $('#map1').simplicityGoogleMap({
+        $('#map1').simplicityGoogleMapOriginal({
           map: map
         });
       }());
 
-      $('#map2').simplicityGoogleMap({
+      $('#map2').simplicityGoogleMapOriginal({
         fitOnResultSet: false,
         mapOptions: {
           mapTypeControlOptions: {
@@ -235,7 +235,7 @@
         }
       });
 
-      $('#map1,#map2').bind('simplicitygooglemapmarker', function (evt, ui) {
+      $('#map1,#map2').bind('simplicityGoogleMapOriginalmarker', function (evt, ui) {
         var marker = ui.marker;
         var properties = ui.row.properties;
         marker.setIcon('images/markers/google/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png')
@@ -287,12 +287,12 @@
       // Position the map based on geocoded address
       var selectCallback = function (evt, ui) {
         if (ui.item && ui.item.bounds) {
-          var map = $('#map2').simplicityGoogleMap('map');
+          var map = $('#map2').simplicityGoogleMapOriginal('map');
           map.fitBounds(ui.item.bounds.vendor);
         }
       };
       // Drive search from current map position
-      $('#map2').bind('simplicitygooglemapbounds', function (evt, ui) {
+      $('#map2').bind('simplicityGoogleMapOriginalbounds', function (evt, ui) {
         $('#north').val(ui.bounds.north);
         $('#east').val(ui.bounds.east);
         $('#south').val(ui.bounds.south);

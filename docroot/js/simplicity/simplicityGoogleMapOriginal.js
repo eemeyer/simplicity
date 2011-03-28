@@ -1,5 +1,5 @@
 /**
- * @name $.ui.simplicityGoogleMap
+ * @name $.ui.simplicityGoogleMapOriginal
  * @namespace A Google map.
  * <p>
  * Google Map widget that creates the map and listens for <code>simplicityResultSet</code> events
@@ -8,13 +8,13 @@
  * @example
  *   &lt;div id="map" style="width: 300px; height: 300px;">&lt;/div>
  *   &lt;script type="text/javascript">
- *     $('#map').simplicityGoogleMap();
+ *     $('#map').simplicityGoogleMapOriginal();
  *   &lt;/script>
  *
  * @see Google Maps JavaScript API V3 <a href="http://code.google.com/apis/maps/documentation/javascript/">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityGoogleMap", {
+  $.widget("ui.simplicityGoogleMapOriginal", {
     /**
      * Widget options.
      *
@@ -63,7 +63,7 @@
      *     Defaults to <code>'idle'</code>.
      *   </dd>
      * </dl>
-     * @name $.ui.simplicityGoogleMap.options
+     * @name $.ui.simplicityGoogleMapOriginal.options
      */
     options: {
       searchElement: 'body',
@@ -91,7 +91,7 @@
      * is available. Intended to be called from any of this widgets public methods that need to
      * access the this._map.
      *
-     * @name $.ui.simplicityGoogleMap._initWhenAvailable
+     * @name $.ui.simplicityGoogleMapOriginal._initWhenAvailable
      * @function
      * @private
      */
@@ -135,7 +135,7 @@
     /**
      * Return the actual map object.
      *
-     * @name $.ui.simplicityGoogleMap.map
+     * @name $.ui.simplicityGoogleMapOriginal.map
      * @function
      */
     map: function () {
@@ -145,7 +145,7 @@
      * Try to dynamically load the necessary JavaScript from the upstream vendor that will
      * allow the map to function.
      *
-     * @name $.ui.simplicityGoogleMap.loadMap
+     * @name $.ui.simplicityGoogleMapOriginal.loadMap
      * @function
      * @private
      */
@@ -153,7 +153,7 @@
       if ('undefined' === typeof this._map) {
         if ('undefined' === typeof google || 'undefined' === typeof google.load) {
           // The Google JS loader is missing, get it
-          var callbackName = 'simplicityGoogleMapGoogleLoaderCallback';
+          var callbackName = 'simplicityGoogleMapOriginalGoogleLoaderCallback';
           window[callbackName] = $.proxy(this.loadMap, this);
           var src = 'http://www.google.com/jsapi?callback=' + callbackName;
           if (this.options.apiKey !== '') {
@@ -173,7 +173,7 @@
      * Makes the widget re-handle the last <code>simplicityResultSet</code> event to reapply
      * any map markers.
      *
-     * @name $.ui.simplicityGoogleMap.refreshMap
+     * @name $.ui.simplicityGoogleMapOriginal.refreshMap
      * @function
      */
     refreshMap: function () {
@@ -186,7 +186,7 @@
      * places a marker on the map for each valid coordinate. The map is then reset to best
      * display the current set of markers.
      *
-     * @name $.ui.simplicityGoogleMap._resultSetHandler
+     * @name $.ui.simplicityGoogleMapOriginal._resultSetHandler
      * @function
      * @private
      */
@@ -199,7 +199,7 @@
     /**
      * Removes any markers that were added to the map by <code>addMarkers</code>.
      *
-     * @name $.ui.simplicityGoogleMap.removeMarkers
+     * @name $.ui.simplicityGoogleMapOriginal.removeMarkers
      * @function
      * @private
      */
@@ -214,7 +214,7 @@
     /**
      * Adds any markers that can be extracted from the given <code>resultSet</code>.
      *
-     * @name $.ui.simplicityGoogleMap.addMarkers
+     * @name $.ui.simplicityGoogleMapOriginal.addMarkers
      * @function
      * @private
      */
@@ -258,14 +258,14 @@
     _mapBoundsChangeHandler: function () {
       var bounds = this.bounds();
       if (this.options.debug) {
-        console.log('simplicityGoogleMap: Bounds changed', bounds);
+        console.log('simplicityGoogleMapOriginal: Bounds changed', bounds);
       }
       this._trigger('bounds', {}, bounds);
     },
     /**
      * Returns the normalized bounds for this map.
      *
-     * @name $.ui.simplicityGoogleMap.bounds
+     * @name $.ui.simplicityGoogleMapOriginal.bounds
      * @function
      */
     bounds: function () {
@@ -276,7 +276,7 @@
      *
      * @param bounds in vendor supplied format
      * @param center point in vendor supplied format
-     * @name $.ui.simplicityGoogleMap.normalizeBounds
+     * @name $.ui.simplicityGoogleMapOriginal.normalizeBounds
      * @function
      * @private
      */
@@ -330,7 +330,7 @@
     /**
      * Removes the bounds from the map.
      *
-     * @name $.ui.simplicityGoogleMap.hideBounds
+     * @name $.ui.simplicityGoogleMapOriginal.hideBounds
      * @function
      * @private
      */
@@ -344,7 +344,7 @@
      * Adds an overlay for the bounds on the map.
      *
      * @param bounds Optional bounds to display, if missing the current bounds are used.
-     * @name $.ui.simplicityGoogleMap.showBounds
+     * @name $.ui.simplicityGoogleMapOriginal.showBounds
      * @function
      * @private
      */
