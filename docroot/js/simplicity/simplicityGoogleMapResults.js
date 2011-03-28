@@ -122,7 +122,6 @@
         resultSet = $(this.options.searchElement).simplicityDiscoverySearch('resultSet');
       }
       if (resultSet.rows.length > 0) {
-        var bounds = this.options.fitOnResultSet ? new google.maps.LatLngBounds() : null;
         $.each(resultSet.rows, $.proxy(function (idx, row) {
           var properties = row.properties;
           if ('undefined' !== typeof properties) {
@@ -143,16 +142,10 @@
               if ('undefined' !== typeof marker) {
                 marker.setMap(this._map);
                 this._markers.push(marker);
-                if (bounds !== null) {
-                  bounds.extend(point);
-                }
               }
             }
           }
         }, this));
-        if (bounds !== null && !bounds.isEmpty()) {
-          this._map.fitBounds(bounds);
-        }
       }
     },
     destroy: function () {
