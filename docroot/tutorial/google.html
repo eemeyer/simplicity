@@ -245,10 +245,10 @@
         .simplicityGoogleMapResults()
         .simplicityGoogleMapBoundsTracker();
 
-      $('#map1,#map2').bind('simplicityGoogleMapmarker', function (evt, ui) {
+      $('#map1,#map2').bind('simplicitygooglemapresultsmarker', function (evt, ui) {
         var marker = ui.marker;
         var properties = ui.row.properties;
-        marker.setIcon('images/markers/google/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png')
+        marker.setIcon('images/markers/google/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png');
         if (properties.type === 'rentals') {
           marker.setTitle('$' + properties.lease);
         } else {
