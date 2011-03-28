@@ -176,10 +176,10 @@
     <script type="text/javascript" src="../js/simplicity/simplicityRenderParamsSearchResults.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityFlyout.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityHaversineDistance.js" charset="utf-8"></script>
-    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapOriginal.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleMap.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapResults.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapBoundsCoordinator.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapBoundsTracker.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
@@ -229,19 +229,21 @@
           .simplicityGoogleMapBoundsCoordinator();
       }());
 
-      $('#map2').simplicityGoogleMapOriginal({
-        fitOnResultSet: false,
-        mapOptions: {
-          mapTypeControlOptions: {
-            position: google.maps.ControlPosition.TOP_LEFT
-          },
-          zoomControlOptions: {
-            position: google.maps.ControlPosition.TOP_RIGHT
+      $('#map2')
+        .simplicityGoogleMap({
+          mapOptions: {
+            mapTypeControlOptions: {
+              position: google.maps.ControlPosition.TOP_LEFT
+            },
+            zoomControlOptions: {
+              position: google.maps.ControlPosition.TOP_RIGHT
+            }
           }
-        }
-      });
+        })
+        .simplicityGoogleMapResults()
+        .simplicityGoogleMapBoundsTracker();
 
-      $('#map1,#map2').bind('simplicityGoogleMapOriginalmarker simplicityGoogleMapmarker', function (evt, ui) {
+      $('#map1,#map2').bind('simplicityGoogleMapmarker', function (evt, ui) {
         var marker = ui.marker;
         var properties = ui.row.properties;
         marker.setIcon('images/markers/google/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png')
@@ -293,12 +295,12 @@
       // Position the map based on geocoded address
       var selectCallback = function (evt, ui) {
         if (ui.item && ui.item.bounds) {
-          var map = $('#map2').simplicityGoogleMapOriginal('map');
+          var map = $('#map2').simplicityGoogleMap('map');
           map.fitBounds(ui.item.bounds.vendor);
         }
       };
       // Drive search from current map position
-      $('#map2').bind('simplicityGoogleMapOriginalbounds', function (evt, ui) {
+      $('#map2').bind('simplicitygooglemapboundstrackerbounds', function (evt, ui) {
         $('#north').val(ui.bounds.north);
         $('#east').val(ui.bounds.east);
         $('#south').val(ui.bounds.south);
