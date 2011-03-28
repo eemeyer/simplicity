@@ -34,8 +34,7 @@
      */
     options: {
       searchElement: 'body',
-      map: '',
-      mapOptions: ''
+      map: ''
     },
     _create: function () {
       this.element.addClass('ui-simplicity-google-map-bounds-coordinator');
