@@ -19,7 +19,25 @@
           <div class="yui3-u-1-2">
             <fieldset class="ui-widget">
               <legend>Request</legend>
-              <textarea rows="10" cols="68" id="request"></textarea>
+              <textarea rows="10" cols="68" id="request">
+{
+  "properties": [
+    "Latitude",
+    "Longitude"
+  ],
+  "criteria": [
+    {
+      "dimension": "Location",
+      "placemarkIds": [
+        "framingham"
+      ],
+      "exactDistance": 1
+    }
+  ],
+  "explain": "criterionValue",
+  "pageSize": 2
+}
+              </textarea>
               <button name="search" type="button">Search</button>
             </fieldset>
             <div id="requestMsg"></div>
