@@ -140,15 +140,15 @@
               var marker = new GeoJSON(pm);
               marker.set('geojson', pm);
               var markerEvent = {
-                  map: this._map,
-                  marker: marker
-                };
-                this._trigger('marker', {}, markerEvent);
-                marker = markerEvent.marker;
-                if ('undefined' !== typeof marker) {
-                  marker.setMap(this._map);
-                  this._markers.push(marker);
-                }
+                map: this._map,
+                marker: marker
+              };
+              this._trigger('marker', {}, markerEvent);
+              marker = markerEvent.marker;
+              if ('undefined' !== typeof marker) {
+                marker.setMap(this._map);
+                this._markers.push(marker);
+              }
             }, this));
           }
         }, this));
