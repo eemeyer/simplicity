@@ -179,6 +179,7 @@
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapOriginal.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleMap.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapResults.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapBoundsCoordinator.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
@@ -224,7 +225,8 @@
           .simplicityGoogleMap({
             map: map
           })
-          .simplicityGoogleMapResults();
+          .simplicityGoogleMapResults()
+          .simplicityGoogleMapBoundsCoordinator();
       }());
 
       $('#map2').simplicityGoogleMapOriginal({

@@ -44,6 +44,7 @@
       searchElement: 'body',
       latitudeField: 'latitude',
       longitudeField: 'longitude',
+      updateBounds: true,
       map: ''
     },
     _create: function () {
@@ -51,6 +52,7 @@
       this._markers = [];
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityGoogleMap('map');
       $(this.options.searchElement).bind('simplicityResultSet', $.proxy(this._resultSetHandler, this));
+      this.element.bind('simplicitygooglemapboundscoordinatorcalculatebounds', $.proxy(this._calcBoundsHandler, this));
     },
     /**
      * Return the actual map object.
@@ -86,6 +88,14 @@
     _resultSetHandler: function (evt, resultSet) {
       this.removeMarkers();
       this.addMarkers(resultSet);
+    },
+    _calcBoundsHandler: function (evt, ui) {
+      var bounds = ui.bounds;
+      if ('undefined' !== typeof bounds && this.options.updateBounds) {
+        $.each(this._markers, function (idx, marker) {
+          bounds.extend(marker.getPosition());
+        });
+      }
     },
     /**
      * Removes any markers that were added to the map by <code>addMarkers</code>.
@@ -148,6 +158,7 @@
     destroy: function () {
       this.element.removeClass('ui-simplicity-google-map-results');
       $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
+      this.element.unbind('simplicitygooglemapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
       $.Widget.prototype.destroy.apply(this, arguments);
     }
   });

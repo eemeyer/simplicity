@@ -186,6 +186,9 @@
       discoveryResponse = discoveryResponse.response || {};
       this.facetCounts(this.extractFacetCounts(discoveryResponse), triggerEvent);
       this.resultSet(this.extractResultSet(discoveryResponse), triggerEvent);
+      if (triggerEvent !== false) {
+        this.element.triggerHandler('simplicitySearchResponseHandled');
+      }
     },
     /**
      * Get the or set the facet counts. Called with no arguments for get behavior.

@@ -32,6 +32,7 @@ groups:
       - js/simplicity/simplicityGoogleMapOriginal.js
       - js/simplicity/simplicityGoogleMap.js
       - js/simplicity/simplicityGoogleMapResults.js
+      - js/simplicity/simplicityGoogleMapBoundsCoordinator.js
       - js/simplicity/simplicityGoogleMapLoader.js
       - js/simplicity/simplicityBingMap.js
       - js/simplicity/simplicityYahooMap.js
