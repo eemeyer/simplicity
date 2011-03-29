@@ -130,7 +130,7 @@
      * @private
      */
     addCriteria: function (ui) {
-      if ('undefined' === typeof resultSet) {
+      if ('undefined' === typeof ui) {
         ui = $(this.options.searchElement).simplicityDiscoverySearch('searchResponse');
       }
       if ($.isArray(ui._discovery.response.explanation)) {
