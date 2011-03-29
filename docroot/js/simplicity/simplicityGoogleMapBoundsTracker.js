@@ -2,8 +2,8 @@
  * @name $.ui.simplicityGoogleMapBoundsTracker
  * @namespace A Google map.
  * <p>
- * Google Map widget that creates the map and listens for <code>simplicityResultSet</code> events
- * which it uses to add markers to the map for the search results.
+ * An invisible jquery ui widget which tracks changes in a Google Map's bounds. Whenever the map bound change, a
+ * simplicitygooglemapboundstrackerbounds event is triggered with ui.bounds being the normalized map bounds.
  *
  * @example
  *   &lt;div id="map" style="width: 300px; height: 300px;">&lt;/div>
@@ -23,6 +23,11 @@
      *   <dd>
      *     Optional map instance, if not provided one will be looked up. Defaults to <code>''</code>.
      *   </dd>
+     *   <dt>mapMoveEvents</dt>
+     *   <dd>
+     *     Provides an override of which vendor specific map events are used to determine
+     *     when the position of the map changes. Expects a comma separated list of event names.
+     *     Defaults to <code>'idle'</code>.
      * </dl>
      * @name $.ui.simplicityGoogleMapBoundsTracker.options
      */

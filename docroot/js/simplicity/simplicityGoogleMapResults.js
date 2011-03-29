@@ -37,6 +37,10 @@
      *   <dd>
      *     Optional map instance, if not provided one will be looked up. Defaults to <code>''</code>.
      *   </dd>
+     *   <dt>updateBounds</dt>
+     *   <dd>
+     *     Whether or not the map bounds should be updated to include the result locations. Defaults to true.
+     *   </dd>
      * </dl>
      * @name $.ui.simplicityGoogleMapResults.options
      */

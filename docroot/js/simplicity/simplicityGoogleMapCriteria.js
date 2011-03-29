@@ -2,8 +2,9 @@
  * @name $.ui.simplicityGoogleMapCriteria
  * @namespace A Google map.
  * <p>
- * Google Map widget that creates the map and listens for <code>simplicityResultSet</code> events
- * which it uses to add markers to the map for the search results.
+ * jQuery UI widget that displays discovery search criteria locations on a map. This widget uses the query explanation output from
+ * the discovery engine response, so the query to the engine must ask for this extra information with
+ * <code>"explain": "criterionValue"</code>.
  *
  * @example
  *   &lt;div id="map" style="width: 300px; height: 300px;">&lt;/div>
@@ -23,19 +24,13 @@
      *   <dd>
      *     The simplicityDiscoverySearch widget that this widget binds it's events to. Defaults to <code>'body'</code>.
      *   </dd>
-     *   <dt>latitudeField</dt>
-     *   <dd>
-     *     Field to find the latitude of the result item in the <code>simplicityResultSet</code>
-     *     item properties. Defaults to <code>'latitude'</code>.
-     *   </dd>
-     *   <dt>longitudeField</dt>
-     *   <dd>
-     *     Field to find the longitude of the result item in the <code>simplicityResultSet</code>
-     *     item properties. Defaults to <code>'longitude'</code>.
-     *   </dd>
      *   <dt>map</dt>
      *   <dd>
      *     Optional map instance, if not provided one will be looked up. Defaults to <code>''</code>.
+     *   </dd>
+     *   <dt>updateBounds</dt>
+     *   <dd>
+     *     Whether or not the map bounds should be updated to include the criteria locations. Defaults to true.
      *   </dd>
      * </dl>
      * @name $.ui.simplicityGoogleMapCriteria.options
@@ -62,7 +57,7 @@
       return this._map;
     },
     /**
-     * Makes the widget re-handle the last <code>simplicityResultSet</code> event to reapply
+     * Makes the widget re-handle the last <code>simplicitySearchResponse</code> event to reapply
      * any map markers.
      *
      * @name $.ui.simplicityGoogleMapCriteria.refreshMap
@@ -73,11 +68,8 @@
       this.addCriteria();
     },
     /**
-     * Event handler for the <code>simplicityResultSet</code> event. Extracts the coordinates
-     * of each result item by using the property fields defined by the
-     * <code>latitudeField</code> and <code>longitudeField</code> options of this widget and
-     * places a marker on the map for each valid coordinate. The map is then reset to best
-     * display the current set of markers.
+     * Event handler for the <code>simplicitySearchResponse</code> event.
+     * Extracts the placemarks for all of the criteria locations, and places markers or shapes on the map for each.
      *
      * @name $.ui.simplicityGoogleMapCriteria._responseHandler
      * @function
@@ -110,7 +102,7 @@
       }
     },
     /**
-     * Removes any markers that were added to the map by <code>addCriteria</code>.
+     * Removes any markers or shapes that were added to the map by <code>addCriteria</code>.
      *
      * @name $.ui.simplicityGoogleMapCriteria.removeCriteria
      * @function
@@ -123,7 +115,7 @@
       this._markers.length = 0;
     },
     /**
-     * Adds any markers that can be extracted from the given <code>resultSet</code>.
+     * Adds any markers and shapes that can be extracted from the given <code>searchResponse</code>.
      *
      * @name $.ui.simplicityGoogleMapCriteria.addCriteria
      * @function
