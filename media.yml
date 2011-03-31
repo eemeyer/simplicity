@@ -38,7 +38,12 @@ groups:
       - js/simplicity/simplicityGoogleMapBoundsCoordinator.js
       - js/simplicity/simplicityGoogleMapBoundsTracker.js
       - js/simplicity/simplicityGoogleMapLoader.js
+      - js/simplicity/simplicityBingMapOriginal.js
       - js/simplicity/simplicityBingMap.js
+      - js/simplicity/simplicityBingMapResults.js
+      - js/simplicity/simplicityBingMapCriteria.js
+      - js/simplicity/simplicityBingMapBoundsCoordinator.js
+      - js/simplicity/simplicityBingMapBoundsTracker.js
       - js/simplicity/simplicityYahooMap.js
       - js/simplicity/simplicityMapQuestMap.js
       # Geocoders

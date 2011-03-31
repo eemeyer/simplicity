@@ -181,6 +181,10 @@
     <script type="text/javascript" src="../js/simplicity/simplicityFlyout.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityHaversineDistance.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityBingMap.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityBingMapResults.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityBingMapCriteria.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityBingMapBoundsCoordinator.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityBingMapBoundsTracker.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityBingGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
@@ -227,15 +231,18 @@
         });
         $('#map1').simplicityBingMap({
           map: map
-        });
+        })
+        .simplicityBingMapResults()
+        .simplicityBingMapBoundsCoordinator();
       }());
 
       $('#map2').simplicityBingMap({
-        credentials: credentials,
-        fitOnResultSet: false
-      });
+        credentials: credentials
+      })
+      .simplicityBingMapResults()
+      .simplicityBingMapBoundsTracker();
 
-      $('#map1,#map2').bind('simplicitybingmapmarker', function (evt, ui) {
+      $('#map1,#map2').bind('simplicitybingmapresultsmarker', function (evt, ui) {
         var pin = ui.marker;
         var properties = ui.row.properties;
         pin.setOptions({
@@ -302,7 +309,7 @@
         }
       };
       // Drive search from current map position
-      $('#map2').bind('simplicitybingmapbounds', function (evt, ui) {
+      $('#map2').bind('simplicitybingmapboundstrackerbounds', function (evt, ui) {
         $('#north').val(ui.bounds.north);
         $('#east').val(ui.bounds.east);
         $('#south').val(ui.bounds.south);
