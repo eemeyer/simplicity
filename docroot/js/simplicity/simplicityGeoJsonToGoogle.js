@@ -2,7 +2,7 @@
   // Based on  GeoJSON to Google Maps library (git://github.com/JasonSanford/GeoJSON-to-Google-Maps.git) commit abbd27
   $.simplicityGeoJsonToGoogle = function (geojson, options) {
 
-    var _geometryToGoogleMaps = function (geojsonGeometry, opts) {
+    var geometryToVendorType = function (geojsonGeometry, opts) {
       var googleObjs = [];
       switch (geojsonGeometry.type) {
       case 'Point':
@@ -90,7 +90,7 @@
         result.push(_error('Invalid GeoJSON object: FeatureCollection object missing "features" member.'));
       } else {
         $.each(geojson.features, function (idx, feature) {
-          result.push(_geometryToGoogleMaps(feature.geometry, opts));
+          result.push(geometryToVendorType(feature.geometry, opts));
         });
       }
       break;
@@ -99,7 +99,7 @@
         result.push(_error('Invalid GeoJSON object: GeometryCollection object missing "geometries" member.'));
       } else {
         $.each(geojson.geometries, function (idx, geom) {
-          result.push(_geometryToGoogleMaps(geom, opts));
+          result.push(geometryToVendorType(geom, opts));
         });
       }
       break;
@@ -107,7 +107,7 @@
       if (!(geojson.properties && geojson.geometry)) {
         result.push(_error('Invalid GeoJSON object: Feature object missing "properties" or "geometry" member.'));
       } else {
-        $.merge(result, _geometryToGoogleMaps(geojson.geometry, opts));
+        $.merge(result, geometryToVendorType(geojson.geometry, opts));
       }
       break;
     case 'Point':
@@ -117,7 +117,7 @@
     case 'Polygon':
     case 'MultiPolygon':
       if (geojson.coordinates) {
-        $.merge(result, _geometryToGoogleMaps(geojson, opts));
+        $.merge(result, geometryToVendorType(geojson, opts));
       } else {
         result.push(_error('Invalid GeoJSON object: Geometry object missing "coordinates" member.'));
       }
