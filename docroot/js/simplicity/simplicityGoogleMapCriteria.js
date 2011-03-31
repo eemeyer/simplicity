@@ -129,18 +129,21 @@
         $.each(ui._discovery.response.explanation, $.proxy(function (idx, exp) {
           if (exp.criterionValue && $.isArray(exp.criterionValue.placemarks)) {
             $.each(exp.criterionValue.placemarks, $.proxy(function (idx, pm) {
-              var marker = new GeoJSON(pm);
-              marker.set('geojson', pm);
-              var markerEvent = {
-                map: this._map,
-                marker: marker
-              };
-              this._trigger('marker', {}, markerEvent);
-              marker = markerEvent.marker;
-              if ('undefined' !== typeof marker) {
-                marker.setMap(this._map);
-                this._markers.push(marker);
-              }
+              $.each($.simplicityGeoJsonToGoogle(pm), $.proxy(function (idx, marker) {
+                if (marker.type !== 'Error') {
+                  marker.set('geojson', pm);
+                  var markerEvent = {
+                    map: this._map,
+                    marker: marker
+                  };
+                  this._trigger('marker', {}, markerEvent);
+                  marker = markerEvent.marker;
+                  if ('undefined' !== typeof marker) {
+                    marker.setMap(this._map);
+                    this._markers.push(marker);
+                  }
+                }
+              }, this));
             }, this));
           }
         }, this));
