@@ -3,16 +3,16 @@
   $.simplicityGeoJsonToGoogle = function (geojson, options) {
 
     var geometryToVendorType = function (geojsonGeometry, opts) {
-      var googleObjs = [];
+      var vendorObjs = [];
       switch (geojsonGeometry.type) {
       case 'Point':
         opts.position = new google.maps.LatLng(geojsonGeometry.coordinates[1], geojsonGeometry.coordinates[0]);
-        googleObjs.push(new google.maps.Marker(opts));
+        vendorObjs.push(new google.maps.Marker(opts));
         break;
       case 'MultiPoint':
         $.each(geojsonGeometry.coordinates, function (idx, coord) {
           opts.position = new google.maps.LatLng(coord[1], coord[0]);
-          googleObjs.push(new google.maps.Marker(opts));
+          vendorObjs.push(new google.maps.Marker(opts));
         });
         break;
       case 'LineString':
@@ -23,7 +23,7 @@
             path.push(ll);
           });
           opts.path = path;
-          googleObjs.push(new google.maps.Polyline(opts));
+          vendorObjs.push(new google.maps.Polyline(opts));
         }());
         break;
       case 'MultiLineString':
@@ -34,7 +34,7 @@
             path.push(ll);
           });
           opts.path = path;
-          googleObjs.push(new google.maps.Polyline(opts));
+          vendorObjs.push(new google.maps.Polyline(opts));
         });
         break;
       case 'Polygon':
@@ -49,7 +49,7 @@
             paths.push(path);
           });
           opts.paths = paths;
-          googleObjs.push(new google.maps.Polygon(opts));
+          vendorObjs.push(new google.maps.Polygon(opts));
         }());
         break;
       case 'MultiPolygon':
@@ -66,13 +66,13 @@
             paths.push(path);
           });
           opts.paths = paths;
-          googleObjs.push(new google.maps.Polygon(opts));
+          vendorObjs.push(new google.maps.Polygon(opts));
         }());
         break;
       default:
-        googleObjs.push(_error('Invalid GeoJSON object: Geometry object must be one of Point, LineString, Polygon or MultiPolygon.'));
+        vendorObjs.push(_error('Invalid GeoJSON object: Geometry object must be one of Point, LineString, Polygon or MultiPolygon.'));
       }
-      return googleObjs;
+      return vendorObjs;
     };
 
     var _error = function (message) {
