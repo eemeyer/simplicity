@@ -80,7 +80,11 @@
     },
     _create : function () {
       this.element.addClass('ui-simplicity-bing-map');
-      this._initWhenAvailable();
+      if (this.options.map !== '') {
+        this._map = this.options.map;
+      } else {
+        this._initWhenAvailable();
+      }
     },
     /**
      * Lazy initialization method used to create the map only when the necessary JavaScript

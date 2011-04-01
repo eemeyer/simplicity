@@ -82,22 +82,12 @@
     },
     _calcBoundsHandler: function (evt, ui) {
       var locations = ui.locations;
-      if ('undefined' !== typeof locations && this.options.updateBounds) {
+      if ($.isArray(locations) && this.options.updateBounds) {
         $.each(this._markers, function (pmIdx, poly) {
-          if (poly.getBounds) {
-            bounds = poly.getBounds();
-          } else if (poly.getPaths) {
-            $.each(poly.getPaths().getArray(), function (idx, path) {
-              $.each(path.getArray(), function (idx2, latlng) {
-                bounds.extend(latlng);
-              });
-            });
-          } else if (poly.getPath) {
-            $.each(poly.getPath().getArray(), function (idx, latlng) {
-              bounds.extend(latlng);
-            });
-          } else if (poly.getPosition) {
-            bounds.extend(poly.getPosition());
+          if ($.isFunction(poly.getLocations)) {
+            $.merge(locations, poly.getLocations());
+          } else if ($.isFunction(poly.getLocation)) {
+            locations.push(poly.getLocation());
           }
         });
       }
@@ -142,7 +132,6 @@
                   if ('undefined' !== typeof marker) {
                     this._markers.push(marker);
                     this._map.entities.push(marker);
-                    console.log(marker, $.isFunction(marker.getLocations) ? marker.getLocations() : []);
                   }
                 }
               }, this));

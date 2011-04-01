@@ -75,74 +75,15 @@
       searchElement: 'body',
       latitudeField: 'latitude',
       longitudeField: 'longitude',
-      map: '',
-      fitOnResultSet: true,
-      credentials: '',
-      mapOptions: '',
-      mapMoveEvents: 'viewchangeend',
-      eventThrottleInterval: '',
-      // The following options are for internal use only
-      mapVersion: '7.0'
+      updateBounds: true,
+      map: ''
     },
     _create : function () {
       this.element.addClass('ui-simplicity-bing-map-results');
+      this._map = this.options.map !== '' ? this.options.map : this.element.simplicityBingMap('map');
       this._markers = [];
-      this._boundsShapes = [];
-      this._boundsChangeListeners = {};
-      this._initWhenAvailable();
       $(this.options.searchElement).bind('simplicityResultSet', $.proxy(this._resultSetHandler, this));
-    },
-    /**
-     * Lazy initialization method used to create the map only when the necessary JavaScript
-     * is available. Intended to be called from any of this widgets public methods that need to
-     * access the this._map.
-     *
-     * @name $.ui.simplicityBingMapResults._initWhenAvailable
-     * @function
-     * @private
-     */
-    _initWhenAvailable: function () {
-      var wasAvailable = 'undefined' !== typeof this._map;
-      if (wasAvailable) {
-        // Already available, do nothing
-      } else if (this.options.map !== '') {
-        this._map = this.options.map;
-      } else if ('undefined' !== typeof Microsoft && 'undefined' !== typeof Microsoft.Maps && 'undefined' !== typeof Microsoft.Maps.Map) {
-        var defaultMapOptions = {
-          credentials: this.options.credentials,
-          center: new Microsoft.Maps.Location(0, 0),
-          zoom: 1,
-          mapTypeId: Microsoft.Maps.MapTypeId.road
-        };
-        var mapOptions;
-        if (this.options.mapOptions === '') {
-          mapOptions = defaultMapOptions;
-        } else if ($.isFunction(this.options.mapOptions)) {
-          mapOptions = $.extend(defaultMapOptions, this.options.mapOptions.call(this));
-        } else {
-          mapOptions = $.extend(defaultMapOptions, this.options.mapOptions);
-        }
-        this._map = new Microsoft.Maps.Map(this.element[0], mapOptions);
-        this._trigger('create', {}, {
-          map: this._map
-        });
-      }
-      var isAvailable = 'undefined' !== typeof this._map;
-      if (!wasAvailable && isAvailable) {
-        $.each(this.options.mapMoveEvents.split(','), $.proxy(function (idx, eventName) {
-          eventName = $.trim(eventName);
-          if (eventName !== '') {
-            var listener;
-            if (this.options.eventThrottleInterval === '') {
-              listener = Microsoft.Maps.Events.addHandler(this._map, eventName, $.proxy(this._mapBoundsChangeHandler, this));
-            } else {
-              listener = Microsoft.Maps.Events.addThrottledHandler(this._map, eventName, $.proxy(this._mapBoundsChangeHandler, this), this.options.eventThrottleInterval);
-            }
-            this._boundsChangeListeners[eventName] = listener;
-          }
-        }, this));
-      }
-      return isAvailable;
+      this.element.bind('simplicitybingmapboundscoordinatorcalculatebounds', $.proxy(this._calcBoundsHandler, this));
     },
     /**
      * Return the actual map object.
@@ -154,29 +95,6 @@
       return this._map;
     },
     /**
-     * Try to dynamically load the necessary JavaScript from the upstream vendor that will
-     * allow the map to function.
-     *
-     * @name $.ui.simplicityBingMapResults.loadMap
-     * @function
-     * @private
-     */
-    loadMap: function () {
-      if ('undefined' === typeof this._map) {
-        if ('undefined' === typeof Microsoft || 'undefined' === typeof Microsoft.Maps || 'undefined' === typeof Microsoft.Maps.Map) {
-          var src = 'http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=' + this.options.mapVersion;
-          if ('undefined' === typeof $.simplicityLoadJs) {
-            alert('Dynamic loading of Bing maps is not supported. Enable this widget by adding the following script tag to your page:\n\n' +
-              '<script charset="UTF-8" type="text/javascript" src="' + src + '"></script>');
-          } else {
-            $.simplicityLoadJs(src, $.proxy(function () {
-              this.refreshMap();
-            }, this));
-          }
-        }
-      }
-    },
-    /**
      * Makes the widget re-handle the last <code>simplicityResultSet</code> event to reapply
      * any map markers.
      *
@@ -184,7 +102,8 @@
      * @function
      */
     refreshMap: function () {
-      this._resultSetHandler({}, $(this.options.searchElement).simplicityDiscoverySearch('resultSet'));
+      this.removeMarkers();
+      this.addMarkers();
     },
     /**
      * Event handler for the <code>simplicityResultSet</code> event. Extracts the coordinates
@@ -198,12 +117,16 @@
      * @private
      */
     _resultSetHandler: function (evt, resultSet) {
-      if (this._initWhenAvailable()) {
-        this.removeMarkers();
-        this.addMarkers(resultSet);
-      }
+      this.removeMarkers();
+      this.addMarkers(resultSet);
     },
-    /**
+    _calcBoundsHandler: function (evt, ui) {
+      if ($.isArray(ui.locations) && this.options.updateBounds) {
+        $.each(this._markers, function (idx, marker) {
+          ui.locations.push(marker.getLocation());
+        });
+      }
+    },    /**
      * Removes any markers that were added to the map by <code>addMarkers</code>.
      *
      * @name $.ui.simplicityBingMapResults.removeMarkers
@@ -222,174 +145,38 @@
      * @function
      */
     addMarkers: function (resultSet) {
-      if (this._initWhenAvailable()) {
-        if (resultSet.rows.length > 0) {
-          var locations = this.options.fitOnResultSet ? [] : null;
-          $.each(resultSet.rows, $.proxy(function (idx, row) {
-            var properties = row.properties;
-            if ('undefined' !== typeof properties) {
-              var latitude = properties[this.options.latitudeField];
-              var longitude = properties[this.options.longitudeField];
-              if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
-                var point = new Microsoft.Maps.Location(latitude, longitude);
-                var pin = new Microsoft.Maps.Pushpin(point);
-                var markerEvent = {
-                    row: row,
-                    map: this._map,
-                    marker: pin
-                  };
-                this._trigger('marker', {}, markerEvent);
-                marker = markerEvent.marker;
-                if ('undefined' !== typeof marker) {
-                  if (locations !== null) {
-                    locations.push(point);
-                  }
-                  this._markers.push(pin);
-                  this._map.entities.push(pin);
+      if (resultSet.rows.length > 0) {
+        var locations = this.options.fitOnResultSet ? [] : null;
+        $.each(resultSet.rows, $.proxy(function (idx, row) {
+          var properties = row.properties;
+          if ('undefined' !== typeof properties) {
+            var latitude = properties[this.options.latitudeField];
+            var longitude = properties[this.options.longitudeField];
+            if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
+              var point = new Microsoft.Maps.Location(latitude, longitude);
+              var pin = new Microsoft.Maps.Pushpin(point);
+              var markerEvent = {
+                  row: row,
+                  map: this._map,
+                  marker: pin
+                };
+              this._trigger('marker', {}, markerEvent);
+              marker = markerEvent.marker;
+              if ('undefined' !== typeof marker) {
+                if (locations !== null) {
+                  locations.push(point);
                 }
+                this._markers.push(pin);
+                this._map.entities.push(pin);
               }
             }
-          }, this));
-          if (locations !== null && locations.length > 0) {
-            var bounds = Microsoft.Maps.LocationRect.fromLocations(locations);
-            this._map.setView({bounds: bounds});
           }
-        }
+        }, this));
       }
-    },
-    _mapBoundsChangeHandler: function () {
-      var bounds = this.bounds();
-      if (this.options.debug) {
-        console.log('simplicityBingMapResults: Bounds changed', bounds);
-      }
-      this._trigger('bounds', {}, bounds);
-    },
-    /**
-     * Returns the normalized bounds for this map.
-     *
-     * @name $.ui.simplicityBingMapResults.bounds
-     * @function
-     */
-    bounds: function () {
-      return this.normalizeBounds(this._map.getBounds(), this._map.getCenter());
-    },
-    /**
-     * Normalizes the bounds for this map.
-     *
-     * @param bounds in vendor supplied format
-     * @param center point in vendor supplied format
-     * @name $.ui.simplicityBingMapResults.normalizeBounds
-     * @function
-     * @private
-     */
-    normalizeBounds: function (bounds, center) {
-      var result = {
-        map: this._map,
-        bounds: {
-          vendor: bounds,
-          north: bounds.getNorth(),
-          east: bounds.getEast(),
-          south: bounds.getSouth(),
-          west: bounds.getWest()
-        },
-        center: {
-          vendor: center,
-          latitude: center.latitude,
-          longitude: center.longitude
-        }
-      };
-      var radiusMiles1 = $.simplicityHaversineDistanceMiles(
-        center.latitude, center.longitude, center.latitude, bounds.getEast());
-      var radiusMiles2 = $.simplicityHaversineDistanceMiles(
-        center.latitude, center.longitude, bounds.getNorth(), center.longitude);
-      var minMiles = Math.min(radiusMiles1, radiusMiles2);
-      var maxMiles = Math.max(radiusMiles1, radiusMiles2);
-      $.extend(result, {
-        minRadius: {
-          meters: minMiles * 1609.344,
-          feet: minMiles * 5280,
-          miles:  minMiles,
-          km: minMiles * 1.609344
-        },
-        maxRadius: {
-          meters: maxMiles * 1609.344,
-          feet: maxMiles * 5280,
-          miles:  maxMiles,
-          km: maxMiles * 1.609344
-        }
-      });
-      return result;
-    },
-    /**
-     * Removes the bounds from the map.
-     *
-     * @name $.ui.simplicityBingMapResults.hideBounds
-     * @function
-     * @private
-     */
-    hideBounds: function () {
-      $.each(this._boundsShapes, $.proxy(function (idx, shape) {
-        this._map.entities.remove(shape);
-      }, this));
-      this._boundsShapes.length = 0;
-    },
-    /**
-     * Adds an overlay for the bounds on the map.
-     *
-     * @param bounds Optional bounds to display, if missing the current bounds are used.
-     * @name $.ui.simplicityBingMapResults.showBounds
-     * @function
-     * @private
-     */
-    showBounds: function (bounds) {
-      if ('undefined' === typeof bounds) {
-        bounds = this.bounds();
-      }
-      var boundsRect = new Microsoft.Maps.Polygon([
-          new Microsoft.Maps.Location(bounds.bounds.north, bounds.bounds.west),
-          new Microsoft.Maps.Location(bounds.bounds.north, bounds.bounds.east),
-          new Microsoft.Maps.Location(bounds.bounds.south, bounds.bounds.east),
-          new Microsoft.Maps.Location(bounds.bounds.south, bounds.bounds.west),
-          new Microsoft.Maps.Location(bounds.bounds.north, bounds.bounds.west)
-        ], {
-          strokeColor: new Microsoft.Maps.Color(255, 0, 0, 0),
-          fillColor: new Microsoft.Maps.Color(0)
-        });
-      var centerLatitude = new Microsoft.Maps.Polyline([
-          new Microsoft.Maps.Location(bounds.center.latitude, bounds.bounds.east),
-          new Microsoft.Maps.Location(bounds.center.latitude, bounds.bounds.west)
-        ], {
-          strokeColor: new Microsoft.Maps.Color(255, 0, 0, 0),
-          strokeThickness: 1,
-          fillColor: new Microsoft.Maps.Color(0)
-        });
-      var centerLongitude = new Microsoft.Maps.Polyline([
-          new Microsoft.Maps.Location(bounds.bounds.north, bounds.center.longitude),
-          new Microsoft.Maps.Location(bounds.bounds.south, bounds.center.longitude)
-        ], {
-          strokeColor: new Microsoft.Maps.Color(255, 0, 0, 0),
-          strokeThickness: 1,
-          fillColor: new Microsoft.Maps.Color(0)
-        });
-      var shapes = {
-        boundsRect: boundsRect,
-        // minCircle and maxCircle fields are missing due to lack of support for circle entities.
-        centerLatutide: centerLatitude,
-        centerLongitude: centerLongitude
-      };
-      this._trigger('boundsshapes', {}, shapes);
-      $.each(shapes, $.proxy(function (name, shape) {
-        this._map.entities.push(shape);
-        this._boundsShapes.push(shape);
-      }, this));
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-bing-map-results');
       $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
-      $.each(this._boundsChangeListeners, $.proxy(function (eventName, listener) {
-        Microsoft.Maps.Events.removeHandler(listener);
-      }, this));
-      this._boundsChangeListeners = {};
       delete this._map;
       $.Widget.prototype.destroy.apply(this, arguments);
     }
