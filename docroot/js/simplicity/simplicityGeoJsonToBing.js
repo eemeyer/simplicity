@@ -1,20 +1,20 @@
 (function ($) {
   // Based on  GeoJSON to Google Maps library (git://github.com/JasonSanford/GeoJSON-to-Google-Maps.git) commit abbd27
-  $.simplicityGeoJsonToBing = function (geojson, options) {
+  $.simplicityGeoJsonToBing = function (geojson) {
 
-    var geometryToVendorType = function (geojsonGeometry, opts) {
+    var geometryToVendorType = function (geojsonGeometry) {
       var vendorObjs = [];
       switch (geojsonGeometry.type) {
       case 'Point':
         (function () {
           var location = new Microsoft.Maps.Location(geojsonGeometry.coordinates[1], geojsonGeometry.coordinates[0]);
-          vendorObjs.push(new Microsoft.Maps.Pushpin(location, opts));
+          vendorObjs.push(new Microsoft.Maps.Pushpin(location));
         }());
         break;
       case 'MultiPoint':
         $.each(geojsonGeometry.coordinates, function (idx, coord) {
           var location =  new Microsoft.Maps.Location(coord[1], coord[0]);
-          vendorObjs.push(new Microsoft.Maps.Pushpin(location, opts));
+          vendorObjs.push(new Microsoft.Maps.Pushpin(location));
         });
         break;
       case 'LineString':
@@ -24,7 +24,7 @@
             var ll = new Microsoft.Maps.Location(coord[1], coord[0]);
             path.push(ll);
           });
-          vendorObjs.push(new Microsoft.Maps.Polyline(path, opts));
+          vendorObjs.push(new Microsoft.Maps.Polyline(path));
         }());
         break;
       case 'MultiLineString':
@@ -34,7 +34,7 @@
             var ll = new Microsoft.Maps.Location(coord[1], coord[0]);
             path.push(ll);
           });
-          vendorObjs.push(new Microsoft.Maps.Polyline(path, opts));
+          vendorObjs.push(new Microsoft.Maps.Polyline(path));
         });
         break;
       case 'Polygon':
@@ -50,7 +50,7 @@
           });
           // TODO: does not support polygons with holes
           if (0 !== paths.length) {
-            vendorObjs.push(new Microsoft.Maps.Polygon(paths[0], opts));
+            vendorObjs.push(new Microsoft.Maps.Polygon(paths[0]));
           }
         }());
         break;
@@ -68,7 +68,7 @@
             paths.push(path);
             // TODO: does not support polygons with holes
             if (0 !== paths.length) {
-              vendorObjs.push(new Microsoft.Maps.Polygon(paths[0], opts));
+              vendorObjs.push(new Microsoft.Maps.Polygon(paths[0]));
             }
           });
         }());
@@ -87,14 +87,13 @@
     };
 
     var result = [];
-    var opts = options || {};
     switch (geojson.type) {
     case 'FeatureCollection':
       if (!geojson.features) {
         result.push(_error('Invalid GeoJSON object: FeatureCollection object missing "features" member.'));
       } else {
         $.each(geojson.features, function (idx, feature) {
-          result.push(geometryToVendorType(feature.geometry, opts));
+          result.push(geometryToVendorType(feature.geometry));
         });
       }
       break;
@@ -103,7 +102,7 @@
         result.push(_error('Invalid GeoJSON object: GeometryCollection object missing "geometries" member.'));
       } else {
         $.each(geojson.geometries, function (idx, geom) {
-          result.push(geometryToVendorType(geom, opts));
+          result.push(geometryToVendorType(geom));
         });
       }
       break;
@@ -111,7 +110,7 @@
       if (!(geojson.properties && geojson.geometry)) {
         result.push(_error('Invalid GeoJSON object: Feature object missing "properties" or "geometry" member.'));
       } else {
-        $.merge(result, geometryToVendorType(geojson.geometry, opts));
+        $.merge(result, geometryToVendorType(geojson.geometry));
       }
       break;
     case 'Point':
@@ -121,7 +120,7 @@
     case 'Polygon':
     case 'MultiPolygon':
       if (geojson.coordinates) {
-        $.merge(result, geometryToVendorType(geojson, opts));
+        $.merge(result, geometryToVendorType(geojson));
       } else {
         result.push(_error('Invalid GeoJSON object: Geometry object missing "coordinates" member.'));
       }
