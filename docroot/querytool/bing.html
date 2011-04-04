@@ -134,19 +134,22 @@
         .bind('simplicitybingmapresultsmarker', function (evt, ui) {
           var marker = ui.marker;
           var properties = ui.row.properties;
-          marker.setOptions({
-            icon: '../tutorial/images/markers/google/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png'
-          });
+//          marker.setOptions({
+//            icon: '../tutorial/images/markers/google/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png'
+//          });
           Microsoft.Maps.Events.addHandler(marker, 'click', function (evt) {
             $('#result-' + ui.row.id).effect("highlight", {}, 3000);
           });
         })
-        .bind('simplicitybingmapcriteriamarker', function (evt, ui) {
-          var marker = ui.marker;
-          if ($.isFunction(marker.getFillColor)) {
-            marker.setOptions({strokeColor: new Microsoft.Maps.Color(255, 0,0,0), fillColor: new Microsoft.Maps.Color(64, 0, 0, 255), strokeThickness: 1});
-          } else if ($.isFunction(marker.getIcon)) {
-            marker.setOptions({icon: '../tutorial/images/markers/google/marker-00f.png'})
+        .bind('simplicitybingmapcriteriaplacemark', function (evt, ui) {
+          if ($.isArray(ui.markers)) {
+            $.each(ui.markers, function (idx, marker) {
+              if ($.isFunction(marker.getFillColor)) {
+                marker.setOptions({strokeColor: new Microsoft.Maps.Color(255, 0,0,0), fillColor: new Microsoft.Maps.Color(64, 0, 0, 255), strokeThickness: 1});
+              } else if ($.isFunction(marker.getIcon)) {
+                //marker.setOptions({icon: '../tutorial/images/markers/google/marker-00f.png'})
+              }
+            });
           }
         });
     //]]>--></script>
