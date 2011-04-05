@@ -30,6 +30,7 @@ groups:
       # Maps
       - js/simplicity/simplicityGeoJsonToBing.js
       - js/simplicity/simplicityGeoJsonToGoogle.js
+      - js/simplicity/simplicityGeoJsonToMapQuest.js
       - js/simplicity/simplicityHaversineDistance.js
       - js/simplicity/simplicityGoogleMapOriginal.js
       - js/simplicity/simplicityGoogleMap.js
