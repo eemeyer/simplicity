@@ -129,21 +129,23 @@
         $.each(ui._discovery.response.explanation, $.proxy(function (idx, exp) {
           if (exp.criterionValue && $.isArray(exp.criterionValue.placemarks)) {
             $.each(exp.criterionValue.placemarks, $.proxy(function (idx, pm) {
-              $.each($.simplicityGeoJsonToGoogle(pm), $.proxy(function (idx, marker) {
-                if (marker.type !== 'Error') {
-                  marker.set('geojson', pm);
-                  var markerEvent = {
-                    map: this._map,
-                    marker: marker
-                  };
-                  this._trigger('marker', {}, markerEvent);
-                  marker = markerEvent.marker;
-                  if ('undefined' !== typeof marker) {
+              var markers = $.simplicityGeoJsonToGoogle(pm);
+              if (markers.length !== 0 && markers[0].type !== 'Error') {
+                var markerEvent = {
+                  map: this._map,
+                  markers: markers,
+                  geoJson: pm
+                };
+                this._trigger('placemark', {}, markerEvent);
+                markers = markerEvent.markers;
+
+                if ('undefined' !== typeof markers) {
+                  $.each(markers, $.proxy(function (idx, marker) {
                     marker.setMap(this._map);
                     this._markers.push(marker);
-                  }
+                  }, this));
                 }
-              }, this));
+              }
             }, this));
           }
         }, this));
