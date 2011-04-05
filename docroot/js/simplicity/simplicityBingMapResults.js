@@ -126,7 +126,8 @@
           ui.locations.push(marker.getLocation());
         });
       }
-    },    /**
+    },
+    /**
      * Removes any markers that were added to the map by <code>addMarkers</code>.
      *
      * @name $.ui.simplicityBingMapResults.removeMarkers

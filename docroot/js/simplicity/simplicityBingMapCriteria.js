@@ -146,6 +146,7 @@
       $(this.options.searchElement).unbind('simplicitySearchResponse', this._responseHandler);
       this.element.unbind('simplicitybingmapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
       delete this._map;
+      delete this._markers;
       $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
