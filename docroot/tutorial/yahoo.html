@@ -179,6 +179,10 @@
     <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMap.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityBingMap.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityYahooMap.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityYahooMapResults.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityYahooMapCriteria.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityYahooMapBoundsCoordinator.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityYahooMapBoundsTracker.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityYahooGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
@@ -222,19 +226,23 @@
         map.drawZoomAndCenter(new YGeoPoint(0, 0), 16);
         $('#map1').simplicityYahooMap({
           map: map
-        });
+        })
+        .simplicityYahooMapBoundsCoordinator()
+        .simplicityYahooMapCriteria()
+        .simplicityYahooMapResults();
       }());
 
       (function () {
-        $('#map2').simplicityYahooMap({
-          fitOnResultSet: false
-        });
+        $('#map2').simplicityYahooMap()
+        .simplicityYahooMapBoundsTracker()
+        .simplicityYahooMapCriteria()
+        .simplicityYahooMapResults();
         var map = $('#map2').simplicityYahooMap('map');
         map.addPanControl();
         map.addZoomShort();
       }());
 
-      $('#map1,#map2').bind('simplicityyahoomapmarker', function (evt, ui) {
+      $('#map1,#map2').bind('simplicityyahoomapresultsmarker', function (evt, ui) {
         var marker = ui.marker;
         var properties = ui.row.properties;
         marker.changeImage(new YImage('images/markers/yahoo/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png'));
@@ -310,7 +318,7 @@
         }
       };
       // Drive search from current map position
-      $('#map2').bind('simplicityyahoomapbounds', function (evt, ui) {
+      $('#map2').bind('simplicityyahoomapboundstrackerbounds', function (evt, ui) {
         $('#north').val(ui.bounds.north);
         $('#east').val(ui.bounds.east);
         $('#south').val(ui.bounds.south);

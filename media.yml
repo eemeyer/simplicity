@@ -46,13 +46,19 @@ groups:
       - js/simplicity/simplicityBingMapCriteria.js
       - js/simplicity/simplicityBingMapBoundsCoordinator.js
       - js/simplicity/simplicityBingMapBoundsTracker.js
-      - js/simplicity/simplicityYahooMap.js
       - js/simplicity/simplicityMapQuestMapOriginal.js
       - js/simplicity/simplicityMapQuestMap.js
       - js/simplicity/simplicityMapQuestMapResults.js
       - js/simplicity/simplicityMapQuestMapCriteria.js
       - js/simplicity/simplicityMapQuestMapBoundsCoordinator.js
       - js/simplicity/simplicityMapQuestMapBoundsTracker.js
+      - js/simplicity/simplicityYahooMapOriginal.js
+      - js/simplicity/simplicityYahooMap.js
+      - js/simplicity/simplicityYahooMapResults.js
+      - js/simplicity/simplicityYahooMapCriteria.js
+      - js/simplicity/simplicityYahooMapBoundsCoordinator.js
+      - js/simplicity/simplicityYahooMapBoundsTracker.js
+
 
       # Geocoders
       - js/simplicity/simplicityGoogleGeocoder.js

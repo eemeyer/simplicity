@@ -66,23 +66,19 @@
      * @name $.ui.simplicityYahooMap.options
      */
     options : {
-      searchElement: 'body',
-      latitudeField: 'latitude',
-      longitudeField: 'longitude',
       map: '',
-      fitOnResultSet: true,
       mapOptions: '',
-      mapMoveEvents: 'endPan,endAutoPan,changeZoom',
       // The following options are for internal use only
       apiKey: '',
       mapVersion: '3.8'
     },
     _create: function () {
       this.element.addClass('ui-simplicity-yahoo-map');
-      this._markers = [];
-      this._boundsShapes = [];
-      this._initWhenAvailable();
-      $(this.options.searchElement).bind('simplicityResultSet', $.proxy(this._resultSetHandler, this));
+      if (this.options.map !== '') {
+        this._map = this.options.map;
+      } else {
+        this._initWhenAvailable();
+      }
     },
     /**
      * Lazy initialization method used to create the map only when the necessary JavaScript
@@ -121,14 +117,6 @@
         });
       }
       var isAvailable = 'undefined' !== typeof this._map;
-      if (!wasAvailable && isAvailable) {
-        $.each(this.options.mapMoveEvents.split(','), $.proxy(function (idx, eventName) {
-          eventName = $.trim(eventName);
-          if (eventName !== '') {
-            YEvent.Capture(this._map, eventName, $.proxy(this._mapBoundsChangeHandler, this));
-          }
-        }, this));
-      }
       return isAvailable;
     },
     /**
@@ -138,6 +126,7 @@
      * @function
      */
     map: function () {
+      this._initWhenAvailable();
       return this._map;
     },
     /**
@@ -167,206 +156,8 @@
         }
       }
     },
-    /**
-     * Makes the widget re-handle the last <code>simplicityResultSet</code> event to reapply
-     * any map markers.
-     *
-     * @name $.ui.simplicityYahooMap.refreshMap
-     * @function
-     */
-    refreshMap: function () {
-      this._resultSetHandler({}, $(this.options.searchElement).simplicityDiscoverySearch('resultSet'));
-    },
-    /**
-     * Event handler for the <code>simplicityResultSet</code> event. Extracts the coordinates
-     * of each result item by using the property fields defined by the
-     * <code>latitudeField</code> and <code>longitudeField</code> options of this widget and
-     * places a marker on the map for each valid coordinate. The map is then reset to best
-     * display the current set of markers.
-     *
-     * @name $.ui.simplicityYahooMap._resultSetHandler
-     * @function
-     * @private
-     */
-    _resultSetHandler: function (evt, resultSet) {
-      if (this._initWhenAvailable()) {
-        this.removeMarkers();
-        this.addMarkers(resultSet);
-      }
-    },
-    /**
-     * Removes any markers that were added to the map by <code>addMarkers</code>.
-     *
-     * @name $.ui.simplicityYahooMap.removeMarkers
-     * @function
-     * @private
-     */
-    removeMarkers: function () {
-      if (this._initWhenAvailable()) {
-        $.each(this._markers, $.proxy(function (idx, marker) {
-          this._map.removeOverlay(marker);
-        }, this));
-        this._markers.length = 0;
-      }
-    },
-    /**
-     * Adds any markers that can be extracted from the given <code>resultSet</code>.
-     *
-     * @name $.ui.simplicityYahooMap.addMarkers
-     * @function
-     * @private
-     */
-    addMarkers: function (resultSet) {
-      if (this._initWhenAvailable()) {
-        if (resultSet.rows.length > 0) {
-          var locations = this.options.fitOnResultSet ? [] : null;
-          $.each(resultSet.rows, $.proxy(function (idx, row) {
-            var properties = row.properties;
-            if ('undefined' !== typeof properties) {
-              var latitude = properties[this.options.latitudeField];
-              var longitude = properties[this.options.longitudeField];
-              if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
-                latitude = Number(latitude);
-                longitude = Number(longitude);
-                var point = new YGeoPoint(latitude, longitude);
-                var marker = new YMarker(point);
-                var markerEvent = {
-                  row: row,
-                  map: this._map,
-                  marker: marker
-                };
-                this._trigger('marker', {}, markerEvent);
-                marker = markerEvent.marker;
-                if ('undefined' !== typeof marker) {
-                  if (locations !== null) {
-                    locations.push(point);
-                  }
-                  this._markers.push(marker);
-                  this._map.addOverlay(marker);
-                }
-              }
-            }
-          }, this));
-          if (locations !== null && locations.length > 0) {
-            var bounds = this._map.getBestZoomAndCenter(locations);
-            this._map.drawZoomAndCenter(bounds.YGeoPoint, bounds.zoomLevel);
-          }
-        }
-      }
-    },
-    _mapBoundsChangeHandler: function () {
-      var bounds = this.bounds();
-      if (this.options.debug) {
-        console.log('simplicityYahooMap: Bounds changed', bounds);
-      }
-      this._trigger('bounds', {}, bounds);
-    },
-    /**
-     * Returns the normalized bounds for this map.
-     *
-     * @name $.ui.simplicityYahooMap.bounds
-     * @function
-     */
-    bounds: function () {
-      return this.normalizeBounds(this._map.getBoundsLatLon(), this._map.getCenterLatLon());
-    },
-    /**
-     * Normalizes the bounds for this map.
-     *
-     * @param bounds in vendor supplied format
-     * @param center point in vendor supplied format
-     * @name $.ui.simplicityYahooMap.normalizeBounds
-     * @function
-     * @private
-     */
-    normalizeBounds: function (bounds, center) {
-      var result = {
-        map: this._map,
-        bounds: {
-          vendor: bounds,
-          north: bounds.LatMax,
-          east: bounds.LonMax,
-          south: bounds.LatMin,
-          west: bounds.LonMin
-        },
-        center: {
-          vendor: center,
-          latitude: center.Lat,
-          longitude: center.Lon
-        }
-      };
-      var radiusMiles1 = center.distance(new YGeoPoint(center.Lat, bounds.LonMax)).miles;
-      var radiusMiles2 = center.distance(new YGeoPoint(bounds.LatMax, center.Lon)).miles;
-      var minMiles = Math.min(radiusMiles1, radiusMiles2);
-      var maxMiles = Math.max(radiusMiles1, radiusMiles2);
-      $.extend(result, {
-        minRadius: {
-          meters: minMiles * 1609.344,
-          feet: minMiles * 5280,
-          miles:  minMiles,
-          km: minMiles * 1.609344
-        },
-        maxRadius: {
-          meters: maxMiles * 1609.344,
-          feet: maxMiles * 5280,
-          miles:  maxMiles,
-          km: maxMiles * 1.609344
-        }
-      });
-      return result;
-    },
-    /**
-     * Removes the bounds from the map.
-     *
-     * @name $.ui.simplicityYahooMap.hideBounds
-     * @function
-     * @private
-     */
-    hideBounds: function () {
-      $.each(this._boundsShapes, $.proxy(function (idx, shape) {
-        this._map.removeOverlay(shape);
-      }, this));
-      this._boundsShapes.length = 0;
-    },
-    /**
-     * Adds an overlay for the bounds on the map.
-     *
-     * @param bounds Optional bounds to display, if missing the current bounds are used.
-     * @name $.ui.simplicityYahooMap.showBounds
-     * @function
-     * @private
-     */
-    showBounds: function (bounds) {
-      if ('undefined' === typeof bounds) {
-        bounds = this.bounds();
-      }
-      var shapes = {
-        boundsRect: new YPolyline([
-          new YGeoPoint(bounds.bounds.north, bounds.bounds.west),
-          new YGeoPoint(bounds.bounds.north, bounds.bounds.east),
-          new YGeoPoint(bounds.bounds.south, bounds.bounds.east),
-          new YGeoPoint(bounds.bounds.south, bounds.bounds.west),
-          new YGeoPoint(bounds.bounds.north, bounds.bounds.west)
-        ], 'black', 3, 1),
-        // minCircle and maxCircle fields are missing due to lack of support for circle entities.
-        centerLatitude: new YPolyline([
-          new YGeoPoint(bounds.center.latitude, bounds.bounds.east),
-          new YGeoPoint(bounds.center.latitude, bounds.bounds.west)
-        ], 'black', 1, 1),
-        centerLongitude: new YPolyline([
-          new YGeoPoint(bounds.bounds.north, bounds.center.longitude),
-          new YGeoPoint(bounds.bounds.south, bounds.center.longitude)
-        ], 'black', 1, 1)
-      };
-      this._trigger('boundsshapes', {}, shapes);
-      $.each(shapes, $.proxy(function (name, shape) {
-        this._map.addOverlay(shape);
-        this._boundsShapes.push(shape);
-      }, this));
-    },
     destroy: function () {
       this.element.removeClass('ui-simplicity-yahoo-map');
-      $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
       delete this._map;
       $.Widget.prototype.destroy.apply(this, arguments);
     }
