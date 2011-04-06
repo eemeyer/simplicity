@@ -169,7 +169,7 @@
       }
     },
     destroy: function () {
-      this.element.removeClass('ui-simplicity-mapquest-map-original');
+      this.element.removeClass('ui-simplicity-mapquest-map-results');
       $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
       $.each(this._boundsChangeListeners, $.proxy(function (eventName, listener) {
         MQA.EventManager.removeListener(this._map, eventName, listener);
