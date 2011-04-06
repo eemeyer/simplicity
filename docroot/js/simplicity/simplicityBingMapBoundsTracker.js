@@ -231,7 +231,6 @@
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-bing-map-bounds-tracker');
-      $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
       $.each(this._boundsChangeListeners, $.proxy(function (eventName, listener) {
         Microsoft.Maps.Events.removeHandler(listener);
       }, this));

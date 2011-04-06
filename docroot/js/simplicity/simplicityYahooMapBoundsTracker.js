@@ -201,7 +201,6 @@
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-yahoo-map-bounds-tracker');
-      $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
       delete this._map;
       delete this._boundsShapes;
       $.Widget.prototype.destroy.apply(this, arguments);

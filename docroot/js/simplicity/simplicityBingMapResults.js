@@ -178,6 +178,7 @@
     destroy: function () {
       this.element.removeClass('ui-simplicity-bing-map-results');
       $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
+      this.element.unbind('simplicitybingmapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
       delete this._map;
       $.Widget.prototype.destroy.apply(this, arguments);
     }

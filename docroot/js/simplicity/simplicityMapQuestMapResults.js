@@ -171,6 +171,7 @@
     destroy: function () {
       this.element.removeClass('ui-simplicity-mapquest-map-results');
       $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
+      this.element.unbind('simplicitymapquestmapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
       $.each(this._boundsChangeListeners, $.proxy(function (eventName, listener) {
         MQA.EventManager.removeListener(this._map, eventName, listener);
       }, this));
