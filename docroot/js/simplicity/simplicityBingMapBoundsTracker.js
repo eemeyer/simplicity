@@ -237,6 +237,7 @@
       }, this));
       this._boundsChangeListeners = {};
       delete this._map;
+      delete this._boundsShapes;
       $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
