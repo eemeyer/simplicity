@@ -27,7 +27,7 @@ TestCase("simplicityGeoJsonToGoogle", {
               'geometry': {
                 'type': 'LineString',
                 'coordinates': [
-                  [102.0, 0.0], [103.0, 1.0], [103.9, 0.0], [105.0, 1.0]
+                  [102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]
                   ]
                 },
               'properties': {
@@ -50,13 +50,12 @@ TestCase("simplicityGeoJsonToGoogle", {
     }());
     (function () {
       var actual = vendorObjs[1][0];
-      assertInstanceOf('should be expected type', google.maps.PolyLine, actual);
       var path = actual.getPath();
       assertEquals('should vertices', 4, path.getLength());
-      assertEquals('should have vertex', [102.0D, 0.0D], [path.getAt(0).lng(), path.getAt(0).lat()]);
-      assertEquals('should have vertex', [103.0D, 1.0D], [path.getAt(1).lng(), path.getAt(1).lat()]);
-      assertEquals('should have vertex', [103.9D, 0.0D], [path.getAt(2).lng(), path.getAt(2).lat()]);
-      assertEquals('should have vertex', [105.0D, 1.0D], [path.getAt(3).lng(), path.getAt(3).lat()]);
+      assertEquals('should have vertex', [102.0, 0.0], [path.getAt(0).lng(), path.getAt(0).lat()]);
+      assertEquals('should have vertex', [103.0, 1.0], [path.getAt(1).lng(), path.getAt(1).lat()]);
+      assertEquals('should have vertex', [104.0, 0.0], [path.getAt(2).lng(), path.getAt(2).lat()]);
+      assertEquals('should have vertex', [105.0, 1.0], [path.getAt(3).lng(), path.getAt(3).lat()]);
     }());
   }
 });
