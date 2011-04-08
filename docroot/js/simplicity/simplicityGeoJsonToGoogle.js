@@ -1,46 +1,60 @@
 (function ($) {
   // Based on  GeoJSON to Google Maps library (git://github.com/JasonSanford/GeoJSON-to-Google-Maps.git) commit abbd27
-  $.simplicityGeoJsonToGoogle = function (geojson, options) {
+  $.simplicityGeoJsonToGoogle = function (geoJson, options, debug) {
 
-    var geometryToVendorType = function (geojsonGeometry, opts) {
-      var vendorObjs = [];
-      switch (geojsonGeometry.type) {
+    var geometryToVendorType = function (output, geoJsonGeometry, opts) {
+      var vendorObjs = output.vendorObjects;
+      switch (geoJsonGeometry.type) {
       case 'Point':
-        opts.position = new google.maps.LatLng(geojsonGeometry.coordinates[1], geojsonGeometry.coordinates[0]);
-        vendorObjs.push(new google.maps.Marker(opts));
+        (function () {
+          opts.position = new google.maps.LatLng(geoJsonGeometry.coordinates[1], geoJsonGeometry.coordinates[0]);
+          var vendorObj = new google.maps.Marker(opts);
+          vendorObj.simplicityGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          output.geoJson.simplicityVendorObject = vendorObj;
+          vendorObjs.push(vendorObj);
+        }());
         break;
       case 'MultiPoint':
-        $.each(geojsonGeometry.coordinates, function (idx, coord) {
+        $.each(geoJsonGeometry.coordinates, function (idx, coord) {
           opts.position = new google.maps.LatLng(coord[1], coord[0]);
-          vendorObjs.push(new google.maps.Marker(opts));
+          var vendorObj = new google.maps.Marker(opts);
+          vendorObj.simplicityGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          output.geoJson.simplicityVendorObject = vendorObj;
+          vendorObjs.push(vendorObj);
         });
         break;
       case 'LineString':
         (function () {
           var path = [];
-          $.each(geojsonGeometry.coordinates, function (idx, coord) {
+          $.each(geoJsonGeometry.coordinates, function (idx, coord) {
             var ll = new google.maps.LatLng(coord[1], coord[0]);
             path.push(ll);
           });
           opts.path = path;
-          vendorObjs.push(new google.maps.Polyline(opts));
+          var vendorObj = new google.maps.Polyline(opts);
+          vendorObj.simplicityGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          output.geoJson.simplicityVendorObject = vendorObj;
+          vendorObjs.push(vendorObj);
         }());
         break;
       case 'MultiLineString':
-        $.each(geojsonGeometry.coordinates, function (idx, coords) {
+        $.each(geoJsonGeometry.coordinates, function (idx, coords) {
           var path = [];
           $.each(coords, function (idx2, coord) {
             var ll = new google.maps.LatLng(coord[1], coord[0]);
             path.push(ll);
           });
           opts.path = path;
-          vendorObjs.push(new google.maps.Polyline(opts));
+          var vendorObj = new google.maps.Polyline(opts);
+          vendorObj.simplicityGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          output.geoJson.simplicityVendorObject = vendorObj;
+          vendorObjs.push(vendorObj);
         });
         break;
       case 'Polygon':
         (function () {
           var paths = [];
-          $.each(geojsonGeometry.coordinates, function (idx, coords) {
+          $.each(geoJsonGeometry.coordinates, function (idx, coords) {
             var path = [];
             $.each(coords, function (idx2, coord) {
               var ll = new google.maps.LatLng(coord[1], coord[0]);
@@ -49,13 +63,16 @@
             paths.push(path);
           });
           opts.paths = paths;
-          vendorObjs.push(new google.maps.Polygon(opts));
+          var vendorObj = new google.maps.Polygon(opts);
+          vendorObj.simplicityGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          output.geoJson.simplicityVendorObject = vendorObj;
+          vendorObjs.push(vendorObj);
         }());
         break;
       case 'MultiPolygon':
         (function () {
           var paths = [];
-          $.each(geojsonGeometry.coordinates, function (idx, shape) {
+          $.each(geoJsonGeometry.coordinates, function (idx, shape) {
             $.each(shape, function (idx2, coords) {
               var path = [];
               $.each(coords, function (idx3, coord) {
@@ -66,48 +83,65 @@
             paths.push(path);
           });
           opts.paths = paths;
-          vendorObjs.push(new google.maps.Polygon(opts));
+          var vendorObj = new google.maps.Polygon(opts);
+          vendorObj.simplicityGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          output.geoJson.simplicityVendorObject = vendorObj;
+          vendorObjs.push(vendorObj);
         }());
         break;
       default:
-        vendorObjs.push(_error('Invalid GeoJSON object: Geometry object must be one of Point, LineString, Polygon or MultiPolygon.'));
+        _error('Invalid GeoJSON object: Geometry object must be one of Point, LineString, Polygon or MultiPolygon.');
       }
-      return vendorObjs;
     };
 
     var _error = function (message) {
-      return {
-        type: 'Error',
-        message: message
-      };
+      if (debug) {
+        cosole.warn(message);
+      }
     };
 
-    var result = [];
+    var result = {
+        vendorObjects: [],
+        geoJson: JSON.parse(JSON.stringify(geoJson))
+    };
+
     var opts = options || {};
-    switch (geojson.type) {
+    switch (geoJson.type) {
     case 'FeatureCollection':
-      if (!geojson.features) {
-        result.push(_error('Invalid GeoJSON object: FeatureCollection object missing "features" member.'));
+      if (!geoJson.features) {
+        _error('Invalid GeoJSON object: FeatureCollection object missing "features" member.');
+        result.geoJson = {};
       } else {
-        $.each(geojson.features, function (idx, feature) {
-          result.push(geometryToVendorType(feature.geometry, opts));
+        $.each(geoJson.features, function (idx, feature) {
+          var output = {
+              vendorObjects: result.vendorObjects,
+              geoJson: feature
+          };
+          geometryToVendorType(output, feature.geometry, opts);
+          result.geoJson.features[idx] = output.geoJson;
         });
       }
       break;
     case 'GeometryCollection':
-      if (!geojson.geometries) {
-        result.push(_error('Invalid GeoJSON object: GeometryCollection object missing "geometries" member.'));
+      if (!geoJson.geometries) {
+        _error('Invalid GeoJSON object: GeometryCollection object missing "geometries" member.');
+        result.geoJson = {};
       } else {
-        $.each(geojson.geometries, function (idx, geom) {
-          result.push(geometryToVendorType(geom, opts));
+        $.each(geoJson.geometries, function (idx, geom) {
+          var output = {
+              vendorObjects: result.vendorObjects,
+              geoJson: geom
+          };
+          geometryToVendorType(output, geom, opts);
         });
       }
       break;
     case 'Feature':
-      if (!(geojson.properties && geojson.geometry)) {
-        result.push(_error('Invalid GeoJSON object: Feature object missing "properties" or "geometry" member.'));
+      if (!(geoJson.properties && geoJson.geometry)) {
+        _error('Invalid GeoJSON object: Feature object missing "properties" or "geometry" member.');
+        result.geoJson = {};
       } else {
-        $.merge(result, geometryToVendorType(geojson.geometry, opts));
+        geometryToVendorType(result, geoJson.geometry, opts);
       }
       break;
     case 'Point':
@@ -116,14 +150,16 @@
     case 'MultiLineString':
     case 'Polygon':
     case 'MultiPolygon':
-      if (geojson.coordinates) {
-        $.merge(result, geometryToVendorType(geojson, opts));
+      if (geoJson.coordinates) {
+        geometryToVendorType(result, geoJson, opts);
       } else {
-        result.push(_error('Invalid GeoJSON object: Geometry object missing "coordinates" member.'));
+        _error('Invalid GeoJSON object: Geometry object missing "coordinates" member.');
+        result.geoJson = {};
       }
       break;
     default:
-      result.push(_error('Invalid GeoJSON object: GeoJSON object must be one of Point, LineString, Polygon, MultiPolygon, Feature, FeatureCollection or GeometryCollection.'));
+      _error('Invalid GeoJSON object: GeoJSON object must be one of Point, LineString, Polygon, MultiPolygon, Feature, FeatureCollection or GeometryCollection.');
+      result.geoJson = {};
     }
     return result;
   };

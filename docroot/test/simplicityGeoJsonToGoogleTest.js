@@ -22,14 +22,29 @@ TestCase("simplicityGeoJsonToGoogle", {
       'properties': {'name': 'named'}
       },
       converted.vendorObjects[0].simplicityGeoJson);
+
     assertEquals(
         {'type': 'Feature',
         'id': 'identifier',
         'geometry': {'type': 'Point', 'coordinates': [100.0, 10.0] },
         'properties': {'name': 'named'},
-        simplicityVendorObject: converted.vendorObjects[0]
+        'simplicityVendorObject': converted.vendorObjects[0]
         },
         converted.geoJson);
+  },
+
+  'testInvalidFeature': function () {
+    var converted = $.simplicityGeoJsonToGoogle(
+        {'type': 'Feature',
+        'id': 'identifier',
+        'properties': {'name': 'named'}
+    });
+    assertObject(converted);
+    assertArray(converted.vendorObjects);
+    assertObject(converted.geoJson);
+
+    assertEquals('should contain converted', [], converted.vendorObjects);
+    assertEquals({}, converted.geoJson);
   },
 
   'testFeatureCollection': function () {
@@ -53,7 +68,7 @@ TestCase("simplicityGeoJsonToGoogle", {
           'prop1': 0.0
         }
       }]
-     });
+     }, {} , true);
     assertObject(converted);
     assertArray(converted.vendorObjects);
     assertObject(converted.geoJson);
@@ -78,6 +93,15 @@ TestCase("simplicityGeoJsonToGoogle", {
     }());
 
     assertEquals({
+      'type': 'Feature',
+      'id': 'point1',
+      'geometry': {'type': 'Point', 'coordinates': [102.0, 0.5]},
+      'properties': {'name': 'point 1 name'}
+    }, converted.vendorObjects[0].simplicityGeoJson);
+
+    delete converted.vendorObjects[0].simplicityGeoJson;
+    delete converted.vendorObjects[1].simplicityGeoJson;
+    assertEquals({
       'type': 'FeatureCollection',
       'features': [{
         'type': 'Feature',
@@ -101,11 +125,5 @@ TestCase("simplicityGeoJsonToGoogle", {
       }]
     }, converted.geoJson);
 
-    assertEquals({
-      'type': 'Feature',
-      'id': 'point1',
-      'geometry': {'type': 'Point', 'coordinates': [102.0, 0.5]},
-      'properties': {'name': 'point 1 name'}
-    }, converted.vendorObjects[0].simplicityGeoJson);
   }
 });
