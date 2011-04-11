@@ -71,22 +71,22 @@
         break;
       case 'MultiPolygon':
         (function () {
-          var paths = [];
           $.each(geoJsonGeometry.coordinates, function (idx, shape) {
+            var paths = [];
             $.each(shape, function (idx2, coords) {
               var path = [];
               $.each(coords, function (idx3, coord) {
                 var ll = new google.maps.LatLng(coord[1], coord[0]);
                 path.push(ll);
               });
+              paths.push(path);
             });
-            paths.push(path);
+            opts.paths = paths;
+            var vendorObj = new google.maps.Polygon(opts);
+            vendorObj.simplicityGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+            output.geoJson.simplicityVendorObject = vendorObj;
+            vendorObjs.push(vendorObj);
           });
-          opts.paths = paths;
-          var vendorObj = new google.maps.Polygon(opts);
-          vendorObj.simplicityGeoJson = JSON.parse(JSON.stringify(output.geoJson));
-          output.geoJson.simplicityVendorObject = vendorObj;
-          vendorObjs.push(vendorObj);
         }());
         break;
       default:
@@ -133,6 +133,7 @@
               geoJson: geom
           };
           geometryToVendorType(output, geom, opts);
+          result.geoJson.geometries[idx] = output.geoJson;
         });
       }
       break;
