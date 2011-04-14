@@ -30,7 +30,47 @@ TestCase("simplicityGeoJsonToGoogle", {
         'id': 'identifier',
         'geometry': {'type': 'Point', 'coordinates': [100.0, 10.0] },
         'properties': {'name': 'named'},
-        'simplicityVendorObject': converted.vendorObjects[0]
+        'simplicityVendorObjects': converted.vendorObjects
+        },
+        converted.geoJson);
+  },
+
+  'testFeatureMultiPoint': function () {
+    var converted = $.simplicityGeoJsonToGoogle(
+        {'type': 'Feature',
+        'id': 'identifier',
+        'geometry': {'type': 'MultiPoint', 'coordinates': [[100.0, 10.0], [101.0, 11.0], [102.0, 12.0]] },
+        'properties': {'name': 'named'}
+    });
+    assertObject(converted);
+    assertArray(converted.vendorObjects);
+    assertObject(converted.geoJson);
+
+    assertEquals('should contain converted', 3, converted.vendorObjects.length);
+    $.each(converted.vendorObjects, $.proxy(function (idx, vendor) {
+    }, this));
+    $.each([[100.0, 10.0], [101.0, 11.0], [102.0, 12.0]], $.proxy(function (idx, coord) {
+      var vendor = converted.vendorObjects[idx];
+      assertInstanceOf('should be expected type ' + idx, google.maps.Marker, vendor);
+      assertEquals('should have lat', coord[1], vendor.getPosition().lat());
+      assertEquals('should have lon', coord[0], vendor.getPosition().lng());
+      assertObject(vendor.simplicityGeoJson);
+
+      assertEquals('idx ' + idx,
+          {'type': 'Feature',
+            'id': 'identifier',
+            'geometry': {'type': 'MultiPoint', 'coordinates': [[100.0, 10.0], [101.0, 11.0], [102.0, 12.0]] },
+            'properties': {'name': 'named'}
+          },
+          vendor.simplicityGeoJson);
+    }, this));
+
+    assertEquals(
+        {'type': 'Feature',
+        'id': 'identifier',
+        'geometry': {'type': 'MultiPoint', 'coordinates': [[100.0, 10.0], [101.0, 11.0], [102.0, 12.0]] },
+        'properties': {'name': 'named'},
+        'simplicityVendorObjects': converted.vendorObjects
         },
         converted.geoJson);
   },
@@ -91,13 +131,13 @@ TestCase("simplicityGeoJsonToGoogle", {
     }, this)());
 
     (function () {
-      var actual = converted.geoJson.features[0].simplicityVendorObject;
+      var actual = converted.geoJson.features[0].simplicityVendorObjects[0];
       assertInstanceOf('should be expected type', google.maps.Marker, actual);
       assertEquals('should have lat', 0.5, actual.getPosition().lat());
       assertEquals('should have lon', 102.0, actual.getPosition().lng());
     }());
     ($.proxy(function () {
-      var actual = converted.geoJson.features[1].simplicityVendorObject;
+      var actual = converted.geoJson.features[1].simplicityVendorObjects[0];
       var path = actual.getPath();
       this._assertVertices([[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]], path.getArray());
     }, this)());
@@ -119,7 +159,7 @@ TestCase("simplicityGeoJsonToGoogle", {
         'id': 'point1',
         'geometry': {'type': 'Point', 'coordinates': [102.0, 0.5]},
         'properties': {'name': 'point 1 name'},
-        simplicityVendorObject: converted.vendorObjects[0]
+        simplicityVendorObjects: [converted.vendorObjects[0]]
       },
       {
         'type': 'Feature',
@@ -132,7 +172,7 @@ TestCase("simplicityGeoJsonToGoogle", {
           'prop0': 'value0',
           'prop1': 0.0
         },
-        simplicityVendorObject: converted.vendorObjects[1]
+        simplicityVendorObjects: [converted.vendorObjects[1]]
       }]
     }, converted.geoJson);
   },
@@ -171,15 +211,14 @@ TestCase("simplicityGeoJsonToGoogle", {
       assertEquals('should have vertex', [105.0, 1.0], [path.getAt(3).lng(), path.getAt(3).lat()]);
     }());
 
-    console.log(JSON.stringify(converted.geoJson));
     (function () {
-      var actual = converted.geoJson.geometries[0].simplicityVendorObject;
+      var actual = converted.geoJson.geometries[0].simplicityVendorObjects[0];
       assertInstanceOf('should be expected type', google.maps.Marker, actual);
       assertEquals('should have lat', 0.5, actual.getPosition().lat());
       assertEquals('should have lon', 102.0, actual.getPosition().lng());
     }());
     (function () {
-      var actual = converted.geoJson.geometries[1].simplicityVendorObject;
+      var actual = converted.geoJson.geometries[1].simplicityVendorObjects[0];
       var path = actual.getPath();
       assertEquals('should vertices', 4, path.getLength());
       assertEquals('should have vertex', [102.0, 0.0], [path.getAt(0).lng(), path.getAt(0).lat()]);
@@ -204,12 +243,12 @@ TestCase("simplicityGeoJsonToGoogle", {
     assertEquals({
         type: 'GeometryCollection',
         geometries: [{'type': 'Point', 'coordinates': [102.0, 0.5],
-        simplicityVendorObject: converted.vendorObjects[0]
+        simplicityVendorObjects: [converted.vendorObjects[0]]
       },
       {
           'type': 'LineString',
           'coordinates': [[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]],
-        simplicityVendorObject: converted.vendorObjects[1]
+        simplicityVendorObjects: [converted.vendorObjects[1]]
       }]
     }, converted.geoJson);
   },
@@ -221,8 +260,9 @@ TestCase("simplicityGeoJsonToGoogle", {
     assertObject(converted);
     assertArray(converted.vendorObjects);
     assertObject(converted.geoJson);
-
-    assertTrue($.isArray(converted.vendorObjects));
+    assertArray(converted.geoJson.simplicityVendorObjects);
+    assertArray(converted.vendorObjects);
+    assertEquals(converted.geoJson.simplicityVendorObjects, converted.vendorObjects);
     assertEquals('should contain converted', 1, converted.vendorObjects.length);
 
     var actual = converted.vendorObjects[0];

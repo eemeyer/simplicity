@@ -7,24 +7,31 @@
       switch (geoJsonGeometry.type) {
       case 'Point':
         (function () {
+          var cleanGeoJson = JSON.parse(JSON.stringify(output.geoJson));
           opts.position = new google.maps.LatLng(geoJsonGeometry.coordinates[1], geoJsonGeometry.coordinates[0]);
           var vendorObj = new google.maps.Marker(opts);
-          vendorObj.simplicityGeoJson = JSON.parse(JSON.stringify(output.geoJson));
-          output.geoJson.simplicityVendorObject = vendorObj;
+          vendorObj.simplicityGeoJson = cleanGeoJson;
+          output.geoJson.simplicityVendorObjects = [vendorObj];
           vendorObjs.push(vendorObj);
         }());
         break;
       case 'MultiPoint':
-        $.each(geoJsonGeometry.coordinates, function (idx, coord) {
-          opts.position = new google.maps.LatLng(coord[1], coord[0]);
-          var vendorObj = new google.maps.Marker(opts);
-          vendorObj.simplicityGeoJson = JSON.parse(JSON.stringify(output.geoJson));
-          output.geoJson.simplicityVendorObject = vendorObj;
-          vendorObjs.push(vendorObj);
-        });
+        (function () {
+          var cleanGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          output.geoJson.simplicityVendorObjects = [];
+          $.each(geoJsonGeometry.coordinates, function (idx, coord) {
+            opts.position = new google.maps.LatLng(coord[1], coord[0]);
+            var vendorObj = new google.maps.Marker(opts);
+            vendorObj.simplicityGeoJson = cleanGeoJson;
+            output.geoJson.simplicityVendorObjects.push(vendorObj);
+            vendorObjs.push(vendorObj);
+          });
+        }());
         break;
       case 'LineString':
         (function () {
+          var cleanGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          output.geoJson.simplicityVendorObjects = [];
           var path = [];
           $.each(geoJsonGeometry.coordinates, function (idx, coord) {
             var ll = new google.maps.LatLng(coord[1], coord[0]);
@@ -32,12 +39,14 @@
           });
           opts.path = path;
           var vendorObj = new google.maps.Polyline(opts);
-          vendorObj.simplicityGeoJson = JSON.parse(JSON.stringify(output.geoJson));
-          output.geoJson.simplicityVendorObject = vendorObj;
+          vendorObj.simplicityGeoJson = cleanGeoJson;
+          output.geoJson.simplicityVendorObjects.push(vendorObj);
           vendorObjs.push(vendorObj);
         }());
         break;
       case 'MultiLineString':
+        var cleanGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+        output.geoJson.simplicityVendorObjects = [];
         $.each(geoJsonGeometry.coordinates, function (idx, coords) {
           var path = [];
           $.each(coords, function (idx2, coord) {
@@ -46,13 +55,15 @@
           });
           opts.path = path;
           var vendorObj = new google.maps.Polyline(opts);
-          vendorObj.simplicityGeoJson = JSON.parse(JSON.stringify(output.geoJson));
-          output.geoJson.simplicityVendorObject = vendorObj;
+          vendorObj.simplicityGeoJson = cleanGeoJson;
+          output.geoJson.simplicityVendorObjects.push(vendorObj);
           vendorObjs.push(vendorObj);
         });
         break;
       case 'Polygon':
         (function () {
+          var cleanGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          output.geoJson.simplicityVendorObjects = [];
           var paths = [];
           $.each(geoJsonGeometry.coordinates, function (idx, coords) {
             var path = [];
@@ -64,13 +75,15 @@
           });
           opts.paths = paths;
           var vendorObj = new google.maps.Polygon(opts);
-          vendorObj.simplicityGeoJson = JSON.parse(JSON.stringify(output.geoJson));
-          output.geoJson.simplicityVendorObject = vendorObj;
+          vendorObj.simplicityGeoJson = cleanGeoJson;
+          output.geoJson.simplicityVendorObjects.push(vendorObj);
           vendorObjs.push(vendorObj);
         }());
         break;
       case 'MultiPolygon':
         (function () {
+          var cleanGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          output.geoJson.simplicityVendorObjects = [];
           $.each(geoJsonGeometry.coordinates, function (idx, shape) {
             var paths = [];
             $.each(shape, function (idx2, coords) {
@@ -83,8 +96,8 @@
             });
             opts.paths = paths;
             var vendorObj = new google.maps.Polygon(opts);
-            vendorObj.simplicityGeoJson = JSON.parse(JSON.stringify(output.geoJson));
-            output.geoJson.simplicityVendorObject = vendorObj;
+            vendorObj.simplicityGeoJson = cleanGeoJson;
+            output.geoJson.simplicityVendorObjects.push(vendorObj);
             vendorObjs.push(vendorObj);
           });
         }());
