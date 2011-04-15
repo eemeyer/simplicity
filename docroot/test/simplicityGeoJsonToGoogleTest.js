@@ -282,9 +282,13 @@ TestCase("simplicityGeoJsonToGoogle", {
 
   _assertVertices : function (expectedCoordinates, actualPathArray) {
     assertEquals('should have vertices', expectedCoordinates.length, actualPathArray.length);
-    $.each(expectedCoordinates, function (idx, expected) {
-      assertEquals('should have vertex ' + idx, expected, [actualPathArray[idx].lng(), actualPathArray[idx].lat()]);
-    });
+    $.each(expectedCoordinates, $.proxy(function (idx, expected) {
+      this._assertLatLng('should have vertex ' + idx, expected, actualPathArray[idx]);
+    }, this));
+  },
+
+  _assertLatLng: function (message, expectedCoord, actualLatLng) {
+    assertEquals(message, expectedCoord, [actualLatLng.lng(), actualLatLng.lat()]);
   },
 
   _convert: function (geoJson) {
