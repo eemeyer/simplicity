@@ -40,8 +40,6 @@ TestCase('simplicityGeoJsonToGoogle', {
     });
 
     assertEquals('should contain converted', 3, converted.vendorObjects.length);
-    $.each(converted.vendorObjects, $.proxy(function (idx, vendor) {
-    }, this));
     $.each([[100.0, 10.0], [101.0, 11.0], [102.0, 12.0]], $.proxy(function (idx, coord) {
       var vendor = converted.vendorObjects[idx];
       assertInstanceOf('should be expected type ' + idx, google.maps.Marker, vendor);
@@ -119,8 +117,8 @@ TestCase('simplicityGeoJsonToGoogle', {
     $.each([[[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]], [[103.0, 2.0], [102.0, 1.0]]], $.proxy(function (idx, coords) {
       var vendor = converted.vendorObjects[idx];
       assertInstanceOf('should be expected type', google.maps.Polyline, vendor);
-      $.each(coords, $.proxy(function (idx, coord) {
-        this._assertLatLng(idx, coord, vendor.getPath().getAt(idx));
+      $.each(coords, $.proxy(function (idx2, coord) {
+        this._assertLatLng(idx + ':' + idx2, coord, vendor.getPath().getAt(idx2));
       }, this));
     }, this));
     assertEquals({
