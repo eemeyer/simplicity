@@ -114,8 +114,8 @@
     };
 
     var result = {
-        vendorObjects: [],
-        geoJson: JSON.parse(JSON.stringify(geoJson))
+      vendorObjects: [],
+      geoJson: JSON.parse(JSON.stringify(geoJson))
     };
 
     var opts = options || {};
@@ -127,8 +127,8 @@
       } else {
         $.each(geoJson.features, function (idx, feature) {
           var output = {
-              vendorObjects: result.vendorObjects,
-              geoJson: feature
+            vendorObjects: result.vendorObjects,
+            geoJson: feature
           };
           geometryToVendorType(output, feature.geometry, opts);
           result.geoJson.features[idx] = output.geoJson;
@@ -143,8 +143,8 @@
       } else {
         $.each(geoJson.geometries, function (idx, geom) {
           var output = {
-              vendorObjects: result.vendorObjects,
-              geoJson: geom
+            vendorObjects: result.vendorObjects,
+            geoJson: geom
           };
           geometryToVendorType(output, geom, opts);
           result.geoJson.geometries[idx] = output.geoJson;
