@@ -138,6 +138,41 @@ TestCase("simplicityGeoJsonToGoogle", {
     }, converted.geoJson);
   },
 
+  'testFeaturePolygon': function () {
+    var converted = this._convert({
+      'type': 'Feature',
+      'id': 'linestr1',
+      'geometry': {
+        "type": "Polygon",
+        "coordinates": [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]]
+      },
+      'properties': {
+        'prop0': 'value0',
+        'prop1': 0.0
+      }
+    });
+    assertEquals('should contain converted', 1, converted.vendorObjects.length);
+
+    var actual = converted.vendorObjects[0];
+    assertEquals(1, actual.getPaths().getLength());
+    var path = actual.getPath();
+    this._assertVertices([[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]], path.getArray());
+
+    assertEquals({
+      'type': 'Feature',
+      'id': 'linestr1',
+      'geometry': {
+        "type": "Polygon",
+        "coordinates": [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]]
+      },
+      'properties': {
+        'prop0': 'value0',
+        'prop1': 0.0
+      },
+      simplicityVendorObjects: converted.vendorObjects
+    }, converted.geoJson);
+  },
+
   'testInvalidFeature': function () {
     var converted = this._convert({
       'type': 'Feature',
