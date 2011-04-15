@@ -81,6 +81,25 @@ TestCase("simplicityGeoJsonToGoogle", {
         'prop1': 0.0
       }
     });
+    assertEquals(1, converted.vendorObjects.length);
+    var vendor = converted.vendorObjects[0];
+    assertInstanceOf('should be expected type', google.maps.Polyline, vendor);
+    $.each([[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]], $.proxy(function (idx, coord) {
+      this._assertLatLng(idx, coord, vendor.getPath().getAt(idx));
+    }, this));
+    assertEquals({
+      'type': 'Feature',
+      'id': 'linestr1',
+      'geometry': {
+        'type': 'LineString',
+        'coordinates': [[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]]
+      },
+      'properties': {
+        'prop0': 'value0',
+        'prop1': 0.0
+      },
+      simplicityVendorObjects: converted.vendorObjects
+    }, converted.geoJson);
   },
 
   'testInvalidFeature': function () {
