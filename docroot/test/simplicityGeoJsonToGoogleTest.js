@@ -102,6 +102,42 @@ TestCase("simplicityGeoJsonToGoogle", {
     }, converted.geoJson);
   },
 
+  'testFeatureMultiLineString': function () {
+    var converted = this._convert({
+      'type': 'Feature',
+      'id': 'linestr1',
+      'geometry': {
+        'type': 'MultiLineString',
+        'coordinates': [[[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]], [[103.0, 2.0], [102.0, 1.0]]]
+      },
+      'properties': {
+        'prop0': 'value0',
+        'prop1': 0.0
+      }
+    });
+    assertEquals(2, converted.vendorObjects.length);
+    $.each([[[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]], [[103.0, 2.0], [102.0, 1.0]]], $.proxy(function (idx, coords) {
+      var vendor = converted.vendorObjects[idx];
+      assertInstanceOf('should be expected type', google.maps.Polyline, vendor);
+      $.each(coords, $.proxy(function (idx, coord) {
+        this._assertLatLng(idx, coord, vendor.getPath().getAt(idx));
+      }, this));
+    }, this));
+    assertEquals({
+      'type': 'Feature',
+      'id': 'linestr1',
+      'geometry': {
+        'type': 'MultiLineString',
+        'coordinates': [[[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]], [[103.0, 2.0], [102.0, 1.0]]]
+      },
+      'properties': {
+        'prop0': 'value0',
+        'prop1': 0.0
+      },
+      simplicityVendorObjects: converted.vendorObjects
+    }, converted.geoJson);
+  },
+
   'testInvalidFeature': function () {
     var converted = this._convert({
       'type': 'Feature',
