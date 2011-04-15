@@ -173,6 +173,53 @@ TestCase('simplicityGeoJsonToGoogle', {
     }, converted.geoJson);
   },
 
+  'testFeatureMultiPolygon': function () {
+    var converted = this._convert({
+      'type': 'Feature',
+      'id': 'linestr1',
+      'geometry': {
+        'type': 'MultiPolygon',
+        'coordinates': [
+                        [[[102.0, 2.0], [103.0, 2.0], [103.0, 3.0], [102.0, 3.0], [102.0, 2.0]]],
+                        [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]],
+                         [[100.2, 0.2], [100.8, 0.2], [100.8, 0.8], [100.2, 0.8], [100.2, 0.2]]]
+                        ]
+      },
+      'properties': {
+        'prop0': 'value0',
+        'prop1': 0.0
+      }
+    });
+    assertEquals(2, converted.vendorObjects.length);
+    $.each([[[[102.0, 2.0], [103.0, 2.0], [103.0, 3.0], [102.0, 3.0], [102.0, 2.0]]],
+            [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]]], $.proxy(function (idx, shape) {
+     $.each(shape, $.proxy(function (idx2, coords) {
+       var vendor = converted.vendorObjects[idx];
+       assertInstanceOf('should be expected type', google.maps.Polygon, vendor);
+       $.each(coords, $.proxy(function (idx3, coord) {
+         this._assertLatLng(idx + ':' + idx2 + ':' + idx3, coord, vendor.getPath().getAt(idx3));
+       }, this));
+     }, this));
+    }, this));
+    assertEquals({
+      'type': 'Feature',
+      'id': 'linestr1',
+      'geometry': {
+        'type': 'MultiPolygon',
+        'coordinates': [
+                        [[[102.0, 2.0], [103.0, 2.0], [103.0, 3.0], [102.0, 3.0], [102.0, 2.0]]],
+                        [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]],
+                         [[100.2, 0.2], [100.8, 0.2], [100.8, 0.8], [100.2, 0.8], [100.2, 0.2]]]
+                        ]
+      },
+      'properties': {
+        'prop0': 'value0',
+        'prop1': 0.0
+      },
+      simplicityVendorObjects: converted.vendorObjects
+    }, converted.geoJson);
+  },
+
   'testInvalidFeature': function () {
     var converted = this._convert({
       'type': 'Feature',
