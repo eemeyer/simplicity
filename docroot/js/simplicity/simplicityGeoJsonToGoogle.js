@@ -123,7 +123,7 @@
     case 'FeatureCollection':
       if (!geoJson.features) {
         _error('Invalid GeoJSON object: FeatureCollection object missing "features" member.');
-        result.geoJson = {};
+        result.geoJson.simplicityVendorObjects = [];
       } else {
         $.each(geoJson.features, function (idx, feature) {
           var output = {
@@ -133,12 +133,13 @@
           geometryToVendorType(output, feature.geometry, opts);
           result.geoJson.features[idx] = output.geoJson;
         });
+        result.geoJson.simplicityVendorObjects = $.merge([], result.vendorObjects);
       }
       break;
     case 'GeometryCollection':
       if (!geoJson.geometries) {
         _error('Invalid GeoJSON object: GeometryCollection object missing "geometries" member.');
-        result.geoJson = {};
+        result.geoJson.simplicityVendorObjects = [];
       } else {
         $.each(geoJson.geometries, function (idx, geom) {
           var output = {
@@ -148,12 +149,13 @@
           geometryToVendorType(output, geom, opts);
           result.geoJson.geometries[idx] = output.geoJson;
         });
+        result.geoJson.simplicityVendorObjects = $.merge([], result.vendorObjects);
       }
       break;
     case 'Feature':
       if (!(geoJson.properties && geoJson.geometry)) {
         _error('Invalid GeoJSON object: Feature object missing "properties" or "geometry" member.');
-        result.geoJson = {};
+        result.geoJson.simplicityVendorObjects = [];
       } else {
         geometryToVendorType(result, geoJson.geometry, opts);
       }
@@ -168,12 +170,12 @@
         geometryToVendorType(result, geoJson, opts);
       } else {
         _error('Invalid GeoJSON object: Geometry object missing "coordinates" member.');
-        result.geoJson = {};
+        result.geoJson.simplicityVendorObjects = [];
       }
       break;
     default:
       _error('Invalid GeoJSON object: GeoJSON object must be one of Point, LineString, Polygon, MultiPolygon, Feature, FeatureCollection or GeometryCollection.');
-      result.geoJson = {};
+      result.geoJson.simplicityVendorObjects = [];
     }
     return result;
   };
