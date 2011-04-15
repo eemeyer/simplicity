@@ -1,4 +1,4 @@
-TestCase("simplicityGeoJsonToGoogle", {
+TestCase('simplicityGeoJsonToGoogle', {
 
   'testFeaturePoint': function () {
     var converted = this._convert({
@@ -143,8 +143,8 @@ TestCase("simplicityGeoJsonToGoogle", {
       'type': 'Feature',
       'id': 'linestr1',
       'geometry': {
-        "type": "Polygon",
-        "coordinates": [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]]
+        'type': 'Polygon',
+        'coordinates': [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]]
       },
       'properties': {
         'prop0': 'value0',
@@ -162,8 +162,8 @@ TestCase("simplicityGeoJsonToGoogle", {
       'type': 'Feature',
       'id': 'linestr1',
       'geometry': {
-        "type": "Polygon",
-        "coordinates": [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]]
+        'type': 'Polygon',
+        'coordinates': [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]]
       },
       'properties': {
         'prop0': 'value0',
@@ -340,8 +340,8 @@ TestCase("simplicityGeoJsonToGoogle", {
   },
 
   'testPolygon': function () {
-    var converted = this._convert({ "type": "Polygon",
-      "coordinates": [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]]
+    var converted = this._convert({ 'type': 'Polygon',
+      'coordinates': [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]]
     });
     assertEquals('should contain converted', 1, converted.vendorObjects.length);
 
@@ -353,8 +353,8 @@ TestCase("simplicityGeoJsonToGoogle", {
 
   'testMultiPolygon': function () {
     var converted = this._convert({
-      "type": "MultiPolygon",
-      "coordinates": [
+      'type': 'MultiPolygon',
+      'coordinates': [
                       [[[102.0, 2.0], [103.0, 2.0], [103.0, 3.0], [102.0, 3.0], [102.0, 2.0]]],
                       [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]],
                        [[100.2, 0.2], [100.8, 0.2], [100.8, 0.8], [100.2, 0.8], [100.2, 0.2]]]
