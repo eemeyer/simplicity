@@ -135,6 +135,13 @@ groups:
     sourceFileNames:
       - js/lib/jquery.ui.autocomplete.html-2010-10-25.js
 
+  - groupName: test_cases
+    mediaType: js
+    outputFileName: /dev/null
+    outputFileNameMinified: /dev/null
+    sourceFileNames:
+      - test/simplicityGeoJsonToGoogleTest.js
+
 jslintOptions:
     - passfail
     - indent=2
