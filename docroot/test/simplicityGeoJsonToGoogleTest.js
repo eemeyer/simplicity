@@ -2,6 +2,43 @@
   var testCase = TestCase;
   testCase('simplicityGeoJsonToGoogle', {
 
+    'testInvalidFeature': function () {
+      var converted = this._convert({
+        'type': 'Feature',
+        'id': 'identifier',
+        'properties': {'name': 'named'}
+      });
+      assertEquals('should contain converted', [], converted.vendorObjects);
+      assertEquals([], converted.geoJson.simplicityVendorObjects);
+    },
+
+    'testInvalidPointCoordsEmpty': function () {
+      var converted = this._convert({
+        type: 'Point',
+        coodinates: []
+      });
+      assertEquals('should contain converted', [], converted.vendorObjects);
+      assertEquals([], converted.geoJson.simplicityVendorObjects);
+    },
+
+    'testInvalidPointNoCoords': function () {
+      var converted = this._convert({
+        type: 'Point'
+      });
+      assertEquals('should contain converted', [], converted.vendorObjects);
+      assertEquals([], converted.geoJson.simplicityVendorObjects);
+    },
+
+    'testInvalidType': function () {
+      var converted = this._convert({
+        'type': 'invalid',
+        'id': 'identifier',
+        'properties': {'name': 'named'}
+      });
+      assertEquals('should contain converted', [], converted.vendorObjects);
+      assertEquals([], converted.geoJson.simplicityVendorObjects);
+    },
+
     'testFeaturePoint': function () {
       var converted = this._convert({
         'type': 'Feature',
@@ -29,6 +66,20 @@
         'properties': {'name': 'named'},
         'simplicityVendorObjects': converted.vendorObjects
       }, converted.geoJson);
+    },
+
+    'testPoint': function () {
+      var converted = this._convert({'type': 'Point', 'coordinates': [100.0, 10.0]});
+      assertEquals('should contain converted', 1, converted.vendorObjects.length);
+      assertInstanceOf('should be expected type', google.maps.Marker, converted.vendorObjects[0]);
+      assertEquals('should have lat', 10.0, converted.vendorObjects[0].getPosition().lat());
+      assertEquals('should have lon', 100.0, converted.vendorObjects[0].getPosition().lng());
+      assertObject(converted.vendorObjects[0].simplicityGeoJson);
+      assertEquals({'type': 'Point', 'coordinates': [100.0, 10.0]},
+        converted.vendorObjects[0].simplicityGeoJson);
+      assertEquals(
+        {'type': 'Point', 'coordinates': [100.0, 10.0], 'simplicityVendorObjects': converted.vendorObjects},
+        converted.geoJson);
     },
 
     'testFeatureMultiPoint': function () {
@@ -66,6 +117,28 @@
           converted.geoJson);
     },
 
+    'testMultiPoint': function () {
+      var converted = this._convert({'type': 'MultiPoint', 'coordinates': [[100.0, 10.0], [101.0, 11.0], [102.0, 12.0]]});
+
+      assertEquals('should contain converted', 3, converted.vendorObjects.length);
+      $.each([[100.0, 10.0], [101.0, 11.0], [102.0, 12.0]], $.proxy(function (idx, coord) {
+        var vendor = converted.vendorObjects[idx];
+        assertInstanceOf('should be expected type ' + idx, google.maps.Marker, vendor);
+        assertEquals('should have lat', coord[1], vendor.getPosition().lat());
+        assertEquals('should have lon', coord[0], vendor.getPosition().lng());
+        assertObject(vendor.simplicityGeoJson);
+
+        assertEquals('idx ' + idx, {'type': 'MultiPoint', 'coordinates': [[100.0, 10.0], [101.0, 11.0], [102.0, 12.0]]},
+          vendor.simplicityGeoJson);
+      }, this));
+
+      assertEquals({
+        'type': 'MultiPoint',
+        'coordinates': [[100.0, 10.0], [101.0, 11.0], [102.0, 12.0]],
+        'simplicityVendorObjects': converted.vendorObjects
+      }, converted.geoJson);
+    },
+
     'testFeatureLineString': function () {
       var converted = this._convert({
         'type': 'Feature',
@@ -96,6 +169,24 @@
           'prop0': 'value0',
           'prop1': 0.0
         },
+        simplicityVendorObjects: converted.vendorObjects
+      }, converted.geoJson);
+    },
+
+    'testLineString': function () {
+      var converted = this._convert({
+        'type': 'LineString',
+        'coordinates': [[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]]
+      });
+      assertEquals(1, converted.vendorObjects.length);
+      var vendor = converted.vendorObjects[0];
+      assertInstanceOf('should be expected type', google.maps.Polyline, vendor);
+      $.each([[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]], $.proxy(function (idx, coord) {
+        this._assertLatLng(idx, coord, vendor.getPath().getAt(idx));
+      }, this));
+      assertEquals({
+        'type': 'LineString',
+        'coordinates': [[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]],
         simplicityVendorObjects: converted.vendorObjects
       }, converted.geoJson);
     },
@@ -136,6 +227,26 @@
       }, converted.geoJson);
     },
 
+    'testMultiLineString': function () {
+      var converted = this._convert({
+        'type': 'MultiLineString',
+        'coordinates': [[[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]], [[103.0, 2.0], [102.0, 1.0]]]
+      });
+      assertEquals(2, converted.vendorObjects.length);
+      $.each([[[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]], [[103.0, 2.0], [102.0, 1.0]]], $.proxy(function (idx, coords) {
+        var vendor = converted.vendorObjects[idx];
+        assertInstanceOf('should be expected type', google.maps.Polyline, vendor);
+        $.each(coords, $.proxy(function (idx2, coord) {
+          this._assertLatLng(idx + ':' + idx2, coord, vendor.getPath().getAt(idx2));
+        }, this));
+      }, this));
+      assertEquals({
+        'type': 'MultiLineString',
+        'coordinates': [[[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]], [[103.0, 2.0], [102.0, 1.0]]],
+        simplicityVendorObjects: converted.vendorObjects
+      }, converted.geoJson);
+    },
+
     'testFeaturePolygon': function () {
       var converted = this._convert({
         'type': 'Feature',
@@ -167,6 +278,25 @@
           'prop0': 'value0',
           'prop1': 0.0
         },
+        simplicityVendorObjects: converted.vendorObjects
+      }, converted.geoJson);
+    },
+
+    'testPolygon': function () {
+      var converted = this._convert({
+        'type': 'Polygon',
+        'coordinates': [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]]
+      });
+      assertEquals('should contain converted', 1, converted.vendorObjects.length);
+
+      var actual = converted.vendorObjects[0];
+      assertEquals(1, actual.getPaths().getLength());
+      var path = actual.getPath();
+      this._assertVertices([[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]], path.getArray());
+
+      assertEquals({
+        'type': 'Polygon',
+        'coordinates': [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]],
         simplicityVendorObjects: converted.vendorObjects
       }, converted.geoJson);
     },
@@ -218,14 +348,35 @@
       }, converted.geoJson);
     },
 
-    'testInvalidFeature': function () {
+    'testMultiPolygon': function () {
       var converted = this._convert({
-        'type': 'Feature',
-        'id': 'identifier',
-        'properties': {'name': 'named'}
+        'type': 'MultiPolygon',
+        'coordinates': [
+          [[[102.0, 2.0], [103.0, 2.0], [103.0, 3.0], [102.0, 3.0], [102.0, 2.0]]],
+          [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]],
+           [[100.2, 0.2], [100.8, 0.2], [100.8, 0.8], [100.2, 0.8], [100.2, 0.2]]]
+        ]
       });
-      assertEquals('should contain converted', [], converted.vendorObjects);
-      assertEquals([], converted.geoJson.simplicityVendorObjects);
+      assertEquals(2, converted.vendorObjects.length);
+      $.each([[[[102.0, 2.0], [103.0, 2.0], [103.0, 3.0], [102.0, 3.0], [102.0, 2.0]]],
+              [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]]], $.proxy(function (idx, shape) {
+        $.each(shape, $.proxy(function (idx2, coords) {
+          var vendor = converted.vendorObjects[idx];
+          assertInstanceOf('should be expected type', google.maps.Polygon, vendor);
+          $.each(coords, $.proxy(function (idx3, coord) {
+            this._assertLatLng(idx + ':' + idx2 + ':' + idx3, coord, vendor.getPath().getAt(idx3));
+          }, this));
+        }, this));
+      }, this));
+      assertEquals({
+        'type': 'MultiPolygon',
+        'coordinates': [
+          [[[102.0, 2.0], [103.0, 2.0], [103.0, 3.0], [102.0, 3.0], [102.0, 2.0]]],
+          [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]],
+           [[100.2, 0.2], [100.8, 0.2], [100.8, 0.8], [100.2, 0.8], [100.2, 0.2]]]
+        ],
+        simplicityVendorObjects: converted.vendorObjects
+      }, converted.geoJson);
     },
 
     'testFeatureCollection': function () {
@@ -383,37 +534,6 @@
           }],
           simplicityVendorObjects: converted.vendorObjects
         }, converted.geoJson);
-    },
-
-    'testPolygon': function () {
-      var converted = this._convert({ 'type': 'Polygon',
-        'coordinates': [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]]
-      });
-      assertEquals('should contain converted', 1, converted.vendorObjects.length);
-
-      var actual = converted.vendorObjects[0];
-      assertEquals(1, actual.getPaths().getLength());
-      var path = actual.getPath();
-      this._assertVertices([[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]], path.getArray());
-    },
-
-    'testMultiPolygon': function () {
-      var converted = this._convert({
-        'type': 'MultiPolygon',
-        'coordinates': [
-          [[[102.0, 2.0], [103.0, 2.0], [103.0, 3.0], [102.0, 3.0], [102.0, 2.0]]],
-          [[[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]],
-           [[100.2, 0.2], [100.8, 0.2], [100.8, 0.8], [100.2, 0.8], [100.2, 0.2]]]
-        ]
-      });
-      assertEquals('should contain converted', 2, converted.vendorObjects.length);
-      this._assertVertices([[102.0, 2.0], [103.0, 2.0], [103.0, 3.0], [102.0, 3.0], [102.0, 2.0]],
-          converted.vendorObjects[0].getPaths().getAt(0).getArray());
-      this._assertVertices([[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]],
-          converted.vendorObjects[1].getPaths().getAt(0).getArray());
-
-      // NOTE: there is no good place to attache the simplicityVendorObject to a MultiPolygon, since the coordinates[][][][] holds
-      // a collection of polygons. Right now simplicityVendorObject just points to the last poly. This could be turned into an array.
     },
 
     _assertVertices : function (expectedCoordinates, actualPathArray) {
