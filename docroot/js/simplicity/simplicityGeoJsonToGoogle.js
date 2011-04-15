@@ -109,7 +109,7 @@
 
     var _error = function (message) {
       if (debug) {
-        cosole.warn(message);
+        console.warn(message);
       }
     };
 
