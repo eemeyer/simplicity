@@ -48,8 +48,8 @@
       });
       assertEquals('should contain converted', 1, converted.vendorObjects.length);
       assertInstanceOf('should be expected type', Microsoft.Maps.Pushpin, converted.vendorObjects[0]);
-      assertEquals('should have lat', 10.0, converted.vendorObjects[0].getPosition().latitude);
-      assertEquals('should have lon', 100.0, converted.vendorObjects[0].getPosition().longitude);
+      assertEquals('should have lat', 10.0, converted.vendorObjects[0].getLocation().latitude);
+      assertEquals('should have lon', 100.0, converted.vendorObjects[0].getLocation().longitude);
       assertObject(converted.vendorObjects[0].simplicityGeoJson);
 
       assertEquals({
@@ -72,8 +72,8 @@
       var converted = this._convert({'type': 'Point', 'coordinates': [100.0, 10.0]});
       assertEquals('should contain converted', 1, converted.vendorObjects.length);
       assertInstanceOf('should be expected type', Microsoft.Maps.Pushpin, converted.vendorObjects[0]);
-      assertEquals('should have lat', 10.0, converted.vendorObjects[0].getPosition().latitude);
-      assertEquals('should have lon', 100.0, converted.vendorObjects[0].getPosition().longitude);
+      assertEquals('should have lat', 10.0, converted.vendorObjects[0].getLocation().latitude);
+      assertEquals('should have lon', 100.0, converted.vendorObjects[0].getLocation().longitude);
       assertObject(converted.vendorObjects[0].simplicityGeoJson);
       assertEquals({'type': 'Point', 'coordinates': [100.0, 10.0]},
         converted.vendorObjects[0].simplicityGeoJson);
@@ -94,8 +94,8 @@
       $.each([[100.0, 10.0], [101.0, 11.0], [102.0, 12.0]], $.proxy(function (idx, coord) {
         var vendor = converted.vendorObjects[idx];
         assertInstanceOf('should be expected type ' + idx, Microsoft.Maps.Pushpin, vendor);
-        assertEquals('should have lat', coord[1], vendor.getPosition().latitude);
-        assertEquals('should have lon', coord[0], vendor.getPosition().longitude);
+        assertEquals('should have lat', coord[1], vendor.getLocation().latitude);
+        assertEquals('should have lon', coord[0], vendor.getLocation().longitude);
         assertObject(vendor.simplicityGeoJson);
 
         assertEquals('idx ' + idx,
@@ -124,8 +124,8 @@
       $.each([[100.0, 10.0], [101.0, 11.0], [102.0, 12.0]], $.proxy(function (idx, coord) {
         var vendor = converted.vendorObjects[idx];
         assertInstanceOf('should be expected type ' + idx, Microsoft.Maps.Pushpin, vendor);
-        assertEquals('should have lat', coord[1], vendor.getPosition().latitude);
-        assertEquals('should have lon', coord[0], vendor.getPosition().longitude);
+        assertEquals('should have lat', coord[1], vendor.getLocation().latitude);
+        assertEquals('should have lon', coord[0], vendor.getLocation().longitude);
         assertObject(vendor.simplicityGeoJson);
 
         assertEquals('idx ' + idx, {'type': 'MultiPoint', 'coordinates': [[100.0, 10.0], [101.0, 11.0], [102.0, 12.0]]},
@@ -410,7 +410,7 @@
       ($.proxy(function () {
         var actual = converted.vendorObjects[1];
         var path = actual.getLocations();
-        this._assertVertices([[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]], path.getArray());
+        this._assertVertices([[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]], path);
       }, this)());
 
       (function () {
@@ -422,7 +422,7 @@
       ($.proxy(function () {
         var actual = converted.geoJson.features[1].simplicityVendorObjects[0];
         var path = actual.getLocations();
-        this._assertVertices([[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]], path.getArray());
+        this._assertVertices([[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]], path);
       }, this)());
 
       assertEquals({
