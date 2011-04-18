@@ -141,7 +141,7 @@
           if ($.isArray(ui.markers)) {
             $.each(ui.markers, function (idx, marker) {
               if ($.isFunction(marker.getPaths)) {
-                marker.setOptions({fillColor: '#00F', fillOpacity: 0.3, strokeWeight: 1});
+                marker.setOptions({strokeColor: '#0000FF', fillColor: '#0000FF', strokeWeight: 1,  fillOpacity: 0.3});
               } else if ($.isFunction(marker.setIcon)) {
                 marker.setIcon('../tutorial/images/markers/google/marker-00f.png')
               }
