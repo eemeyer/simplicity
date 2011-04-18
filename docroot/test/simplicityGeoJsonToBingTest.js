@@ -546,7 +546,7 @@
     },
 
     _convert: function (geoJson) {
-      var converted = $.simplicityGeoJsonToBing(geoJson, {}, true);
+      var converted = $.simplicityGeoJsonToBing(geoJson, true);
       assertObject(converted);
       assertArray(converted.vendorObjects);
       assertObject(converted.geoJson);
