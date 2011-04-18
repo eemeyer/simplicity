@@ -2,8 +2,7 @@
  * @name $.ui.simplicityGoogleMapResults
  * @namespace A Google map.
  * <p>
- * Google Map widget that creates the map and listens for <code>simplicityResultSet</code> events
- * which it uses to add markers to the map for the search results.
+ * Widget that listens for <code>simplicityResultSet</code> events which it uses to add markers to the map for the search results.
  *
  * @example
  *   &lt;div id="map" style="width: 300px; height: 300px;">&lt;/div>

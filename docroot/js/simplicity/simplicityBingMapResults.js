@@ -2,8 +2,7 @@
  * @name $.ui.simplicityBingMapResults
  * @namespace A Bing map.
  * <p>
- * Bing Map widget that creates the map and listens for <code>simplicityResultSet</code> events
- * which it uses to add markers to the map for the search results.
+ * Widget that listens for <code>simplicityResultSet</code> events which it uses to add markers to the map for the search results.
  *
  * @example
  *   &lt;div id="map" style="position: absolute; width: 300px; height: 300px;">&lt;/div>
