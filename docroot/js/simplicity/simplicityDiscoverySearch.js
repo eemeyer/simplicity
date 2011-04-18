@@ -362,7 +362,6 @@
     destroy: function () {
       this.element.removeClass('ui-simplicity-discovery-search');
       $(this.options.stateElement).unbind('simplicityStateChange', this._stateChangeHandler);
-      this.element.unbind('change', this._changeHandler);
       $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
