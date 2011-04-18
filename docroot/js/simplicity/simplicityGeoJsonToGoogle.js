@@ -7,7 +7,7 @@
       switch (geoJsonGeometry.type) {
       case 'Point':
         (function () {
-          var cleanGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          var cleanGeoJson = $.extend(true, {}, output.geoJson);
           opts.position = new google.maps.LatLng(geoJsonGeometry.coordinates[1], geoJsonGeometry.coordinates[0]);
           var vendorObj = new google.maps.Marker(opts);
           vendorObj.simplicityGeoJson = cleanGeoJson;
@@ -17,7 +17,7 @@
         break;
       case 'MultiPoint':
         (function () {
-          var cleanGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          var cleanGeoJson = $.extend(true, {}, output.geoJson);
           output.geoJson.simplicityVendorObjects = [];
           $.each(geoJsonGeometry.coordinates, function (idx, coord) {
             opts.position = new google.maps.LatLng(coord[1], coord[0]);
@@ -30,7 +30,7 @@
         break;
       case 'LineString':
         (function () {
-          var cleanGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          var cleanGeoJson = $.extend(true, {}, output.geoJson);
           output.geoJson.simplicityVendorObjects = [];
           var path = [];
           $.each(geoJsonGeometry.coordinates, function (idx, coord) {
@@ -45,7 +45,7 @@
         }());
         break;
       case 'MultiLineString':
-        var cleanGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+        var cleanGeoJson = $.extend(true, {}, output.geoJson);
         output.geoJson.simplicityVendorObjects = [];
         $.each(geoJsonGeometry.coordinates, function (idx, coords) {
           var path = [];
@@ -62,7 +62,7 @@
         break;
       case 'Polygon':
         (function () {
-          var cleanGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          var cleanGeoJson = $.extend(true, {}, output.geoJson);
           output.geoJson.simplicityVendorObjects = [];
           var paths = [];
           $.each(geoJsonGeometry.coordinates, function (idx, coords) {
@@ -82,7 +82,7 @@
         break;
       case 'MultiPolygon':
         (function () {
-          var cleanGeoJson = JSON.parse(JSON.stringify(output.geoJson));
+          var cleanGeoJson = $.extend(true, {}, output.geoJson);
           output.geoJson.simplicityVendorObjects = [];
           $.each(geoJsonGeometry.coordinates, function (idx, shape) {
             var paths = [];
