@@ -149,12 +149,13 @@
         $.each(ui._discovery.response.explanation, $.proxy(function (idx, exp) {
           if (exp.criterionValue && $.isArray(exp.criterionValue.placemarks)) {
             $.each(exp.criterionValue.placemarks, $.proxy(function (idx, pm) {
-              var markers = $.simplicityGeoJsonToYahoo(pm);
-              if (markers.length !== 0 && markers[0].type !== 'Error') {
+              var converted = $.simplicityGeoJsonToBing(pm);
+              var markers = converted.vendorObjects;
+              if (markers.length !== 0) {
                 var markerEvent = {
                   map: this._map,
                   markers: markers,
-                  geoJson: pm
+                  geoJson: converted.geoJson
                 };
                 this._trigger('placemark', {}, markerEvent);
                 markers = markerEvent.markers;
