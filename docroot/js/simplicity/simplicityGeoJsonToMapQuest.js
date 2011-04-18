@@ -13,7 +13,7 @@
       var vendorObj = undefined;
       if (path.getSize() !== 0) {
         vendorObj = new MQA.LineOverlay();
-        vendorObj.setValue('shapePoints', path);f
+        vendorObj.setValue('shapePoints', path);
       }
       return vendorObj;
     },
