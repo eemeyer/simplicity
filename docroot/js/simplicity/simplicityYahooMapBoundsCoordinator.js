@@ -91,7 +91,7 @@
      * object with a locations member. They can update, replace or delete that variable. ui.locations is defined and non-empty
      * after the event is handled, then this component will update the bing map to fit the locations.
      *
-     * @name $.ui.simplicityGoogleMapBoundsCoordinator.updateBounds
+     * @name $.ui.simplicityYahooMapBoundsCoordinator.updateBounds
      * @function
      */
     updateBounds: function () {
