@@ -1,8 +1,5 @@
 (function ($) {
-  var simplicityGeoJsonToGoogleFactory = {
-    newLocation: function (lonlat) {
-      return new google.maps.LatLng(lonlat[1], lonlat[0]);
-    },
+  var shapeFactory = {
     newPoint: function (lonlat) {
       var opts = {};
       opts.position = new google.maps.LatLng(lonlat[1], lonlat[0]);
@@ -31,6 +28,6 @@
   };
 
   $.simplicityGeoJsonToGoogle = function (geoJson, debug) {
-    return $.simplicityGeoJsonToVendor(geoJson, simplicityGeoJsonToGoogleFactory, debug);
+    return $.simplicityGeoJsonToVendor(geoJson, shapeFactory, debug);
   };
 }(jQuery));

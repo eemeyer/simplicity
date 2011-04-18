@@ -10,9 +10,11 @@
         (function () {
           var cleanGeoJson = $.extend(true, {}, output.geoJson);
           var vendorObj = factory.newPoint(geoJsonGeometry.coordinates);
-          vendorObj.simplicityGeoJson = cleanGeoJson;
-          output.geoJson.simplicityVendorObjects = [vendorObj];
-          vendorObjs.push(vendorObj);
+          if (typeof vendorObj !== 'undefined') {
+            vendorObj.simplicityGeoJson = cleanGeoJson;
+            output.geoJson.simplicityVendorObjects = [vendorObj];
+            vendorObjs.push(vendorObj);
+          }
         }());
         break;
       case 'MultiPoint':
@@ -21,9 +23,11 @@
           output.geoJson.simplicityVendorObjects = [];
           $.each(geoJsonGeometry.coordinates, function (idx, coord) {
             var vendorObj = factory.newPoint(coord);
-            vendorObj.simplicityGeoJson = cleanGeoJson;
-            output.geoJson.simplicityVendorObjects.push(vendorObj);
-            vendorObjs.push(vendorObj);
+            if (typeof vendorObj !== 'undefined') {
+              vendorObj.simplicityGeoJson = cleanGeoJson;
+              output.geoJson.simplicityVendorObjects.push(vendorObj);
+              vendorObjs.push(vendorObj);
+            }
           });
         }());
         break;
@@ -32,9 +36,11 @@
           var cleanGeoJson = $.extend(true, {}, output.geoJson);
           output.geoJson.simplicityVendorObjects = [];
           var vendorObj = factory.newLineString(geoJsonGeometry.coordinates);
-          vendorObj.simplicityGeoJson = cleanGeoJson;
-          output.geoJson.simplicityVendorObjects.push(vendorObj);
-          vendorObjs.push(vendorObj);
+          if (typeof vendorObj !== 'undefined') {
+            vendorObj.simplicityGeoJson = cleanGeoJson;
+            output.geoJson.simplicityVendorObjects.push(vendorObj);
+            vendorObjs.push(vendorObj);
+          }
         }());
         break;
       case 'MultiLineString':
@@ -42,9 +48,11 @@
         output.geoJson.simplicityVendorObjects = [];
         $.each(geoJsonGeometry.coordinates, function (idx, coords) {
           var vendorObj = factory.newLineString(coords);
-          vendorObj.simplicityGeoJson = cleanGeoJson;
-          output.geoJson.simplicityVendorObjects.push(vendorObj);
-          vendorObjs.push(vendorObj);
+          if (typeof vendorObj !== 'undefined') {
+            vendorObj.simplicityGeoJson = cleanGeoJson;
+            output.geoJson.simplicityVendorObjects.push(vendorObj);
+            vendorObjs.push(vendorObj);
+          }
         });
         break;
       case 'Polygon':
@@ -52,9 +60,11 @@
           var cleanGeoJson = $.extend(true, {}, output.geoJson);
           output.geoJson.simplicityVendorObjects = [];
           var vendorObj = factory.newPolygon(geoJsonGeometry.coordinates);
-          vendorObj.simplicityGeoJson = cleanGeoJson;
-          output.geoJson.simplicityVendorObjects.push(vendorObj);
-          vendorObjs.push(vendorObj);
+          if (typeof vendorObj !== 'undefined') {
+            vendorObj.simplicityGeoJson = cleanGeoJson;
+            output.geoJson.simplicityVendorObjects.push(vendorObj);
+            vendorObjs.push(vendorObj);
+          }
         }());
         break;
       case 'MultiPolygon':
@@ -63,9 +73,11 @@
           output.geoJson.simplicityVendorObjects = [];
           $.each(geoJsonGeometry.coordinates, function (idx, shape) {
             var vendorObj = factory.newPolygon(shape);
-            vendorObj.simplicityGeoJson = cleanGeoJson;
-            output.geoJson.simplicityVendorObjects.push(vendorObj);
-            vendorObjs.push(vendorObj);
+            if (typeof vendorObj !== 'undefined') {
+              vendorObj.simplicityGeoJson = cleanGeoJson;
+              output.geoJson.simplicityVendorObjects.push(vendorObj);
+              vendorObjs.push(vendorObj);
+            }
           });
         }());
         break;
