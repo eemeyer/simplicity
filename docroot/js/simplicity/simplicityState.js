@@ -153,7 +153,6 @@
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-state');
-      this.element.unbind('change', this._changeHandler);
       $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
