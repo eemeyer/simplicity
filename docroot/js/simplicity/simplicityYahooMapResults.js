@@ -2,8 +2,7 @@
  * @name $.ui.simplicityYahooMapResults
  * @namespace A Yahoo! map.
  * <p>
- * Yahho! Map widget that creates the map and listens for <code>simplicityResultSet</code> events
- * which it uses to add markers to the map for the search results.
+ * Widget that listens for <code>simplicityResultSet</code> events which it uses to add markers to the map for the search results.
  *
  * @example
  *   &lt;div id="map" style="width: 300px; height: 300px;">&lt;/div>
@@ -37,30 +36,11 @@
      *   <dd>
      *     Optional map instance, if not provided one will be created. Defaults to <code>''</code>.
      *   </dd>
-     *   <dt>fitOnResultSet<dt>
+     *   <dt>updateBounds<dt>
      *   <dd>
      *     When true the map is panned and zoomed to best fit the search
      *     results that are added as part of the <code>simplicityResultSet</code>
      *     event handler. Defaults to <code>true</code>.
-     *   </dd>
-     *   <dt>mapOptions</dt>
-     *   <dd>
-     *     Options used when creating the map. Defaults to <code>''</code> which is expanded at
-     *     runtime to
-     *     <pre>
-     *     {
-     *       center: new YGeoPoint(0, 0),
-     *       zoom: 16,
-     *       mapTypeId: YAHOO_MAP_REG
-     *     }
-     *     </pre>
-     *     Can be either an <code>Object</code> or a <code>function</code>.
-     *   </dd>
-     *   <dt>mapMoveEvents</dt>
-     *   <dd>
-     *     Provides an override of which vendor specific map events are used to determine
-     *     when the position of the map changes. Expects a comma separated list of event names.
-     *     Defaults to <code>'endPan,endAutoPan,changeZoom'</code>.
      *   </dd>
      * </dl>
      * @name $.ui.simplicityYahooMapResults.options
