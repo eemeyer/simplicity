@@ -548,7 +548,7 @@
     },
 
     _convert: function (geoJson) {
-      var converted = $.simplicityGeoJsonToGoogle(geoJson, {}, true);
+      var converted = $.simplicityGeoJsonToGoogle(geoJson, true);
       assertObject(converted);
       assertArray(converted.vendorObjects);
       assertObject(converted.geoJson);

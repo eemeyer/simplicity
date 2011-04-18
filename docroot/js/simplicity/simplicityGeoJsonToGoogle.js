@@ -1,13 +1,14 @@
 (function ($) {
   // Based on  GeoJSON to Google Maps library (git://github.com/JasonSanford/GeoJSON-to-Google-Maps.git) commit abbd27
-  $.simplicityGeoJsonToGoogle = function (geoJson, options, debug) {
+  $.simplicityGeoJsonToGoogle = function (geoJson, debug) {
 
-    var geometryToVendorType = function (output, geoJsonGeometry, opts) {
+    var geometryToVendorType = function (output, geoJsonGeometry) {
       var vendorObjs = output.vendorObjects;
       switch (geoJsonGeometry.type) {
       case 'Point':
         (function () {
           var cleanGeoJson = $.extend(true, {}, output.geoJson);
+          var opts = {};
           opts.position = new google.maps.LatLng(geoJsonGeometry.coordinates[1], geoJsonGeometry.coordinates[0]);
           var vendorObj = new google.maps.Marker(opts);
           vendorObj.simplicityGeoJson = cleanGeoJson;
@@ -20,6 +21,7 @@
           var cleanGeoJson = $.extend(true, {}, output.geoJson);
           output.geoJson.simplicityVendorObjects = [];
           $.each(geoJsonGeometry.coordinates, function (idx, coord) {
+            var opts = {};
             opts.position = new google.maps.LatLng(coord[1], coord[0]);
             var vendorObj = new google.maps.Marker(opts);
             vendorObj.simplicityGeoJson = cleanGeoJson;
@@ -37,6 +39,7 @@
             var ll = new google.maps.LatLng(coord[1], coord[0]);
             path.push(ll);
           });
+          var opts = {};
           opts.path = path;
           var vendorObj = new google.maps.Polyline(opts);
           vendorObj.simplicityGeoJson = cleanGeoJson;
@@ -53,6 +56,7 @@
             var ll = new google.maps.LatLng(coord[1], coord[0]);
             path.push(ll);
           });
+          var opts = {};
           opts.path = path;
           var vendorObj = new google.maps.Polyline(opts);
           vendorObj.simplicityGeoJson = cleanGeoJson;
@@ -73,6 +77,7 @@
             });
             paths.push(path);
           });
+          var opts = {};
           opts.paths = paths;
           var vendorObj = new google.maps.Polygon(opts);
           vendorObj.simplicityGeoJson = cleanGeoJson;
@@ -94,6 +99,7 @@
               });
               paths.push(path);
             });
+            var opts = {};
             opts.paths = paths;
             var vendorObj = new google.maps.Polygon(opts);
             vendorObj.simplicityGeoJson = cleanGeoJson;
@@ -118,7 +124,7 @@
       geoJson: JSON.parse(JSON.stringify(geoJson))
     };
 
-    var opts = options || {};
+    var opts = {};
     switch (geoJson.type) {
     case 'FeatureCollection':
       if (!geoJson.features) {
