@@ -149,7 +149,7 @@
         $.each(ui._discovery.response.explanation, $.proxy(function (idx, exp) {
           if (exp.criterionValue && $.isArray(exp.criterionValue.placemarks)) {
             $.each(exp.criterionValue.placemarks, $.proxy(function (idx, pm) {
-              var converted = $.simplicityGeoJsonToBing(pm);
+              var converted = $.simplicityGeoJsonToYahoo(pm);
               var markers = converted.vendorObjects;
               if (markers.length !== 0) {
                 var markerEvent = {
