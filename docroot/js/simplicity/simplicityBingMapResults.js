@@ -39,34 +39,11 @@
      *   <dd>
      *     Optional map instance, if not provided one will be created. Defaults to <code>''</code>.
      *   </dd>
-     *   <dt>fitOnResultSet<dt>
+     *   <dt>updateBounds<dt>
      *   <dd>
      *     When true the map is panned and zoomed to best fit the search
      *     results that are added as part of the <code>simplicityResultSet</code>
      *     event handler. Defaults to <code>true</code>.
-     *   </dd>
-     *   <dt>credentials</dt>
-     *   <dd>
-     *     Mandatory option that contains your Bing credentials.
-     *   </dd>
-     *   <dt>mapOptions</dt>
-     *   <dd>
-     *     Options used when creating the map. Defaults to <code>''</code> which is expanded at
-     *     runtime to
-     *     <pre>
-     *     {
-     *       center: new Microsoft.Maps.Location(0, 0),
-     *       zoom: 1,
-     *       mapTypeId: Microsoft.Maps.MapTypeId.road
-     *     }
-     *     </pre>
-     *     Can be either an <code>Object</code> or a <code>function</code>.
-     *   </dd>
-     *   <dt>mapMoveEvents</dt>
-     *   <dd>
-     *     Provides an override of which vendor specific map events are used to determine
-     *     when the position of the map changes. Expects a comma separated list of event names.
-     *     Defaults to <code>'viewchangeend'</code>.
      *   </dd>
      * </dl>
      * @name $.ui.simplicityBingMapResults.options

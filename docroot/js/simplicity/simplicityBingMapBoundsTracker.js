@@ -2,8 +2,8 @@
  * @name $.ui.simplicityBingMapBoundsTracker
  * @namespace A Bing map.
  * <p>
- * Bing Map widget that creates the map and listens for <code>simplicityResultSet</code> events
- * which it uses to add markers to the map for the search results.
+ * An invisible jquery ui widget which tracks changes in a Bing Map's bounds. Whenever the map bound change, a
+ * simplicitybingmapboundstrackerbounds event is triggered with ui.bounds being the normalized map bounds.
  *
  * @example
  *   &lt;div id="map" style="position: absolute; width: 300px; height: 300px;">&lt;/div>
@@ -21,46 +21,9 @@
      * Widget options.
      *
      * <dl>
-     *   <dt>searchElement</dt>
-     *   <dd>
-     *     The simplicityDiscoverySearch widget that this widget binds it's events to. Defaults to <code>'body'</code>.
-     *   </dd>
-     *   <dt>latitudeField</dt>
-     *   <dd>
-     *     Field to find the latitude of the result item in the <code>simplicityResultSet</code>
-     *     item properties. Defaults to <code>'latitude'</code>.
-     *   </dd>
-     *   <dt>longitudeField</dt>
-     *   <dd>
-     *     Field to find the longitude of the result item in the <code>simplicityResultSet</code>
-     *     item properties. Defaults to <code>'longitude'</code>.
-     *   </dd>
      *   <dt>map</dt>
      *   <dd>
      *     Optional map instance, if not provided one will be created. Defaults to <code>''</code>.
-     *   </dd>
-     *   <dt>fitOnResultSet<dt>
-     *   <dd>
-     *     When true the map is panned and zoomed to best fit the search
-     *     results that are added as part of the <code>simplicityResultSet</code>
-     *     event handler. Defaults to <code>true</code>.
-     *   </dd>
-     *   <dt>credentials</dt>
-     *   <dd>
-     *     Mandatory option that contains your Bing credentials.
-     *   </dd>
-     *   <dt>mapOptions</dt>
-     *   <dd>
-     *     Options used when creating the map. Defaults to <code>''</code> which is expanded at
-     *     runtime to
-     *     <pre>
-     *     {
-     *       center: new Microsoft.Maps.Location(0, 0),
-     *       zoom: 1,
-     *       mapTypeId: Microsoft.Maps.MapTypeId.road
-     *     }
-     *     </pre>
-     *     Can be either an <code>Object</code> or a <code>function</code>.
      *   </dd>
      *   <dt>mapMoveEvents</dt>
      *   <dd>

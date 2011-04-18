@@ -2,8 +2,9 @@
  * @name $.ui.simplicityBingMapCriteria
  * @namespace A Bing map.
  * <p>
- * Bing Map widget that creates the map and listens for <code>simplicityResultSet</code> events
- * which it uses to add markers to the map for the search results.
+ * jQuery UI widget that displays discovery search criteria locations on a map. This widget uses the query explanation output from
+ * the discovery engine response, so the query to the engine must ask for this extra information with
+ * <code>"explain": "criterionValue"</code>.
  *
  * @example
  *   &lt;div id="map" style="position: absolute; width: 300px; height: 300px;">&lt;/div>

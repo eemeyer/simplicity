@@ -2,8 +2,10 @@
  * @name $.ui.simplicityBingMapBoundsCoordinator
  * @namespace A Bing map.
  * <p>
- * Bing Map widget that creates the map and listens for <code>simplicityResultSet</code> events
- * which it uses to add markers to the map for the search results.
+ * An invisible jquery ui widget which coordinates the updating of a Bing Map's bounds after a discovery search
+ * response is parsed and dispatched (the simplicitySearchResponseHandled event from the simplicityDiscoverySearch
+ * widget. Triggers a simplicitybingmapboundscoordinatorcalculatebounds event which other components can use to
+ * modify the map bounds.
  *
  * @example
  *   &lt;div id="map" style="position: absolute; width: 300px; height: 300px;">&lt;/div>
@@ -30,7 +32,7 @@
      *     The simplicityDiscoverySearch widget that this widget binds it's events to. Defaults to <code>'body'</code>.
      *   </dd>
      * </dl>
-     * @name $.ui.simplicityGoogleMapBoundsCoordinator.options
+     * @name $.ui.simplicityBingMapBoundsCoordinator.options
      */
     options: {
       searchElement: 'body',
@@ -58,7 +60,7 @@
      * object with a locations member. They can update, replace or delete that variable. ui.locations is defined and non-empty
      * after the event is handled, then this component will update the bing map to fit the locations.
      *
-     * @name $.ui.simplicityGoogleMapBoundsCoordinator.updateBounds
+     * @name $.ui.simplicityBingMapBoundsCoordinator.updateBounds
      * @function
      */
     updateBounds: function () {
