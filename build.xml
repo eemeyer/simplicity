@@ -81,4 +81,24 @@
     </zip>
     <delete dir="build.ant/dist"/>
   </target>
+
+  <property name="jsTestDriverServer.port" value="4224"/>
+  <target name="jsTestDriverServer" depends="compress-media" description="Run jsTestDriver server">
+    <echo>
+      Capture some web browsers at http://localhost:${jsTestDriverServer.port}
+      Then run: ant jsTest
+    </echo>
+    <java fork="true" jar="tools/JsTestDriver-1.3.2.jar">
+      <arg line="--port ${jsTestDriverServer.port}"/>
+    </java>
+  </target>
+
+  <property name="jsTest.server" value="http://localhost:${jsTestDriverServer.port}"/>
+  <target name="jsTest" description="Run the jsTestDriver tests">
+    <delete dir="build.ant/jstest"/>
+    <mkdir dir="build.ant/jstest"/>
+    <java fork="true" jar="tools/JsTestDriver-1.3.2.jar" failonerror="true">
+      <arg line="--tests all --testOutput build.ant/jstest --server ${jsTest.server}"/>
+    </java>
+  </target>
 </project>
