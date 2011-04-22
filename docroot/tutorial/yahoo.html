@@ -36,7 +36,7 @@
         list-style-type: none;
         padding-left: 1em;
       }
-  </style>
+    </style>
   </head>
   <body>
     <div id="themeSwitcher" class="ui-helper-clearfix">
@@ -103,37 +103,12 @@
             <label for="longitude">Longitude</label>
             <input id="longitude" name="lon" />
           </fieldset>
-          <fieldset id="locationFields2">
-            <legend>Location</legend>
-            <input id="address2" name="a" />
-            <br />
-            <label for="north">North</label>
-            <input id="north" name="n" />
-            <br />
-            <label for="east">East</label>
-            <input id="east" name="e" />
-            <br />
-            <label for="south">South</label>
-            <input id="south" name="s" />
-            <br />
-            <label for="west">West</label>
-            <input id="west" name="w" />
-          </fieldset>
         </div>
         <div id="main" class="yui3-u">
           <div class="yui3-g">
-            <div class="yui3-u-1-2">
-              <fieldset class="ui-widget ui-widget-content">
-                <legend>Map created manually</legend>
-                <div id="map1" style="width: 349px; height: 300px;"></div>
-              </fieldset>
-            </div>
-            <div class="yui3-u-1-2">
-              <fieldset class="ui-widget ui-widget-content">
-                <legend>Map created by widget</legend>
-                <div id="map2" style="width: 349px; height: 300px;"></div>
-              </fieldset>
-            </div>
+            <fieldset class="ui-widget ui-widget-content">
+              <div id="map" style="width: 700px; height: 300px;"></div>
+            </fieldset>
           </div>
           <fieldset class="ui-widget ui-widget-content">
             <legend>Pagination</legend>
@@ -175,10 +150,10 @@
     <script type="text/javascript" src="../js/simplicity/simplicitySearchResults.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityRenderParamsSearchResults.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityFlyout.js" charset="utf-8"></script>
-    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMap.js" charset="utf-8"></script>
-    <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMap.js" charset="utf-8"></script>
-    <script type="text/javascript" src="../js/simplicity/simplicityBingMap.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityYahooMap.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityYahooMapResults.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityYahooMapBoundsCoordinator.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityYahooMapBoundsTracker.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityYahooGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
@@ -215,26 +190,19 @@
       });
 
       (function () {
-        var map = new YMap($('#map1')[0]);
+        $('#map')
+          .simplicityYahooMap()
+          .simplicityYahooMapBoundsCoordinator()
+          .simplicityYahooMapResults();
+
+        var map = $('#map').simplicityYahooMap('map');
         map.addPanControl();
         map.addZoomShort();
         map.setMapType(YAHOO_MAP_REG);
         map.drawZoomAndCenter(new YGeoPoint(0, 0), 16);
-        $('#map1').simplicityYahooMap({
-          map: map
-        });
       }());
 
-      (function () {
-        $('#map2').simplicityYahooMap({
-          fitOnResultSet: false
-        });
-        var map = $('#map2').simplicityYahooMap('map');
-        map.addPanControl();
-        map.addZoomShort();
-      }());
-
-      $('#map1,#map2').bind('simplicityyahoomapmarker', function (evt, ui) {
+      $('#map').bind('simplicityyahoomapresultsmarker', function (evt, ui) {
         var marker = ui.marker;
         var properties = ui.row.properties;
         marker.changeImage(new YImage('images/markers/yahoo/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png'));
@@ -275,52 +243,6 @@
       $('#address').autocomplete({
         minLength: 0,
         source: $('#locationFields').simplicityYahooGeocoder('autocompleteSource'),
-        select: selectCallback,
-        change: selectCallback,
-        search: function (evt, ui) {
-          if ($(evt.target).val() === '') {
-            selectCallback(evt, ui);
-            return false;
-          }
-          return true;
-        },
-        selectFirst: true
-      });
-
-      $('#locationFields2')
-        .simplicityInputs()
-        .simplicityYahooGeocoder({
-          url: '../test/yahooGeocoderProxy.php',
-          requestTemplate: {
-            apikey: apikey
-          }
-        });
-      // Position the map based on geocoded address
-      var selectCallback = function (evt, ui) {
-        if (ui.item && ui.item.bounds) {
-          var map = $('#map2').simplicityYahooMap('map');
-          var bounds = ui.item.bounds;
-          var best = map.getBestZoomAndCenter([
-            new YGeoPoint(bounds.north, bounds.west),
-            new YGeoPoint(bounds.north, bounds.east),
-            new YGeoPoint(bounds.south, bounds.east),
-            new YGeoPoint(bounds.south, bounds.west)
-          ]);
-          map.drawZoomAndCenter(best.YGeoPoint, best.zoomLevel);
-        }
-      };
-      // Drive search from current map position
-      $('#map2').bind('simplicityyahoomapbounds', function (evt, ui) {
-        $('#north').val(ui.bounds.north);
-        $('#east').val(ui.bounds.east);
-        $('#south').val(ui.bounds.south);
-        $('#west').val(ui.bounds.west);
-        $('#locationFields2').change();
-      });
-      // Autocomplete based geocoder
-      $('#address2').autocomplete({
-        minLength: 0,
-        source: $('#locationFields2').simplicityYahooGeocoder('autocompleteSource'),
         select: selectCallback,
         change: selectCallback,
         search: function (evt, ui) {

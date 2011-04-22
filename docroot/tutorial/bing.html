@@ -36,7 +36,7 @@
         list-style-type: none;
         padding-left: 1em;
       }
-  </style>
+    </style>
   </head>
   <body>
     <div id="themeSwitcher" class="ui-helper-clearfix">
@@ -103,41 +103,14 @@
             <label for="longitude">Longitude</label>
             <input id="longitude" name="lon" />
           </fieldset>
-          <fieldset id="locationFields2">
-            <legend>Location</legend>
-            <input id="address2" name="a" />
-            <br />
-            <label for="north">North</label>
-            <input id="north" name="n" />
-            <br />
-            <label for="east">East</label>
-            <input id="east" name="e" />
-            <br />
-            <label for="south">South</label>
-            <input id="south" name="s" />
-            <br />
-            <label for="west">West</label>
-            <input id="west" name="w" />
-          </fieldset>
         </div>
         <div id="main" class="yui3-u">
           <div class="yui3-g">
-            <div class="yui3-u-1-2">
-              <fieldset class="ui-widget ui-widget-content">
-                <legend>Map created manually</legend>
-                <div style="width: 349px; height: 300px">
-                  <div id="map1" style="position: absolute; width: 349px; height: 300px;"></div>
-                </div>
-              </fieldset>
-            </div>
-            <div class="yui3-u-1-2">
-              <fieldset class="ui-widget ui-widget-content">
-                <legend>Map created by widget</legend>
-                <div style="width: 349px; height: 300px">
-                  <div id="map2" style="position: absolute; width: 349px; height: 300px;"></div>
-                </div>
-              </fieldset>
-            </div>
+            <fieldset class="ui-widget ui-widget-content">
+              <div style="width: 349px; height: 300px">
+                <div id="map" style="position: absolute; width: 700px; height: 300px;"></div>
+              </div>
+            </fieldset>
           </div>
           <fieldset class="ui-widget ui-widget-content">
             <legend>Pagination</legend>
@@ -181,6 +154,9 @@
     <script type="text/javascript" src="../js/simplicity/simplicityFlyout.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityHaversineDistance.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityBingMap.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityBingMapResults.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityBingMapBoundsCoordinator.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityBingMapBoundsTracker.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityBingGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
@@ -219,23 +195,15 @@
       var credentials = 'AqsWuHqZWoV942yySq7z7YZcyz7skrvFfPX_if4OmK5FyHkyJDmQSvX17Z7ymtok';
 
       (function () {
-        var map = new Microsoft.Maps.Map($('#map1')[0], {
-          credentials: credentials,
-          center: new Microsoft.Maps.Location(0, 0),
-          zoom: 1,
-          mapTypeId: Microsoft.Maps.MapTypeId.road
-        });
-        $('#map1').simplicityBingMap({
-          map: map
-        });
+        $('#map')
+          .simplicityBingMap({
+            credentials: credentials
+          })
+          .simplicityBingMapResults()
+          .simplicityBingMapBoundsCoordinator();
       }());
 
-      $('#map2').simplicityBingMap({
-        credentials: credentials,
-        fitOnResultSet: false
-      });
-
-      $('#map1,#map2').bind('simplicitybingmapmarker', function (evt, ui) {
+      $('#map').bind('simplicitybingmapresultsmarker', function (evt, ui) {
         var pin = ui.marker;
         var properties = ui.row.properties;
         pin.setOptions({
@@ -271,48 +239,6 @@
       $('#address').autocomplete({
         minLength: 0,
         source: $('#locationFields').simplicityBingGeocoder('autocompleteSource'),
-        select: selectCallback,
-        change: selectCallback,
-        search: function (evt, ui) {
-          if ($(evt.target).val() === '') {
-            selectCallback(evt, ui);
-            return false;
-          }
-          return true;
-        },
-        selectFirst: true
-      });
-
-      $('#locationFields2')
-        .simplicityInputs()
-        .simplicityBingGeocoder({
-          url: '../test/bingGeocoderProxy.php',
-          requestTemplate: {
-            key: credentials
-          }
-        });
-      // Position the map based on geocoded address
-      var selectCallback = function (evt, ui) {
-        if (ui.item && ui.item.bounds) {
-          var map = $('#map2').simplicityBingMap('map');
-          var bounds = ui.item.bounds;
-          map.setView({
-            bounds: Microsoft.Maps.LocationRect.fromEdges(bounds.north, bounds.west, bounds.south, bounds.east)
-          });
-        }
-      };
-      // Drive search from current map position
-      $('#map2').bind('simplicitybingmapbounds', function (evt, ui) {
-        $('#north').val(ui.bounds.north);
-        $('#east').val(ui.bounds.east);
-        $('#south').val(ui.bounds.south);
-        $('#west').val(ui.bounds.west);
-        $('#locationFields2').change();
-      });
-      // Autocomplete based geocoder
-      $('#address2').autocomplete({
-        minLength: 0,
-        source: $('#locationFields2').simplicityBingGeocoder('autocompleteSource'),
         select: selectCallback,
         change: selectCallback,
         search: function (evt, ui) {

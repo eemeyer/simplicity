@@ -133,8 +133,10 @@ if (array_key_exists("lat", $_GET) && array_key_exists("lon", $_GET)) {
 $discoveryRequest = array(
     "startIndex" => $startIndex,
     "pageSize" => $pageSize,
-    "properties" => $properties
+    "properties" => $properties,
+    "explain" => "criterionValue"
 );
+
 if ($renderParameters) {
   $discoveryRequest["renderParameters"] = true;
 } else {

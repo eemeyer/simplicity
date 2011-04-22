@@ -2,7 +2,7 @@
  * @name $.ui.simplicityMapQuestGeocoder
  * @namespace A MapQuest geocoder.
  * <p>
- * Google geocoder widget. Also provides a jQueri UI autocomplete source.
+ * MapQuest geocoder widget. Also provides a jQueri UI autocomplete source.
  * <p>
  * See the MapQuest JavaScript SDK v6 Geocoding <a href="http://platform.beta.mapquest.com/sdk/js/v6.0.0/geocoding.html">documentation</a>.
  */

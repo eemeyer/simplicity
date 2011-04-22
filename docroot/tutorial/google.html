@@ -103,37 +103,12 @@
             <label for="longitude">Longitude</label>
             <input id="longitude" name="lon" />
           </fieldset>
-          <fieldset id="locationFields2">
-            <legend>Location</legend>
-            <input id="address2" name="a" />
-            <br />
-            <label for="north">North</label>
-            <input id="north" name="n" />
-            <br />
-            <label for="east">East</label>
-            <input id="east" name="e" />
-            <br />
-            <label for="south">South</label>
-            <input id="south" name="s" />
-            <br />
-            <label for="west">West</label>
-            <input id="west" name="w" />
-          </fieldset>
         </div>
         <div id="main" class="yui3-u">
           <div class="yui3-g">
-            <div class="yui3-u-1-2">
-              <fieldset class="ui-widget ui-widget-content">
-                <legend>Map created manually</legend>
-                <div id="map1" style="width: 349px; height: 300px;"></div>
-              </fieldset>
-            </div>
-            <div class="yui3-u-1-2">
-              <fieldset class="ui-widget ui-widget-content">
-                <legend>Map created by widget</legend>
-                <div id="map2" style="width: 349px; height: 300px;"></div>
-              </fieldset>
-            </div>
+            <fieldset class="ui-widget ui-widget-content">
+              <div id="map" style="width: 700px; height: 300px;"></div>
+            </fieldset>
           </div>
           <fieldset class="ui-widget ui-widget-content">
             <legend>Pagination</legend>
@@ -177,6 +152,9 @@
     <script type="text/javascript" src="../js/simplicity/simplicityFlyout.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityHaversineDistance.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleMap.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapResults.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapBoundsCoordinator.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapBoundsTracker.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
@@ -213,32 +191,23 @@
       });
 
       (function () {
-        var map = new google.maps.Map($('#map1')[0], {
+        var map = new google.maps.Map($('#map')[0], {
           center: new google.maps.LatLng(0, 0),
           zoom: 1,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         });
-        $('#map1').simplicityGoogleMap({
-          map: map
-        });
+        $('#map')
+          .simplicityGoogleMap({
+            map: map
+          })
+          .simplicityGoogleMapResults()
+          .simplicityGoogleMapBoundsCoordinator();
       }());
 
-      $('#map2').simplicityGoogleMap({
-        fitOnResultSet: false,
-        mapOptions: {
-          mapTypeControlOptions: {
-            position: google.maps.ControlPosition.TOP_LEFT
-          },
-          zoomControlOptions: {
-            position: google.maps.ControlPosition.TOP_RIGHT
-          }
-        }
-      });
-
-      $('#map1,#map2').bind('simplicitygooglemapmarker', function (evt, ui) {
+      $('#map').bind('simplicitygooglemapresultsmarker', function (evt, ui) {
         var marker = ui.marker;
         var properties = ui.row.properties;
-        marker.setIcon('images/markers/google/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png')
+        marker.setIcon('images/markers/google/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png');
         if (properties.type === 'rentals') {
           marker.setTitle('$' + properties.lease);
         } else {
@@ -269,40 +238,6 @@
       $('#address').autocomplete({
         minLength: 0,
         source: $('#locationFields').simplicityGoogleGeocoder('autocompleteSource'),
-        select: selectCallback,
-        change: selectCallback,
-        search: function (evt, ui) {
-          if ($(evt.target).val() === '') {
-            selectCallback(evt, ui);
-            return false;
-          }
-          return true;
-        },
-        selectFirst: true
-      });
-
-      $('#locationFields2')
-        .simplicityInputs()
-        .simplicityGoogleGeocoder();
-      // Position the map based on geocoded address
-      var selectCallback = function (evt, ui) {
-        if (ui.item && ui.item.bounds) {
-          var map = $('#map2').simplicityGoogleMap('map');
-          map.fitBounds(ui.item.bounds.vendor);
-        }
-      };
-      // Drive search from current map position
-      $('#map2').bind('simplicitygooglemapbounds', function (evt, ui) {
-        $('#north').val(ui.bounds.north);
-        $('#east').val(ui.bounds.east);
-        $('#south').val(ui.bounds.south);
-        $('#west').val(ui.bounds.west);
-        $('#locationFields2').change();
-      });
-      // Autocomplete based geocoder
-      $('#address2').autocomplete({
-        minLength: 0,
-        source: $('#locationFields2').simplicityGoogleGeocoder('autocompleteSource'),
         select: selectCallback,
         change: selectCallback,
         search: function (evt, ui) {

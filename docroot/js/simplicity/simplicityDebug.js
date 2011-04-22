@@ -60,7 +60,7 @@
       this._searchResponse.unbind('change', this._searchResponseChanger);
       this._resultSet.unbind('change', this._resultSetChanger);
       this._facetCounts.unbind('change', this._facetCountsChanger);
-      $(this.options.stateElement).unbind('_stateChangeHandler', this._stateChangeHandler);
+      $(this.options.stateElement).unbind('simplicityStateChange', this._stateChangeHandler);
       $(this.options.searchElement).unbind('simplicitySearchResponse', this._searchResponseHandler);
       $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
       $(this.options.searchElement).unbind('simplicityFacetCounts', this._facetCountsHandler);

@@ -30,9 +30,22 @@ groups:
       # Maps
       - js/simplicity/simplicityHaversineDistance.js
       - js/simplicity/simplicityGoogleMap.js
+      - js/simplicity/simplicityGoogleMapResults.js
+      - js/simplicity/simplicityGoogleMapBoundsCoordinator.js
+      - js/simplicity/simplicityGoogleMapBoundsTracker.js
+      - js/simplicity/simplicityGoogleMapLoader.js
       - js/simplicity/simplicityBingMap.js
-      - js/simplicity/simplicityYahooMap.js
+      - js/simplicity/simplicityBingMapResults.js
+      - js/simplicity/simplicityBingMapBoundsCoordinator.js
+      - js/simplicity/simplicityBingMapBoundsTracker.js
       - js/simplicity/simplicityMapQuestMap.js
+      - js/simplicity/simplicityMapQuestMapResults.js
+      - js/simplicity/simplicityMapQuestMapBoundsCoordinator.js
+      - js/simplicity/simplicityMapQuestMapBoundsTracker.js
+      - js/simplicity/simplicityYahooMap.js
+      - js/simplicity/simplicityYahooMapResults.js
+      - js/simplicity/simplicityYahooMapBoundsCoordinator.js
+      - js/simplicity/simplicityYahooMapBoundsTracker.js
       # Geocoders
       - js/simplicity/simplicityGoogleGeocoder.js
       - js/simplicity/simplicityBingGeocoder.js
