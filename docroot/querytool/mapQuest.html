@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>JSON Query Tool</title>
+    <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/jquery-ui-1.8.7.custom.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="../images/favicon.jpg"/>
+    <style>
+      body {
+        font-size:62.5%;
+      }
+  </style>
+  </head>
+  <body>
+    <form onsubmit="return false;">
+      <div id="main" class="yui3-u">
+        <div class="yui3-g">
+          <div class="yui3-u-1-2">
+            <fieldset class="ui-widget">
+              <legend>Request</legend>
+              <textarea rows="10" cols="68" id="request">
+{
+  "properties": [
+    "Latitude",
+    "Longitude"
+  ],
+  "criteria": [
+    {
+      "dimension": "Location",
+      "placemarkIds": [
+        "framingham",
+        "Marlborough"
+      ],
+      "latitude": 42,
+      "longitude": -72,
+      "exactDistance": 1
+    }
+  ],
+  "explain": "criterionValue",
+  "pageSize": 2
+}
+              </textarea>
+              <button name="search" type="button">Search</button>
+            </fieldset>
+            <div id="requestMsg"></div>
+          </div>
+          <div class="yui3-u-1-2">
+            <fieldset class="ui-widget">
+              <legend>Response</legend>
+              <textarea rows="10" cols="68" id="response"></textarea>
+            </fieldset>
+          </div>
+        </div>
+        <div id="map" style="position: relative; width: 349px; height: 300px;"></div>
+        <div class="yui3-g">
+          <div id="debug"></div>
+        </div>
+      </div>
+    </form>
+    <script type="text/javascript" src="../js/lib/jquery-1.5.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.7.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+    <script type="text/javascript" src="http://mapquestapi.com/sdk/js/v6.0.0/mqa.toolkit.js?key=Fmjtd%7Cluu22q68nq%2C75%3Do5-h67wg"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityDebug.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMap.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMapResults.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMapCriteria.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMapBoundsCoordinator.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityHaversineDistance.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGeoJsonToMapQuest.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGeoJsonToVendor.js" charset="utf-8"></script>
+    <script type="text/javascript"><!--//<![CDATA[
+
+    MQA.withModule('mapinit', 'geocoder', 'shapes', 'zoomcontrol3', function() {
+
+      $('fieldset').addClass("ui-widget ui-widget-content");
+
+      $('#debug').simplicityDebug();
+
+      $('body')
+        .simplicityDiscoverySearch({
+          url: 'query_proxy.php'
+        });
+      // json request widget
+      $('#request').bind('focus', function (evt, ui) {
+        $('#requestMsg').hide(500);
+      });
+
+      $('button[name="search"]').bind('click', function (evt, ui) {
+        var input = $('#request');
+        var raw =  input.val();
+        var validJson = false;
+        try
+        {
+          var search = JSON.parse(raw)
+          var pretty = JSON.stringify(search, null, '  ');
+          validJson = true;
+        }
+        catch (e)
+        {
+          $('#requestMsg').text('Invalid JSON').show(500);
+        }
+        if (validJson)
+        {
+          input.val(pretty);
+          $('button[name="search"]').attr('disabled', 'disabled');
+          $('body').simplicityDiscoverySearch('query', raw);
+        }
+      });
+      $('body').bind('simplicitySearchResponse', function (evt, ui) {
+        $('button[name="search"]').removeAttr('disabled');
+      });
+
+      // json response widget
+      $('body').bind('simplicitySearchResponse', function (evt, ui) {
+        $('#response').val(JSON.stringify(ui._discovery.response, null, '  '));
+      });
+
+      var map = new MQA.TileMap($('#map')[0], 1, {lat: 0, lng: 0}, 'map', new MQA.MapInit());
+      map.addControl(new MQA.LargeZoomControl3(), new MQA.MapCornerPlacement(MQA.MapCorner.TOP_LEFT));
+
+      $('#map')
+        .simplicityMapQuestMap({map: map})
+        .simplicityMapQuestMapResults({
+          latitudeField: 'Latitude',
+          longitudeField: 'Longitude'
+        })
+        .simplicityMapQuestMapCriteria()
+        .simplicityMapQuestMapBoundsCoordinator()
+        .bind('simplicitymapquestmapresultsmarker', function (evt, ui) {
+          var marker = ui.marker;
+          var properties = ui.row.properties;
+         })
+        .bind('simplicitymapquestmapcriteriaplacemark', function (evt, ui) {
+          if ($.isArray(ui.markers)) {
+            $.each(ui.markers, function (idx, marker) {
+            });
+          }
+        });
+    });
+    //]]>--></script>
+  </body>
+</html>

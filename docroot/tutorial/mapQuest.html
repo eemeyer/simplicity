@@ -176,7 +176,13 @@
     <script type="text/javascript" src="../js/simplicity/simplicityRenderParamsSearchResults.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityFlyout.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMap.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMapResults.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMapCriteria.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMapBoundsCoordinator.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMapBoundsTracker.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityMapQuestGeocoder.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGeoJsonToMapQuest.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGeoJsonToVendor.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       MQA.withModule('mapinit', 'geocoder', 'shapes', 'zoomcontrol3', function() {
 
@@ -214,22 +220,34 @@
       });
 
       (function () {
-        var map = new MQA.TileMap($('#map1')[0], 1, {lat: 0, lng: 0}, 'map', new MQA.MapInit());
+        var map = new MQA.TileMap($('#map1')[0], 1, {lat: 0, lng: 0}, 'map');
         map.addControl(new MQA.LargeZoomControl3(), new MQA.MapCornerPlacement(MQA.MapCorner.TOP_LEFT));
         $('#map1').simplicityMapQuestMap({
           map: map
-        });
+        })
+        .simplicityMapQuestMapResults({
+          latitudeField: 'latitude',
+          longitudeField: 'longitude'
+        })
+        .simplicityMapQuestMapCriteria()
+        .simplicityMapQuestMapBoundsCoordinator();
       }());
 
       (function () {
         $('#map2').simplicityMapQuestMap({
-          fitOnResultSet: false
-        });
+        })
+        .simplicityMapQuestMapResults({
+          latitudeField: 'latitude',
+          longitudeField: 'longitude'
+        })
+        .simplicityMapQuestMapCriteria()
+        .simplicityMapQuestMapBoundsTracker();
+
         var map = $('#map2').simplicityMapQuestMap('map');
         map.addControl(new MQA.LargeZoomControl3(), new MQA.MapCornerPlacement(MQA.MapCorner.TOP_RIGHT));
       }());
 
-      $('#map1,#map2').bind('simplicitymapquestmapmarker', function (evt, ui) {
+      $('#map1,#map2').bind('simplicitymapquestmapresultsmarker', function (evt, ui) {
         var poi = ui.marker;
         var properties = ui.row.properties;
         var icon = new MQA.Icon('images/markers/mapquest/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png', 30, 30);
@@ -307,7 +325,7 @@
         }
       };
       // Drive search from current map position
-      $('#map2').bind('simplicitymapquestmapbounds', function (evt, ui) {
+      $('#map2').bind('simplicitymapquestmapboundstrackerbounds', function (evt, ui) {
         $('#north').val(ui.bounds.north);
         $('#east').val(ui.bounds.east);
         $('#south').val(ui.bounds.south);

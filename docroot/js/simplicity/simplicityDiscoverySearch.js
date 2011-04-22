@@ -111,6 +111,39 @@
         }, this)
       });
     },
+    query: function (jsonString)
+    {
+      $.ajax({
+        url: this.options.url,
+        type: 'POST',
+        contentType: 'application/json',
+        data: jsonString,
+        dataType: 'json',
+        cache: false,
+        error: $.proxy(function (xhr, textStatus, errorThrown) {
+          if (this.options.debug) {
+            console.log('Search error for', this.element, '[' + xhr.status + '] ' + xhr.statusText, arguments);
+          }
+          this.searchResponse({
+            error: true,
+            statusText: xhr.statusText,
+            status: xhr.status,
+            resultsHtml: xhr.responseText
+          });
+        }, this),
+        success: $.proxy(function (data, textStatus, xhr) {
+          if (this.options.debug) {
+            console.log('Search success for', this.element, 'with response', data);
+          }
+          this.searchResponse({
+            _discovery: {
+              request: JSON.parse(jsonString),
+              response: data
+            }
+          });
+        }, this)
+      });
+    },
     /**
      * Get or set (and process) the search response. Called with no arguments to retrieve the
      * last response. Called with arguments to process the current response (called by
@@ -153,6 +186,9 @@
       discoveryResponse = discoveryResponse.response || {};
       this.facetCounts(this.extractFacetCounts(discoveryResponse), triggerEvent);
       this.resultSet(this.extractResultSet(discoveryResponse), triggerEvent);
+      if (triggerEvent !== false) {
+        this.element.triggerHandler('simplicitySearchResponseHandled');
+      }
     },
     /**
      * Get the or set the facet counts. Called with no arguments for get behavior.
