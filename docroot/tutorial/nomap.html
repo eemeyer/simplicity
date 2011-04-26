@@ -328,6 +328,11 @@
         placement: 'append-label'
       });
 
+      $('#neighborhoodCheckboxes :checkbox').simplicityFacetedInput({
+        dimension: 'locationTree',
+        placement: 'append-label'
+      });
+
       $('#nav :input[name="bed"]').simplicityInputs();
       (function () {
         var display = function (evt, ui) {
