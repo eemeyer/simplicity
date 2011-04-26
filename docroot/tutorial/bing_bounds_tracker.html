@@ -106,6 +106,22 @@
             <label for="longitude">Longitude</label>
             <input id="longitude" name="lon" />
           </fieldset>
+          <fieldset id="locationFields2">
+            <legend>Location</legend>
+            <input id="address2" name="a" />
+            <br />
+            <label for="north">North</label>
+            <input id="north" name="n" />
+            <br />
+            <label for="east">East</label>
+            <input id="east" name="e" />
+            <br />
+            <label for="south">South</label>
+            <input id="south" name="s" />
+            <br />
+            <label for="west">West</label>
+            <input id="west" name="w" />
+          </fieldset>
           <fieldset id="neighborhoodCheckboxes">
             <legend>Neighborhood</legend>
             <div class="row">
@@ -218,7 +234,7 @@
           <div class="yui3-g">
             <fieldset class="ui-widget ui-widget-content">
               <div style="width: 349px; height: 300px">
-                <div id="map1" style="position: absolute; width: 700px; height: 300px;"></div>
+                <div id="map2" style="position: absolute; width: 349px; height: 300px;"></div>
               </div>
             </fieldset>
           </div>
@@ -312,16 +328,17 @@
 
       var credentials = 'AqsWuHqZWoV942yySq7z7YZcyz7skrvFfPX_if4OmK5FyHkyJDmQSvX17Z7ymtok';
 
-      (function () {
-        $('#map1').simplicityBingMap({
-          credentials: credentials
-        })
-        .simplicityBingMapResults()
-        .simplicityBingMapCriteria()
-        .simplicityBingMapBoundsCoordinator();
-      }());
+      $('#map2').simplicityBingMap({
+        credentials: credentials,
+        mapOptions: {
+          center: new Microsoft.Maps.Location(40.75792020879332, -74.00699615478442),
+          zoom: 10
+        }
+      })
+      .simplicityBingMapResults()
+      .simplicityBingMapBoundsTracker();
 
-      $('#map1').bind('simplicitybingmapresultsmarker', function (evt, ui) {
+      $('#map2').bind('simplicitybingmapresultsmarker', function (evt, ui) {
         var pin = ui.marker;
         var properties = ui.row.properties;
         pin.setOptions({
@@ -357,6 +374,48 @@
       $('#address').autocomplete({
         minLength: 0,
         source: $('#locationFields').simplicityBingGeocoder('autocompleteSource'),
+        select: selectCallback,
+        change: selectCallback,
+        search: function (evt, ui) {
+          if ($(evt.target).val() === '') {
+            selectCallback(evt, ui);
+            return false;
+          }
+          return true;
+        },
+        selectFirst: true
+      });
+
+      $('#locationFields2')
+        .simplicityInputs()
+        .simplicityBingGeocoder({
+          url: '../test/bingGeocoderProxy.php',
+          requestTemplate: {
+            key: credentials
+          }
+        });
+      // Position the map based on geocoded address
+      var selectCallback = function (evt, ui) {
+        if (ui.item && ui.item.bounds) {
+          var map = $('#map2').simplicityBingMap('map');
+          var bounds = ui.item.bounds;
+          map.setView({
+            bounds: Microsoft.Maps.LocationRect.fromEdges(bounds.north, bounds.west, bounds.south, bounds.east)
+          });
+        }
+      };
+      // Drive search from current map position
+      $('#map2').bind('simplicitybingmapboundstrackerbounds', function (evt, ui) {
+        $('#north').val(ui.bounds.north);
+        $('#east').val(ui.bounds.east);
+        $('#south').val(ui.bounds.south);
+        $('#west').val(ui.bounds.west);
+        $('#locationFields2').change();
+      });
+      // Autocomplete based geocoder
+      $('#address2').autocomplete({
+        minLength: 0,
+        source: $('#locationFields2').simplicityBingGeocoder('autocompleteSource'),
         select: selectCallback,
         change: selectCallback,
         search: function (evt, ui) {
