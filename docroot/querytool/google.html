@@ -128,10 +128,10 @@
           }
         })
         .simplicityGoogleMapResults({
-          latitudeField: 'Latitude',
-          longitudeField: 'Longitude'
+          latitudeField: 'latitude',
+          longitudeField: 'longitude'
         })
-        .simplicityGoogleMapCriteria()
+        .simplicityGoogleMapCriteria({'updateBounds': false})
         .simplicityGoogleMapBoundsCoordinator()
         .bind('simplicitygooglemapresultsmarker', function (evt, ui) {
           var marker = ui.marker;
