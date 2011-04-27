@@ -1,5 +1,7 @@
 /**
  * @name $.ui.simplicityBingMapOriginial
+ * @deprecated see simplicityBingMap and its friends
+ * @see $.ui.simplicityBingMap
  * @namespace A Bing map.
  * <p>
  * Bing Map widget that creates the map and listens for <code>simplicityResultSet</code> events

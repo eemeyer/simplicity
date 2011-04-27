@@ -1,5 +1,7 @@
 /**
  * @name $.ui.simplicityMapQuestMapOriginal
+ * @deprecated see simplicityMapQuestMap and its friends
+ * @see $.ui.simplicityMapQuestMap
  * @namespace A MapQuest map
  * <p>
  * MapQuest Map widget that creates the map and listens for <code>simplicityResultSet</code> events

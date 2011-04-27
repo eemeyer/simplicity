@@ -1,6 +1,7 @@
 /**
  * @name $.ui.simplicityGoogleMapOriginal
  * @deprecated See simplicityGoogleMap and its friends
+ * @see $.ui.simplicityGoogleMap
  * @namespace A Google map.
  * <p>
  * Google Map widget that creates the map and listens for <code>simplicityResultSet</code> events

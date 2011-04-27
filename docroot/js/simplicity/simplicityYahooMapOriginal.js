@@ -1,5 +1,7 @@
 /**
  * @name $.ui.simplicityYahooMapOriginal
+ * @deprecated see simplicityYahooMap and its friends
+ * @see $.ui.simplicityYahooMap
  * @namespace A Yahoo! map.
  * <p>
  * Yahho! Map widget that creates the map and listens for <code>simplicityResultSet</code> events
