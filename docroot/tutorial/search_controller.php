@@ -6,6 +6,7 @@ error_reporting(E_WARNING);
 $pageSize = 5;
 $startIndex = 0;
 $renderParameters = false;
+$criterionValues = false;
 if (array_key_exists("renderParameters", $_GET)) {
   $renderParameters = $_GET["renderParameters"];
 }
@@ -85,6 +86,15 @@ if (array_key_exists("locationTree", $_GET)) {
         "dimension" => "locationTree",
         "id" => $_GET["locationTree"],
     );
+}
+
+if (array_key_exists("location", $_GET)) {
+    $criteria[] = array(
+        "dimension" => "location",
+        "placemarkIds" => $_GET["location"],
+        "exactDistance" => 0
+    );
+    $criterionValues = true;
 }
 
 if (array_key_exists("bed", $_GET)) {
@@ -170,8 +180,10 @@ if (array_key_exists("lat", $_GET) && array_key_exists("lon", $_GET)) {
 $discoveryRequest = array(
     "startIndex" => $startIndex,
     "pageSize" => $pageSize,
-    "properties" => $properties
+    "properties" => $properties,
+    "explain" => ($criterionValues ? "criterionValue" : "")
 );
+
 if ($renderParameters) {
   $discoveryRequest["renderParameters"] = true;
 } else {
