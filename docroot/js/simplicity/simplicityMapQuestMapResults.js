@@ -7,7 +7,7 @@
  * @example
  *   &lt;div id="map" style="width: 300px; height: 300px;">&lt;/div>
  *   &lt;script type="text/javascript">
- *     $('#map').simplicityMapQuestMapOriginal();
+ *     $('#map').simplicityMapQuestMapResults();
  *   &lt;/script>
  *
  * @see MapQuest JavaScript SDK v6 <a href="http://platform.beta.mapquest.com/sdk/js/v6.0.0/">documentation</a>.
