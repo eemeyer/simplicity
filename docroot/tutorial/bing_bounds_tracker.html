@@ -96,16 +96,6 @@
               <label for="condition_4">Excellent condition</label>
             </div>
           </fieldset>
-          <fieldset id="locationFields">
-            <legend>Location</legend>
-            <input id="address" name="address" />
-            <br />
-            <label for="latitude">Latitude</label>
-            <input id="latitude" name="lat" />
-            <br />
-            <label for="longitude">Longitude</label>
-            <input id="longitude" name="lon" />
-          </fieldset>
           <fieldset id="locationFields2">
             <legend>Location</legend>
             <input id="address2" name="a" />
@@ -347,43 +337,6 @@
         Microsoft.Maps.Events.addHandler(pin, 'click', function (evt) {
           $('#result-' + ui.row.id).effect("highlight", {}, 3000);
         });
-      });
-
-      $('#locationFields')
-        .simplicityInputs()
-        .simplicityBingGeocoder({
-          url: '../test/bingGeocoderProxy.php',
-          requestTemplate: {
-            key: credentials
-          }
-        });
-      var selectCallback = function (evt, ui) {
-        var address = '';
-        var latitude = '';
-        var longitude = '';
-        if (ui.item) {
-          address = ui.item.value;
-          latitude = ui.item.latitude;
-          longitude = ui.item.longitude;
-        }
-        $('#address').val(address);
-        $('#latitude').val(latitude);
-        $('#longitude').val(longitude);
-        $('#locationFields').change();
-      };
-      $('#address').autocomplete({
-        minLength: 0,
-        source: $('#locationFields').simplicityBingGeocoder('autocompleteSource'),
-        select: selectCallback,
-        change: selectCallback,
-        search: function (evt, ui) {
-          if ($(evt.target).val() === '') {
-            selectCallback(evt, ui);
-            return false;
-          }
-          return true;
-        },
-        selectFirst: true
       });
 
       $('#locationFields2')

@@ -97,15 +97,21 @@
               <label for="condition_4">Excellent condition</label>
             </div>
           </fieldset>
-          <fieldset id="locationFields">
+          <fieldset id="locationFields2">
             <legend>Location</legend>
-            <input id="address" name="address" />
+            <input id="address2" name="a" />
             <br />
-            <label for="latitude">Latitude</label>
-            <input id="latitude" name="lat" />
+            <label for="north">North</label>
+            <input id="north" name="n" />
             <br />
-            <label for="longitude">Longitude</label>
-            <input id="longitude" name="lon" />
+            <label for="east">East</label>
+            <input id="east" name="e" />
+            <br />
+            <label for="south">South</label>
+            <input id="south" name="s" />
+            <br />
+            <label for="west">West</label>
+            <input id="west" name="w" />
           </fieldset>
           <fieldset id="neighborhoodCheckboxes">
             <legend>Neighborhood</legend>
@@ -218,7 +224,7 @@
         <div id="main" class="yui3-u">
           <div class="yui3-g">
             <fieldset class="ui-widget ui-widget-content">
-              <div id="map1" style="width: 700px; height: 300px;"></div>
+              <div id="map2" style="width: 349px; height: 300px;"></div>
             </fieldset>
           </div>
           <fieldset class="ui-widget ui-widget-content">
@@ -311,18 +317,20 @@
       });
 
       (function () {
-        $('#map1').simplicityMapQuestMap({})
+        $('#map2').simplicityMapQuestMap({
+        })
         .simplicityMapQuestMapResults({
           latitudeField: 'latitude',
           longitudeField: 'longitude'
         })
         .simplicityMapQuestMapCriteria()
-        .simplicityMapQuestMapBoundsCoordinator();
-        var map = $('#map1').simplicityMapQuestMap('map');
-        map.addControl(new MQA.LargeZoomControl3(), new MQA.MapCornerPlacement(MQA.MapCorner.TOP_LEFT));
+        .simplicityMapQuestMapBoundsTracker();
+
+        var map = $('#map2').simplicityMapQuestMap('map');
+        map.addControl(new MQA.LargeZoomControl3(), new MQA.MapCornerPlacement(MQA.MapCorner.TOP_RIGHT));
       }());
 
-      $('#map1').bind('simplicitymapquestmapresultsmarker', function (evt, ui) {
+      $('#map2').bind('simplicitymapquestmapresultsmarker', function (evt, ui) {
         var poi = ui.marker;
         var properties = ui.row.properties;
         var icon = new MQA.Icon('images/markers/mapquest/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png', 30, 30);
@@ -337,30 +345,44 @@
         });
       });
 
-      $('#locationFields')
+      $('#locationFields2')
         .simplicityInputs()
-        .simplicityMapQuestGeocoder({
-          geocodeOptions: {
-            maxResults: 10
-          }
-        });
-      var selectCallback = function (evt, ui) {
-        var address = '';
-        var latitude = '';
-        var longitude = '';
-        if (ui.item) {
-          address = ui.item.value;
-          latitude = ui.item.latitude;
-          longitude = ui.item.longitude;
-        }
-        $('#address').val(address);
-        $('#latitude').val(latitude);
-        $('#longitude').val(longitude);
-        $('#locationFields').change();
+        .simplicityMapQuestGeocoder();
+      var mapQuestQualityZoomLevels = {
+        'POINT': 14,
+        'ADDRESS': 14,
+        'INTERSECTION': 13,
+        'STREET': 13,
+        'ZIP': 10,
+        'ZIP_EXTENDED': 11,
+        'CITY': 9,
+        'COUNTY': 7,
+        'STATE': 3,
+        'COUNTRY': 2
       };
-      $('#address').autocomplete({
+      // Position the map based on geocoded address
+      var selectCallback = function (evt, ui) {
+        if (ui.item) {
+          var map = $('#map2').simplicityMapQuestMap('map');
+          var zoomLevel = mapQuestQualityZoomLevels[ui.item.vendor.geocodeQuality];
+          if (zoomLevel) {
+            map.setZoomLevel(zoomLevel);
+          }
+          map.setCenter({lat: ui.item.latitude, lng: ui.item.longitude});
+        }
+      };
+      // Drive search from current map position
+      $('#map2').bind('simplicitymapquestmapboundstrackerbounds', function (evt, ui) {
+        $('#north').val(ui.bounds.north);
+        $('#east').val(ui.bounds.east);
+        $('#south').val(ui.bounds.south);
+        $('#west').val(ui.bounds.west);
+        $('#locationFields2').change();
+      });
+      // Autocomplete based geocoder
+      $('#address2').autocomplete({
         minLength: 0,
-        source: $('#locationFields').simplicityMapQuestGeocoder('autocompleteSource'),
+        source: $('#locationFields2').simplicityMapQuestGeocoder('autocompleteSource'),
         select: selectCallback,
         change: selectCallback,
         search: function (evt, ui) {

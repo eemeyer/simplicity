@@ -106,22 +106,6 @@
             <label for="longitude">Longitude</label>
             <input id="longitude" name="lon" />
           </fieldset>
-          <fieldset id="locationFields2">
-            <legend>Location</legend>
-            <input id="address2" name="a" />
-            <br />
-            <label for="north">North</label>
-            <input id="north" name="n" />
-            <br />
-            <label for="east">East</label>
-            <input id="east" name="e" />
-            <br />
-            <label for="south">South</label>
-            <input id="south" name="s" />
-            <br />
-            <label for="west">West</label>
-            <input id="west" name="w" />
-          </fieldset>
           <fieldset id="neighborhoodCheckboxes">
             <legend>Neighborhood</legend>
             <div class="row">
@@ -232,18 +216,9 @@
         </div>
         <div id="main" class="yui3-u">
           <div class="yui3-g">
-            <div class="yui3-u-1-2">
-              <fieldset class="ui-widget ui-widget-content">
-                <legend>Map created manually</legend>
-                <div id="map1" style="width: 349px; height: 300px;"></div>
-              </fieldset>
-            </div>
-            <div class="yui3-u-1-2">
-              <fieldset class="ui-widget ui-widget-content">
-                <legend>Map created by widget</legend>
-                <div id="map2" style="width: 349px; height: 300px;"></div>
-              </fieldset>
-            </div>
+            <fieldset class="ui-widget ui-widget-content">
+              <div id="map1" style="width: 700px; height: 300px;"></div>
+            </fieldset>
           </div>
           <fieldset class="ui-widget ui-widget-content">
             <legend>Pagination</legend>
@@ -336,30 +311,18 @@
       });
 
       (function () {
-        var map = new YMap($('#map1')[0]);
+        $('#map1').simplicityYahooMap()
+        .simplicityYahooMapBoundsCoordinator()
+        .simplicityYahooMapCriteria()
+        .simplicityYahooMapResults();
+        var map = $('#map1').simplicityYahooMap('map');
         map.addPanControl();
         map.addZoomShort();
         map.setMapType(YAHOO_MAP_REG);
         map.drawZoomAndCenter(new YGeoPoint(0, 0), 16);
-        $('#map1').simplicityYahooMap({
-          map: map
-        })
-        .simplicityYahooMapBoundsCoordinator()
-        .simplicityYahooMapCriteria()
-        .simplicityYahooMapResults();
       }());
 
-      (function () {
-        $('#map2').simplicityYahooMap()
-        .simplicityYahooMapBoundsTracker()
-        .simplicityYahooMapCriteria()
-        .simplicityYahooMapResults();
-        var map = $('#map2').simplicityYahooMap('map');
-        map.addPanControl();
-        map.addZoomShort();
-      }());
-
-      $('#map1,#map2').bind('simplicityyahoomapresultsmarker', function (evt, ui) {
+      $('#map1').bind('simplicityyahoomapresultsmarker', function (evt, ui) {
         var marker = ui.marker;
         var properties = ui.row.properties;
         marker.changeImage(new YImage('images/markers/yahoo/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png'));
@@ -400,52 +363,6 @@
       $('#address').autocomplete({
         minLength: 0,
         source: $('#locationFields').simplicityYahooGeocoder('autocompleteSource'),
-        select: selectCallback,
-        change: selectCallback,
-        search: function (evt, ui) {
-          if ($(evt.target).val() === '') {
-            selectCallback(evt, ui);
-            return false;
-          }
-          return true;
-        },
-        selectFirst: true
-      });
-
-      $('#locationFields2')
-        .simplicityInputs()
-        .simplicityYahooGeocoder({
-          url: '../test/yahooGeocoderProxy.php',
-          requestTemplate: {
-            apikey: apikey
-          }
-        });
-      // Position the map based on geocoded address
-      var selectCallback = function (evt, ui) {
-        if (ui.item && ui.item.bounds) {
-          var map = $('#map2').simplicityYahooMap('map');
-          var bounds = ui.item.bounds;
-          var best = map.getBestZoomAndCenter([
-            new YGeoPoint(bounds.north, bounds.west),
-            new YGeoPoint(bounds.north, bounds.east),
-            new YGeoPoint(bounds.south, bounds.east),
-            new YGeoPoint(bounds.south, bounds.west)
-          ]);
-          map.drawZoomAndCenter(best.YGeoPoint, best.zoomLevel);
-        }
-      };
-      // Drive search from current map position
-      $('#map2').bind('simplicityyahoomapboundstrackerbounds', function (evt, ui) {
-        $('#north').val(ui.bounds.north);
-        $('#east').val(ui.bounds.east);
-        $('#south').val(ui.bounds.south);
-        $('#west').val(ui.bounds.west);
-        $('#locationFields2').change();
-      });
-      // Autocomplete based geocoder
-      $('#address2').autocomplete({
-        minLength: 0,
-        source: $('#locationFields2').simplicityYahooGeocoder('autocompleteSource'),
         select: selectCallback,
         change: selectCallback,
         search: function (evt, ui) {
