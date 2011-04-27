@@ -328,6 +328,8 @@
 
         var map = $('#map2').simplicityMapQuestMap('map');
         map.addControl(new MQA.LargeZoomControl3(), new MQA.MapCornerPlacement(MQA.MapCorner.TOP_RIGHT));
+        map.setZoomLevel(7);
+        map.setCenter({lat:40.75792020879332, lng:-74.00699615478442})
       }());
 
       $('#map2').bind('simplicitymapquestmapresultsmarker', function (evt, ui) {

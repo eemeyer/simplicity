@@ -324,6 +324,7 @@
         var map = $('#map2').simplicityYahooMap('map');
         map.addPanControl();
         map.addZoomShort();
+        map.drawZoomAndCenter(new YGeoPoint(40.75792020879332, -74.00699615478442), 8);
       }());
 
       $('#map2').bind('simplicityyahoomapresultsmarker', function (evt, ui) {
