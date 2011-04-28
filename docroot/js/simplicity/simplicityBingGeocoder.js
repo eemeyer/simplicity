@@ -174,23 +174,27 @@
         $.each(response.vendor.resourceSets, $.proxy(function (i, resourceSet) {
           $.each(resourceSet.resources, $.proxy(function (j, result) {
             var value = this.normalizeAddress(result);
-            if (Boolean(value) &&
-                typeof result.point !== 'undefined' &&
-                $.isArray(result.point.coordinates) &&
-                $.isArray(result.bbox)) {
-              items.push({
+            if (Boolean(value)) {
+              var item = {
                 value: value,
-                latitude: result.point.coordinates[0],
-                longitude: result.point.coordinates[1],
-                bounds: {
+                vendor: result
+              };
+              if (typeof result.point !== 'undefined' && $.isArray(result.point.coordinates)) {
+                $.extend(item, {
+                  latitude: result.point.coordinates[0],
+                  longitude: result.point.coordinates[1]
+                });
+              }
+              if ($.isArray(result.bbox)) {
+                item.bounds = {
                   vendor: result.bbox,
                   south: result.bbox[0],
                   west: result.bbox[1],
                   north: result.bbox[2],
                   east: result.bbox[3]
-                },
-                vendor: result
-              });
+                };
+              }
+              items.push(item);
             }
           }, this));
         }, this));

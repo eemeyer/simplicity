@@ -125,23 +125,28 @@
       if (status === google.maps.GeocoderStatus.OK && $.isArray(results)) {
         $.each(results, $.proxy(function (i, result) {
           var value = this.normalizeAddress(result);
-          if (Boolean(value) &&
-              typeof result.geometry !== 'undefined' &&
-              typeof typeof result.geometry.location !== 'undefined' &&
-              typeof result.geometry.bounds !== 'undefined') {
-            items.push({
+          if (Boolean(value)) {
+            var item = {
               value: value,
-              latitude: result.geometry.location.lat(),
-              longitude: result.geometry.location.lng(),
-              bounds: {
+              vendor: result
+            };
+            if (typeof result.geometry !== 'undefined' &&
+              typeof typeof result.geometry.location !== 'undefined') {
+              $.extend(item, {
+                latitude: result.geometry.location.lat(),
+                longitude: result.geometry.location.lng()
+              });
+            }
+            if (typeof result.geometry.bounds !== 'undefined') {
+              item.bounds = {
                 vendor: result.geometry.bounds,
                 south: result.geometry.bounds.getSouthWest().lat(),
                 west: result.geometry.bounds.getSouthWest().lng(),
                 north: result.geometry.bounds.getNorthEast().lat(),
                 east: result.geometry.bounds.getNorthEast().lng()
-              },
-              vendor: result
-            });
+              };
+            }
+            items.push(item);
           }
         }, this));
       }

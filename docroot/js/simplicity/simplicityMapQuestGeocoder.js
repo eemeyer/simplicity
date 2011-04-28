@@ -143,13 +143,18 @@
         $.each(response.results, $.proxy(function (i, result) {
           $.each(result.locations, $.proxy(function (i, location) {
             var value = this.normalizeAddress(location);
-            if (Boolean(value) && typeof location.latLng !== 'undefined') {
-              items.push({
+            if (Boolean(value)) {
+              var item = {
                 value: value,
-                latitude: location.latLng.lat,
-                longitude: location.latLng.lng,
                 vendor: location
-              });
+              };
+              if (typeof location.latLng !== 'undefined') {
+                $.extend(item, {
+                  latitude: location.latLng.lat,
+                  longitude: location.latLng.lng
+                });
+              }
+              items.push(item);
             }
           }, this));
         }, this));

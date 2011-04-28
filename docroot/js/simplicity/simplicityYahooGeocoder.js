@@ -178,20 +178,27 @@
           $.isArray(response.vendor.ResultSet.Results)) {
         $.each(response.vendor.ResultSet.Results, $.proxy(function (i, result) {
           var value = this.normalizeAddress(result);
-          if (Boolean(value) && typeof result.boundingbox !== 'undefined') {
-            items.push({
+          if (Boolean(value)) {
+            var item = {
               value: value,
-              latitude: Number(result.latitude),
-              longitude: Number(result.longitude),
-              bounds: {
+              vendor: result
+            };
+            if (typeof result.latitude !== 'undefined' && typeof result.longitude !== 'undefined') {
+              $.extend(item, {
+                latitude: Number(result.latitude),
+                longitude: Number(result.longitude)
+              });
+            }
+            if (typeof result.boundingbox !== 'undefined') {
+              item.bounds = {
                 vendor: result.boundingbox,
                 south: Number(result.boundingbox.south),
                 west: Number(result.boundingbox.west),
                 north: Number(result.boundingbox.north),
                 east: Number(result.boundingbox.east)
-              },
-              vendor: result
-            });
+              };
+            }
+            items.push(item);
           }
         }, this));
       }
