@@ -39,6 +39,10 @@
       .child {
         margin-left: 1em;
       }
+      #neighborhoodCheckboxes, #neighborhoodCheckboxes2 {
+        height: 18em;
+        overflow: scroll;
+      }
     </style>
   </head>
   <body>
@@ -220,6 +224,109 @@
               <label for="neighborhood_wall_street">Wall Street</label>
             </div>
           </fieldset>
+          <fieldset id="neighborhoodCheckboxes2">
+            <legend>Neighborhood Geoshapes</legend>
+            <div class="row">
+              <label>North</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_inwood2" name="location" value="Inwood" />
+              <label for="neighborhood_inwood2">Inwood</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_east_harlem2" name="location" value="East Harlem" />
+              <label for="neighborhood_east_harlem2">East Harlem</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_harlem2" name="location" value="Harlem" />
+              <label for="neighborhood_harlem2">Harlem</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_washington_heights2" name="location" value="Washington Heights" />
+              <label for="neighborhood_washington_heights2">Washington Heights</label>
+            </div>
+            <div class="row">
+              <label>Uptown</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_upper_west_side2" name="location" value="Upper West Side" />
+              <label for="neighborhood_upper_west_side2">Upper West Side</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_upper_east_side2" name="location" value="Upper East Side" />
+              <label for="neighborhood_upper_east_side2">Upper East Side</label>
+            </div>
+            <div class="row">
+              <label>Midtown</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_hells_kitchen2" name="location" value="Hell&apos;s Kitchen" />
+              <label for="neighborhood_hells_kitchen2">Hell&apos;s Kitchen</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_times_square2" name="location" value="Times Square" />
+              <label for="neighborhood_times_square2">Times Square</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_murray_hill2" name="location" value="Murray Hill" />
+              <label for="neighborhood_murray_hill2">Murray Hill</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_turtle_bay2" name="location" value="Turtle Bay" />
+              <label for="neighborhood_turtle_bay2">Turtle Bay</label>
+            </div>
+            <div class="row">
+              <label>Downtown</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_kips_bay2" name="location" value="Kips Bay" />
+              <label for="neighborhood_kips_bay2">Kips Bay</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_chelsea2" name="location" value="Chelsea" />
+              <label for="neighborhood_chelsea2">Chelsea</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_union_square2" name="location" value="Union Square" />
+              <label for="neighborhood_union_square2">Union Square</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_alphabet_city2" name="location" value="Alphabet City" />
+              <label for="neighborhood_alphabet_city2">Alphabet City</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_east_village2" name="location" value="East Village" />
+              <label for="neighborhood_east_village2">East Village</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_greenwich_village_(west_village)2" name="location" value="Greenwich Village (West Village)" />
+              <label for="neighborhood_greenwich_village_(west_village)2">Greenwich Village</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_battery_park_city2" name="location" value="Battery Park City" />
+              <label for="neighborhood_battery_park_city2">Battery Park City</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_south_street_seaport2" name="location" value="South Street Seaport" />
+              <label for="neighborhood_south_street_seaport2">South Street Seaport</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_chinatown2" name="location" value="Chinatown" />
+              <label for="neighborhood_chinatown2">Chinatown</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_lower_east_side2" name="location" value="Lower East Side" />
+              <label for="neighborhood_lower_east_side2">Lower East Side</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_tribeca2" name="location" value="TriBeCa" />
+              <label for="neighborhood_tribeca2">TriBeCa</label>
+            </div>
+            <div class="row child">
+              <input type="checkbox" id="neighborhood_wall_street2" name="location" value="Wall Street" />
+              <label for="neighborhood_wall_street2">Wall Street</label>
+            </div>
+          </fieldset>
         </div>
         <div id="main" class="yui3-u">
           <div class="yui3-g">
@@ -314,6 +421,10 @@
       $('#neighborhoodCheckboxes :checkbox').simplicityFacetedInput({
         dimension: 'locationTree',
         placement: 'append-label'
+      });
+
+      $('#neighborhoodCheckboxes2 :checkbox').simplicityInputs({
+        dimension: 'location'
       });
 
       (function () {
