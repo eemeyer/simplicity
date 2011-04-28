@@ -122,23 +122,31 @@
      */
     normalizeResults: function (results, status) {
       var items = [];
-      if (status === google.maps.GeocoderStatus.OK) {
+      if (status === google.maps.GeocoderStatus.OK && $.isArray(results)) {
         $.each(results, $.proxy(function (i, result) {
           var value = this.normalizeAddress(result);
-          if (value !== '') {
-            items.push({
+          if (Boolean(value)) {
+            var item = {
               value: value,
-              latitude: result.geometry.location.lat(),
-              longitude: result.geometry.location.lng(),
-              bounds: {
+              vendor: result
+            };
+            if (typeof result.geometry !== 'undefined' &&
+              typeof typeof result.geometry.location !== 'undefined') {
+              $.extend(item, {
+                latitude: result.geometry.location.lat(),
+                longitude: result.geometry.location.lng()
+              });
+            }
+            if (typeof result.geometry.bounds !== 'undefined') {
+              item.bounds = {
                 vendor: result.geometry.bounds,
                 south: result.geometry.bounds.getSouthWest().lat(),
                 west: result.geometry.bounds.getSouthWest().lng(),
                 north: result.geometry.bounds.getNorthEast().lat(),
                 east: result.geometry.bounds.getNorthEast().lng()
-              },
-              vendor: result
-            });
+              };
+            }
+            items.push(item);
           }
         }, this));
       }
@@ -153,7 +161,11 @@
      * @private
      */
     normalizeAddress: function (result) {
-      return result.formatted_address;
+      var output = '';
+      if (typeof result !== 'undefined') {
+        output = result.formatted_address;
+      }
+      return output;
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-google-geocoder');

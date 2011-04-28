@@ -170,24 +170,31 @@
      */
     normalizeResults: function (response) {
       var items = [];
-      if (response && response.vendor && response.vendor.statusCode === 200) {
+      if (response && response.vendor && response.vendor.statusCode === 200 && $.isArray(response.vendor.resourceSets)) {
         $.each(response.vendor.resourceSets, $.proxy(function (i, resourceSet) {
           $.each(resourceSet.resources, $.proxy(function (j, result) {
             var value = this.normalizeAddress(result);
-            if (value !== '') {
-              items.push({
+            if (Boolean(value)) {
+              var item = {
                 value: value,
-                latitude: result.point.coordinates[0],
-                longitude: result.point.coordinates[1],
-                bounds: {
+                vendor: result
+              };
+              if (typeof result.point !== 'undefined' && $.isArray(result.point.coordinates)) {
+                $.extend(item, {
+                  latitude: result.point.coordinates[0],
+                  longitude: result.point.coordinates[1]
+                });
+              }
+              if ($.isArray(result.bbox)) {
+                item.bounds = {
                   vendor: result.bbox,
                   south: result.bbox[0],
                   west: result.bbox[1],
                   north: result.bbox[2],
                   east: result.bbox[3]
-                },
-                vendor: result
-              });
+                };
+              }
+              items.push(item);
             }
           }, this));
         }, this));
@@ -203,7 +210,11 @@
      * @private
      */
     normalizeAddress: function (result) {
-      return result.address.formattedAddress;
+      var output = '';
+      if (typeof result !== 'undefined' && typeof result.address !== 'undefined') {
+        output = result.address.formattedAddress;
+      }
+      return output;
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-bing-geocoder');

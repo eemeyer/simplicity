@@ -171,23 +171,34 @@
      */
     normalizeResults: function (response) {
       var items = [];
-      if (response && response.vendor && response.vendor.ResultSet && response.vendor.ResultSet.Error === 0) {
+      if (typeof response !== 'undefined' &&
+          typeof response.vendor !== 'undefined' &&
+          typeof response.vendor.ResultSet !== 'undefined' &&
+          response.vendor.ResultSet.Error === 0 &&
+          $.isArray(response.vendor.ResultSet.Results)) {
         $.each(response.vendor.ResultSet.Results, $.proxy(function (i, result) {
           var value = this.normalizeAddress(result);
-          if (value !== '') {
-            items.push({
+          if (Boolean(value)) {
+            var item = {
               value: value,
-              latitude: Number(result.latitude),
-              longitude: Number(result.longitude),
-              bounds: {
+              vendor: result
+            };
+            if (typeof result.latitude !== 'undefined' && typeof result.longitude !== 'undefined') {
+              $.extend(item, {
+                latitude: Number(result.latitude),
+                longitude: Number(result.longitude)
+              });
+            }
+            if (typeof result.boundingbox !== 'undefined') {
+              item.bounds = {
                 vendor: result.boundingbox,
                 south: Number(result.boundingbox.south),
                 west: Number(result.boundingbox.west),
                 north: Number(result.boundingbox.north),
                 east: Number(result.boundingbox.east)
-              },
-              vendor: result
-            });
+              };
+            }
+            items.push(item);
           }
         }, this));
       }
@@ -202,7 +213,11 @@
      * @private
      */
     normalizeAddress: function (result) {
-      return result.line1 + ' ' + result.line2;
+      var output = '';
+      if (typeof result !== 'undefined') {
+        output = result.line1 + ' ' + result.line2;
+      }
+      return output;
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-yahoo-geocoder');
