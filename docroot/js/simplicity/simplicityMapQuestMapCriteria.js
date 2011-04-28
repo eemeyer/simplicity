@@ -83,8 +83,10 @@
       var locations = ui.locations;
       if ($.isArray(locations) && this.options.updateBounds) {
         $.each(this._markers, function (pmIdx, poly) {
-          if (typeof poly.shapePoints !== 'undefined' && $.isArray(poly.shapePoints.items)) {
-            $.merge(locations, poly.shapePoints.items);
+          if (typeof poly.shapePoints !== 'undefined' && $.isArray(poly.shapePoints)) {
+            for (var i = 0; i + 1 < poly.shapePoints.length; i += 2) {
+              locations.push({lat: poly.shapePoints[i], lng: poly.shapePoints[i + 1]});
+            }
           } else if (typeof poly.latLng !== 'undefined') {
             locations.push(poly.latLng);
           }
