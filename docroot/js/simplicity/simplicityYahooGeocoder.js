@@ -171,10 +171,14 @@
      */
     normalizeResults: function (response) {
       var items = [];
-      if (response && response.vendor && response.vendor.ResultSet && response.vendor.ResultSet.Error === 0) {
+      if (typeof response !== 'undefined' &&
+          typeof response.vendor !== 'undefined' &&
+          typeof response.vendor.ResultSet !== 'undefined' &&
+          response.vendor.ResultSet.Error === 0 &&
+          $.isArray(response.vendor.ResultSet.Results)) {
         $.each(response.vendor.ResultSet.Results, $.proxy(function (i, result) {
           var value = this.normalizeAddress(result);
-          if (value !== '') {
+          if (Boolean(value) && typeof result.boundingbox !== 'undefined') {
             items.push({
               value: value,
               latitude: Number(result.latitude),
@@ -202,7 +206,11 @@
      * @private
      */
     normalizeAddress: function (result) {
-      return result.line1 + ' ' + result.line2;
+      var output = '';
+      if (typeof result !== 'undefined') {
+        output = result.line1 + ' ' + result.line2;
+      }
+      return output;
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-yahoo-geocoder');

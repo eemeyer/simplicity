@@ -122,10 +122,13 @@
      */
     normalizeResults: function (results, status) {
       var items = [];
-      if (status === google.maps.GeocoderStatus.OK) {
+      if (status === google.maps.GeocoderStatus.OK && $.isArray(results)) {
         $.each(results, $.proxy(function (i, result) {
           var value = this.normalizeAddress(result);
-          if (value !== '') {
+          if (Boolean(value) &&
+              typeof result.geometry !== 'undefined' &&
+              typeof typeof result.geometry.location !== 'undefined' &&
+              typeof result.geometry.bounds !== 'undefined') {
             items.push({
               value: value,
               latitude: result.geometry.location.lat(),
@@ -153,7 +156,11 @@
      * @private
      */
     normalizeAddress: function (result) {
-      return result.formatted_address;
+      var output = '';
+      if (typeof result !== 'undefined') {
+        output = result.formatted_address;
+      }
+      return output;
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-google-geocoder');

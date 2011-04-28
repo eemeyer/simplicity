@@ -139,11 +139,11 @@
      */
     normalizeResults: function (response) {
       var items = [];
-      if (response.info.statuscode === 0) {
+      if (response.info.statuscode === 0 && $.isArray(response.results)) {
         $.each(response.results, $.proxy(function (i, result) {
           $.each(result.locations, $.proxy(function (i, location) {
             var value = this.normalizeAddress(location);
-            if (value !== '') {
+            if (Boolean(value) && typeof location.latLng !== 'undefined') {
               items.push({
                 value: value,
                 latitude: location.latLng.lat,
@@ -168,30 +168,33 @@
      * @private
      */
     normalizeAddress: function (location) {
-      var value = location.street;
-      if (location.adminArea5 !== '') {
-        if (value !== '') {
-          value += ', ';
+      var value = '';
+      if (typeof location !== 'undefined') {
+        value = location.street;
+        if (location.adminArea5 !== '') {
+          if (value !== '') {
+            value += ', ';
+          }
+          value += location.adminArea5;
         }
-        value += location.adminArea5;
-      }
-      if (location.adminArea4 !== '' && location.geocodeQuality === 'COUNTY') {
-        if (value !== '') {
-          value += ', ';
+        if (location.adminArea4 !== '' && location.geocodeQuality === 'COUNTY') {
+          if (value !== '') {
+            value += ', ';
+          }
+          value += location.adminArea4;
         }
-        value += location.adminArea4;
-      }
-      if (location.adminArea3 !== '') {
-        if (value !== '') {
-          value += ', ';
+        if (location.adminArea3 !== '') {
+          if (value !== '') {
+            value += ', ';
+          }
+          value += location.adminArea3;
         }
-        value += location.adminArea3;
-      }
-      if (location.postalCode !== '') {
-        if (value !== '') {
-          value += ' ';
+        if (location.postalCode !== '') {
+          if (value !== '') {
+            value += ' ';
+          }
+          value += location.postalCode;
         }
-        value += location.postalCode;
       }
       return value;
     },

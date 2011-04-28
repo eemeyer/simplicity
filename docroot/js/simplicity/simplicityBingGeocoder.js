@@ -170,11 +170,14 @@
      */
     normalizeResults: function (response) {
       var items = [];
-      if (response && response.vendor && response.vendor.statusCode === 200) {
+      if (response && response.vendor && response.vendor.statusCode === 200 && $.isArray(response.vendor.resourceSets)) {
         $.each(response.vendor.resourceSets, $.proxy(function (i, resourceSet) {
           $.each(resourceSet.resources, $.proxy(function (j, result) {
             var value = this.normalizeAddress(result);
-            if (value !== '') {
+            if (Boolean(value) &&
+                typeof result.point !== 'undefined' &&
+                $.isArray(result.point.coordinates) &&
+                $.isArray(result.bbox)) {
               items.push({
                 value: value,
                 latitude: result.point.coordinates[0],
@@ -203,7 +206,11 @@
      * @private
      */
     normalizeAddress: function (result) {
-      return result.address.formattedAddress;
+      var output = '';
+      if (typeof result !== 'undefined' && typeof result.address !== 'undefined') {
+        output = result.address.formattedAddress;
+      }
+      return output;
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-bing-geocoder');
