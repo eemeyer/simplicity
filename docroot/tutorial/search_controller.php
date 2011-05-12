@@ -24,6 +24,36 @@ if (array_key_exists("page", $_GET)) {
 $drillDown = array(
   array("dimension" => "type"),
   array("dimension" => "condition"),
+  array(
+    "dimension" => "locationTree",
+    "ids" => array(
+      "north",
+      "inwood",
+      "east_harlem",
+      "harlem",
+      "washington_heights",
+      "uptown",
+      "upper_west_side",
+      "upper_east_side",
+      "midtown",
+      "hells_kitchen",
+      "times_square",
+      "murray_hill",
+      "turtle_bay",
+      "downtown",
+      "kips_bay",
+      "chelsea",
+      "union_square",
+      "alphabet_city",
+      "east_village",
+      "greenwich_village_(west_village)",
+      "battery_park_city",
+      "south_street_seaport",
+      "chinatown",
+      "lower_east_side",
+      "tribeca",
+      "wall_street")
+    ),
   array("dimension" => "bedroom"),
   array(
     "dimension" => "style",
@@ -47,6 +77,21 @@ if (array_key_exists("condition", $_GET)) {
     $criteria[] = array(
         "dimension" => "condition",
         "id" => $_GET["condition"],
+    );
+}
+
+if (array_key_exists("locationTree", $_GET)) {
+    $criteria[] = array(
+        "dimension" => "locationTree",
+        "id" => $_GET["locationTree"],
+    );
+}
+
+if (array_key_exists("location", $_GET)) {
+    $criteria[] = array(
+        "dimension" => "location",
+        "placemarkIds" => $_GET["location"],
+        "exactDistance" => 0
     );
 }
 
