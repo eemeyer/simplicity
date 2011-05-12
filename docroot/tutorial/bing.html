@@ -444,6 +444,16 @@
         });
       });
 
+      $('#map').bind('simplicitybingmapcriteriaplacemark', function (evt, ui) {
+        $.each(ui.markers, function (idx, marker) {
+          marker.setOptions({
+            fillColor: new Microsoft.Maps.Color(60,100,0,100),
+            strokeColor: new Microsoft.Maps.Color(200,0,100,100),
+            strokeThickness: 2
+          });
+        });
+      });
+
       $('#locationFields')
         .simplicityInputs()
         .simplicityBingGeocoder({

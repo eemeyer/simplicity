@@ -447,6 +447,12 @@
         });
       });
 
+      $('#map').bind('simplicitymapquestmapcriteriaplacemark', function (evt, ui) {
+        $.each(ui.markers, function (idx, marker) {
+          marker.fillColorAlpha = 0.2;
+        });
+      });
+
       $('#locationFields')
         .simplicityInputs()
         .simplicityMapQuestGeocoder({
