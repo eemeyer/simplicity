@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>JSON Utility</title>
+      <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+      <link href="../css/lib/jquery-ui-1.8.7.custom.css" rel="stylesheet" type="text/css" />
+      <link href="slickgrid-df064f/slick.grid.css" rel="stylesheet" type="text/css" />
+      <link href="slickgrid-df064f/controls/slick.columnpicker.css" rel="stylesheet" type="text/css" />
+      <style>
+        body.ui-widget-content{
+          border: none
+        }
+        a {
+          text-decoration: none;
+        }
+        a:visited, a:link {
+         color: #000000;
+        }
+        .ui-widget {
+          font-size: .8em;
+        }
+        #menuHeaderButtons {
+          width: 400px;
+          font-size: 0.5em;
+          float: right;
+        }
+        #themeSwitcher {
+          float: right;
+          margin-left: 1em;
+        }
+       .heading span {
+          font-family: Myriad, Helvetica, Tahoma, Arial, clean, sans-serif;
+          font-size: 167%; // 22px
+        }
+        .heading .page_logo .title {
+            border-left: 1px dotted #AAAAAA;
+            padding-left: 0.5em;
+            color: #666666;
+        }
+        .heading div.page_logo {
+          padding-bottom: 1em;
+        }
+        span.t11e_logo
+        {
+          padding: 0.5em;
+        }
+        .t11e_logo_begin {
+            color: #BBBBBB;
+        }
+        .t11e_logo_end {
+            color: #FFCC00;
+        }
+        #request,#response,#results {
+          width: 100%;
+        }
+        #results {
+          height: 300px;
+          display: none;
+          margin-left: auto;
+          margin-right: auto;
+          border-top: none;
+        }
+        .copyright {
+          font-family: Myriad, Helvetica, Tahoma, Arial, clean, sans-serif;
+          text-align: center;
+          margin-top: 0.25em;
+        }
+        fieldset legend {
+          color: inherit;
+        }
+        button, span.checkbox label, span.checkbox input{
+          cursor: pointer;
+        }
+        div.discovery_widget {
+          margin-top: 0.25em;
+          padding: 0.5em 0;
+        }
+        div.rightColumn {
+          margin-left: 0.5em;
+        }
+        #tableHeader {
+         line-height: 1.8em;
+         padding:0 .5em 0 1em;
+        }
+        #closeTable {
+          display: block;
+          float: right;
+          height: 1.8em;
+          line-height: 1.8em;
+          margin-top: .4em;
+        }
+    </style>
+  </head>
+  <body class="ui-widget ui-widget-content">
+    <div id="menuHeaderButtons" class="ui-helper-clearfix" >
+      <div id="themeSwitcher" class="ui-helper-clearfix">
+        <button id="themeSwitcherButton">Theme</button>
+      </div>
+    </div>
+    <form onsubmit="return false;">
+      <div class="yui-g heading">
+        <div class="yui-u first">
+          <div class="page_logo">
+            <span class="t11e_logo">
+              <a href="http://transparensee.com">
+                <span class="t11e_logo_begin">transparen</span><span class="t11e_logo_end">see</span>
+              </a>
+            </span>
+            <span class="title">JSON Utility</span>
+          </div>
+        </div>
+      </div>
+      <div id="tableHeader" class="ui-widget-header ui-corner-all ui-helper-clearfix">
+          <span>Property Results</span>
+          <span class="checkbox">
+            <input type="checkbox" id="keepColumns"/>
+            <label for="keepColumns">Lock column names and positions</label>
+            <a id="closeTable" href="#" role="button" title="Close results table"><span class="ui-icon ui-icon-closethick">close</span></a>
+          </span>
+      </div>
+      <div id="results" class="ui-widget ui-widget-content">
+      </div>
+      <div id="main">
+        <div class="yui3-g">
+          <div class="yui3-u-1-2">
+            <div class="discovery_widget">
+            <fieldset class="ui-widget discovery_widget">
+              <legend class="ui-widget ui-widget-header ui-corner-all">Request</legend>
+              <textarea rows="24" id="request" class="ui-widget">
+{
+  "criteria": [
+    {
+      "dimension": ""
+    }
+  ],
+  "properties": [],
+  "startIndex": 0,
+  "pageSize": 10
+}
+</textarea>
+                <button name="search" type="button">Test</button>
+                <span class="checkbox">
+                  <input type="checkbox" id="executeOnChange" checked="y"/>
+                  <label for="executeOnChange">Search on loss of focus</label>
+                </span>
+              </fieldset>
+            </div>
+            <div id="requestMsg"></div>
+          </div>
+          <div class="yui3-u-1-2">
+            <div class="discovery_widget rightColumn">
+              <fieldset class="ui-widget discovery_widget">
+                <legend class="ui-widget ui-widget-header ui-corner-all">Response</legend>
+                <textarea rows="24" id="response" readonly="yes" class="ui-widget"></textarea>
+                <button id="selectAll" type="button">Select All</button>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  <div id="ft">
+    <div class="copyright">
+      <a href="http://transparensee.com">&copy; Transparensee Systems</a>
+    </div>
+  </div>
+    <script type="text/javascript" src="../js/lib/jquery-1.5.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.7.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+    <script type="text/javascript" src="slickgrid-df064f/lib/jquery.event.drag-2.0.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="slickgrid-df064f/slick.core.js" charset="utf-8"></script>
+    <script type="text/javascript" src="slickgrid-df064f/slick.grid.js" charset="utf-8"></script>
+    <script type="text/javascript" src="slickgrid-df064f/controls/slick.columnpicker.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="http://jqueryui.com/themeroller/themeswitchertool/" charset="utf-8"></script>
+
+    <script type="text/javascript" src="../js/simplicity/simplicityState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityDebug.js" charset="utf-8"></script>
+    <script type="text/javascript" src="simplicityLargeContentViewer.js" charset="utf-8"></script>
+
+    <script type="text/javascript"><!--//<![CDATA[
+    $('#themeSwitcherButton').button().click(function (evt) {
+        $('#themeSwitcherButton').remove();
+        $('#themeSwitcher').themeswitcher({
+          width: 200,
+          height: 600,
+          closeOnSelect: false
+        });
+      });
+
+    function executeQuery(evt, ui) {
+        var input = $('#request');
+        var raw =  input.val();
+        var validJson = false;
+        try
+        {
+          var search = JSON.parse(raw)
+          var pretty = JSON.stringify(search, null, '  ');
+          validJson = true;
+        }
+        catch (e)
+        {
+          $('#requestMsg').text('Invalid JSON').show(500);
+        }
+        if (validJson)
+        {
+          input.val(pretty);
+          $('button[name="search"]').attr('disabled', 'disabled');
+          $('body').simplicityDiscoverySearch('query', raw);
+        }
+      }
+
+      $('fieldset').addClass("ui-widget ui-widget-content");
+
+      $('body')
+        .simplicityState()
+        .simplicityDiscoverySearch({
+          url: 'query_proxy.php'
+        });
+      // json request widget
+      $('#request').bind('focus', function (evt, ui) {
+        $('#requestMsg').hide(500);
+      });
+
+      $('button[name="search"]').button().click(executeQuery);
+      $('#closeTable').bind('click', function(evt, ui) {
+          $('#results,#closeTable,#tableHeader').hide(500);
+        });
+      $('#executeOnChange').bind('click', function(evt, ui) {
+          ($('#executeOnChange').is(':checked')) ?
+              $('#request').bind('change', executeQuery) :
+              $('#request').unbind('change', executeQuery);
+      });
+      $('#selectAll').button().click(function() {
+          $('#response').select();
+        });
+      $('body').bind('simplicitySearchResponse', function (evt, ui) {
+        $('button[name="search"]').removeAttr('disabled');
+      });
+
+      // json response widget
+      $('body').bind('simplicitySearchResponse', function (evt, ui) {
+        $('#response').val(JSON.stringify(ui._discovery.response, null, '  '));
+      });
+
+      $('#closeTable,#tableHeader').hide();
+      if ($('#executeOnChange').is(':checked')) {
+        $('#request').bind('change', executeQuery);
+      }
+
+      var grid = new Slick.Grid($('#results'), [], [], {});
+      $(window).bind('resize', function (evt, ui) {
+        $('#results').trigger('resize.slickgrid');
+      });
+
+      // json response properties widget
+      $('body').bind('simplicityResultSet', function (evt, result) {
+        // TODO: display top level result properties: datasetSize, exactSize, numRows, pageSize.
+        var rows = result.rows
+        var colNamesMap = {};
+        var colNames = [];
+        // could derive this while looping, but this way we control the order.
+        var rowPropNames = ['id', 'score', 'exact'];
+        $.each(rows, function (idx, row) {
+          if (row.properties) {
+            $.each(row.properties, function (propName, propValue) {
+              if (!colNamesMap[propName]) {
+                colNames.push(propName);
+                colNamesMap[propName] = 1;
+              }
+            });
+          }
+        });
+        delete colNamesMap;
+
+        var data = [];
+        $.each(rows, function (idx, row) {
+          var item = $.extend({}, row);
+          delete item.properties;
+          $.extend(item, row.properties);
+          data.push(item);
+        });
+
+        var columns = grid.getColumns();
+        if ($('#keepColumns').is(':not(:checked)') || columns.length === 0)
+        {
+          columns = [];
+          $.each($.merge($.merge([], rowPropNames), colNames), function (idx, name) {
+            columns.push({id: name, name: name, field: name, resizable: true, selectable: false,
+              editor:simplicityLargeContentViewer})
+          });
+        }
+        grid.destroy();
+        $('#results').show();
+        var options = {enableCellNavigation: true, forceFitColumns: true, editable: true};
+        grid = new Slick.Grid($('#results'), data, columns, options);
+        new Slick.Controls.ColumnPicker(columns, grid, {});
+        $('#closeTable,#tableHeader').fadeIn(500);
+      });
+    //]]>--></script>
+  </body>
+</html>
