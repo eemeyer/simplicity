@@ -192,6 +192,9 @@
         {
           input.val(pretty);
           $('button[name="search"]').attr('disabled', 'disabled');
+          // clear response and grid
+          $('body').trigger('simplicitySearchResponse', [{_discovery:{response: "searching..."}}])
+          $('body').trigger('simplicityResultSet', [{rows:[]}]);
           $('body').simplicityDiscoverySearch('query', raw);
         }
       }
