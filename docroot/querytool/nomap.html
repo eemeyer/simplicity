@@ -190,7 +190,9 @@
         if (validJson)
         {
           input.val(pretty);
-          $('button[name="search"]').attr('disabled', 'disabled');
+          $('button[name="search"]').button('disable');
+          $('#request').attr('disabled', 'disabled');
+          $('#executeOnChange').attr('disabled', 'disabled');
           // clear response and grid
           $('body').simplicityDiscoverySearch('searchResponse', {message: "searching..."});
           $('body').simplicityDiscoverySearch('query', raw);
@@ -206,20 +208,28 @@
         });
 
       // json request widget
-      $('button[name="search"]').button().click(executeQuery);
+      $('button[name="search"]').button().button('disable').bind('click', executeQuery);
       $('#closeTable').bind('click', function(evt, ui) {
           $('#results,#closeTable,#tableHeader').hide(500);
         });
       $('#executeOnChange').bind('click', function(evt, ui) {
-          ($('#executeOnChange').is(':checked')) ?
-              $('#request').bind('change', executeQuery) :
-              $('#request').unbind('change', executeQuery);
+        if ($('#executeOnChange').is(':checked')) {
+          $('#request').bind('change', executeQuery);
+          $('button[name="search"]').button('disable');
+        } else {
+          $('#request').unbind('change', executeQuery);
+          $('button[name="search"]').button('enable');
+        }
       });
       $('#selectAll').button().click(function() {
           $('#response').select();
         });
       $('body').bind('simplicitySearchResponse', function (evt, ui) {
-        $('button[name="search"]').removeAttr('disabled');
+        $('#executeOnChange').removeAttr('disabled');
+        $('#request').removeAttr('disabled');
+        if ($('#executeOnChange').is(':not(:checked)')) {
+          $('button[name="search"]').button('enable');
+        }
       });
 
       // json response widget
