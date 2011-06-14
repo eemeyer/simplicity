@@ -229,7 +229,11 @@
 
       // json response widget
       $('body').bind('simplicitySearchResponse', function (evt, ui) {
-        $('#response').val(JSON.stringify(ui._discovery.response, null, '  '));
+        if (ui.error) {
+          $('#response').val('Problem searching:\n' + JSON.stringify(ui, null, '  '));
+        } else {
+          $('#response').val(JSON.stringify(ui._discovery.response, null, '  '));
+        }
       });
 
       $('#closeTable,#tableHeader').hide();
