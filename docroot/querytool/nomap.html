@@ -193,6 +193,7 @@
           $('body').simplicityDiscoverySearch('searchResponse', {message: "searching..."});
           $('button[name="search"]').button('disable');
           $('#request').attr({disabled: 'disabled', readonly:'readonly'});
+          $('#response').attr({disabled: 'disabled'});
           $('#executeOnChange').attr('disabled', 'disabled');
           // clear response and grid
           $('body').simplicityDiscoverySearch('query', raw);
@@ -226,6 +227,7 @@
         });
       $('body').bind('simplicitySearchResponse', function (evt, ui) {
         $('#executeOnChange').removeAttr('disabled');
+        $('#response').removeAttr('disabled');
         $('#request').removeAttr('disabled').removeAttr('readonly');
         if ($('#executeOnChange').is(':not(:checked)')) {
           $('button[name="search"]').button('enable');
