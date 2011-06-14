@@ -132,6 +132,25 @@ groups:
     sourceFileNames:
       - js/lib/jquery.ui.autocomplete.html-2010-10-25.js
 
+  - groupName: slickgrid_js
+    mediaType: js
+    jslint: off
+    outputFileName: js/build/slickgrid-df064f.js
+    outputFileNameMinified: js/build/slickgrid-df064f.min.js
+    sourceFileNames:
+      - querytool/slickgrid-df064f/lib/jquery.event.drag-2.0.min.js
+      - querytool/slickgrid-df064f/slick.core.js
+      - querytool/slickgrid-df064f/slick.grid.js
+      - querytool/slickgrid-df064f/controls/slick.columnpicker.js
+
+  - groupName: slickgrid_css
+    mediaType: css
+    outputFileName: css/build/slickgrid-df064f.css
+    outputFileNameMinified: css/build/slickgrid-df064f.min.css
+    sourceFileNames:
+      - querytool/slickgrid-df064f/slick.grid.css
+      - querytool/slickgrid-df064f/controls/slick.columnpicker.css
+
 jslintOptions:
     - passfail
     - indent=2
