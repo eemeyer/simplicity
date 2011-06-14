@@ -92,11 +92,6 @@
     </style>
   </head>
   <body class="ui-widget ui-widget-content">
-    <div id="menuHeaderButtons" class="ui-helper-clearfix" >
-      <div id="themeSwitcher" class="ui-helper-clearfix">
-        <button id="themeSwitcherButton">Theme</button>
-      </div>
-    </div>
     <form onsubmit="return false;">
       <div class="yui-g heading">
         <div class="yui-u first">
@@ -173,23 +168,12 @@
     <script type="text/javascript" src="slickgrid-df064f/slick.grid.js" charset="utf-8"></script>
     <script type="text/javascript" src="slickgrid-df064f/controls/slick.columnpicker.js" charset="utf-8"></script>
 
-    <script type="text/javascript" src="http://jqueryui.com/themeroller/themeswitchertool/" charset="utf-8"></script>
-
     <script type="text/javascript" src="../js/simplicity/simplicityState.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityDebug.js" charset="utf-8"></script>
     <script type="text/javascript" src="simplicityLargeContentViewer.js" charset="utf-8"></script>
 
     <script type="text/javascript"><!--//<![CDATA[
-    $('#themeSwitcherButton').button().click(function (evt) {
-        $('#themeSwitcherButton').remove();
-        $('#themeSwitcher').themeswitcher({
-          width: 200,
-          height: 600,
-          closeOnSelect: false
-        });
-      });
-
     function executeQuery(evt, ui) {
         var input = $('#request');
         var raw =  input.val();
