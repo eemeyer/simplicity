@@ -271,19 +271,33 @@
         });
 
         var columns = grid.getColumns();
+        var allColumns = [];
+        var remember = false;
+        $.each($.merge($.merge([], rowPropNames), colNames), function (idx, name) {
+          allColumns.push({id: name, name: name, field: name, resizable: true, selectable: false,
+            editor:simplicityLargeContentViewer})
+        });
         if ($('#keepColumns').is(':not(:checked)') || columns.length === 0)
         {
-          columns = [];
-          $.each($.merge($.merge([], rowPropNames), colNames), function (idx, name) {
-            columns.push({id: name, name: name, field: name, resizable: true, selectable: false,
-              editor:simplicityLargeContentViewer})
-          });
+          columns = $.merge([] , allColumns);
+        }
+        else
+        {
+          remember = true;
+          var forceFit = grid.getOptions().forceFitColumns
+          var syncColumnCellResize = grid.getOptions().syncColumnCellResize
+          // TODO: possibly union oldColumns into allColumns
         }
         grid.destroy();
         $('#results').show();
-        var options = {enableCellNavigation: true, forceFitColumns: true, editable: true};
+        var options = {
+          enableCellNavigation: true,
+          forceFitColumns: remember ? forceFit : true,
+          syncColumnCellResize: remember ? syncColumnCellResize : false,
+          editable: true
+        };
         grid = new Slick.Grid($('#results'), data, columns, options);
-        new Slick.Controls.ColumnPicker(columns, grid, {});
+        new Slick.Controls.ColumnPicker(allColumns, grid, {});
         $('#closeTable,#tableHeader').fadeIn(500);
       });
     //]]>--></script>
