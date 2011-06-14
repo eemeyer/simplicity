@@ -190,11 +190,11 @@
         if (validJson)
         {
           input.val(pretty);
+          $('body').simplicityDiscoverySearch('searchResponse', {message: "searching..."});
           $('button[name="search"]').button('disable');
           $('#request').attr({disabled: 'disabled', readonly:'readonly'});
           $('#executeOnChange').attr('disabled', 'disabled');
           // clear response and grid
-          $('body').simplicityDiscoverySearch('searchResponse', {message: "searching..."});
           $('body').simplicityDiscoverySearch('query', raw);
         }
       }
