@@ -185,16 +185,14 @@
         }
         catch (e)
         {
-          $('body').trigger('simplicitySearchResponse', [{error:true, message: "Invalid JSON"}])
-          $('body').trigger('simplicityResultSet', [{rows:[]}]);
+          $('body').simplicityDiscoverySearch('searchResponse', {error:true, message: "Invalid request JSON"});
         }
         if (validJson)
         {
           input.val(pretty);
           $('button[name="search"]').attr('disabled', 'disabled');
           // clear response and grid
-          $('body').trigger('simplicitySearchResponse', [{_discovery:{response: "searching..."}}])
-          $('body').trigger('simplicityResultSet', [{rows:[]}]);
+          $('body').simplicityDiscoverySearch('searchResponse', {message: "searching..."});
           $('body').simplicityDiscoverySearch('query', raw);
         }
       }
@@ -227,9 +225,10 @@
       // json response widget
       $('body').bind('simplicitySearchResponse', function (evt, ui) {
         if (ui.error) {
-          $('#response').val('Problem searching:\n' + JSON.stringify(ui, null, '  '));
+          $('#response').addClass('ui-state-error').val(JSON.stringify(ui, null, '  '));
         } else {
-          $('#response').val(JSON.stringify(ui._discovery.response, null, '  '));
+          var text = ui.message || JSON.stringify(ui._discovery.response, null, '  ');
+          $('#response').removeClass('ui-state-error').val(text);
         }
       });
 
