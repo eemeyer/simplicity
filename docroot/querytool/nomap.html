@@ -130,7 +130,6 @@
                 </span>
               </fieldset>
             </div>
-            <div id="requestMsg"></div>
           </div>
           <div class="yui3-u-1-2">
             <div class="discovery_widget rightColumn">
@@ -186,7 +185,8 @@
         }
         catch (e)
         {
-          $('#requestMsg').text('Invalid JSON').show(500);
+          $('body').trigger('simplicitySearchResponse', [{error:true, message: "Invalid JSON"}])
+          $('body').trigger('simplicityResultSet', [{rows:[]}]);
         }
         if (validJson)
         {
@@ -206,11 +206,8 @@
         .simplicityDiscoverySearch({
           url: 'query_proxy.php'
         });
-      // json request widget
-      $('#request').bind('focus', function (evt, ui) {
-        $('#requestMsg').hide(500);
-      });
 
+      // json request widget
       $('button[name="search"]').button().click(executeQuery);
       $('#closeTable').bind('click', function(evt, ui) {
           $('#results,#closeTable,#tableHeader').hide(500);
