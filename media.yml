@@ -135,21 +135,21 @@ groups:
   - groupName: slickgrid_js
     mediaType: js
     jslint: off
-    outputFileName: js/build/slickgrid-df064f.js
-    outputFileNameMinified: js/build/slickgrid-df064f.min.js
+    outputFileName: js/build/slickgrid-0ed544.js
+    outputFileNameMinified: js/build/slickgrid-0ed544.min.js
     sourceFileNames:
-      - querytool/slickgrid-df064f/lib/jquery.event.drag-2.0.min.js
-      - querytool/slickgrid-df064f/slick.core.js
-      - querytool/slickgrid-df064f/slick.grid.js
-      - querytool/slickgrid-df064f/controls/slick.columnpicker.js
+      - querytool/slickgrid-0ed544/lib/jquery.event.drag-2.0.min.js
+      - querytool/slickgrid-0ed544/slick.core.js
+      - querytool/slickgrid-0ed544/slick.grid.js
+      - querytool/slickgrid-0ed544/controls/slick.columnpicker.js
 
   - groupName: slickgrid_css
     mediaType: css
-    outputFileName: css/build/slickgrid-df064f.css
-    outputFileNameMinified: css/build/slickgrid-df064f.min.css
+    outputFileName: css/build/slickgrid-0ed544.css
+    outputFileNameMinified: css/build/slickgrid-0ed544.min.css
     sourceFileNames:
-      - querytool/slickgrid-df064f/slick.grid.css
-      - querytool/slickgrid-df064f/controls/slick.columnpicker.css
+      - querytool/slickgrid-0ed544/slick.grid.css
+      - querytool/slickgrid-0ed544/controls/slick.columnpicker.css
 
 jslintOptions:
     - passfail
