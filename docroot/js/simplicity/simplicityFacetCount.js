@@ -57,7 +57,10 @@
      *   <dt>optionTemplate</dt>
      *   <dd>
      *     Template used when bound to an <code>option</code> element.
-     *     Defaults to <code>'{option} {count}'</code>.
+     *     Defaults to <code>'{option} {count}'</code>. Bracketed text will be
+     *     replaced by the option value and any formatted count respectively.
+     *     Other text not included in the bracketed fields will be left as-is.
+     *     Applies only to facet counts for OPTION tags.
      *   </dd>
      *   <dt>numberFormatter</dt>
      *   <dd>
@@ -73,6 +76,30 @@
       dimension: '',
       facetId: '',
       optionTemplate: '{option} {count}',
+      /**
+       * Format a face count value. Returning the facet count as a formatted
+       * string.
+       *
+       * @name $.ui.simplicityFacetCount.numberFormatter
+       * @function
+       * @param count The facet count to format
+       * @example
+       *   &lt;select id="size" name="size">
+       *     &lt;option value="small">Small&lt;/option>
+       *     &lt;option value="medium">Medium&lt;/option>
+       *     &lt;option value="large">Large&lt;/option>
+       *   &lt;/select>
+       *   &lt;script type="text/javascript">
+       *     $('#size option[value="small"]').simplicityFacetCount({
+       *       dimension: 'Size',
+       *       facetId: 'S',
+       *       numberFormatter: function(count) {
+       *        return "(" + count + ")";
+       *       }
+       *     });
+       *     // etc.
+       *   &lt;/script>
+       */
       numberFormatter: ''
     },
     _create : function () {
