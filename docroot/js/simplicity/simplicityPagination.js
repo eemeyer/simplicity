@@ -41,7 +41,7 @@
      *   </dd>
      *   <dt>pageParam</dt>
      *   <dd>
-     *     Used when binding directly to the <code>simplicityState</code> and determins which
+     *     Used when binding directly to the <code>simplicityState</code> and determines which
      *     field the state holds the current page number. Defaults to <code>'page'</code>.
      *   </dd>
      *   <dt>input</dt>
