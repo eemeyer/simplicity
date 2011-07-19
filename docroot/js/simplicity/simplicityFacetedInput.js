@@ -22,13 +22,13 @@
      *   <dt>template</dt>
      *   <dd>
      *     For when this widget is bound to an <code>input</code> other than <code>select</code>.
-     *     Is used as the element for the <code>simplicityFacetCounts</code> widget.
+     *     Is used as the element for the <code>simplicityFacetCount</code> widget.
      *     Defaults to <code>&lt;span/></code>.
      *   </dd>
      *   <dt>placement</dt>
      *   <dd>
      *     For when this widget is bound to an <code>input</code> other than <code>select</code>.
-     *     Determines where to place the automatically created <code>simplicityFacetCounts</code>
+     *     Determines where to place the automatically created <code>simplicityFacetCount</code>
      *     widget. Defaults to <code>after-label</code>. Possible options are
      *     <dl>
      *       <dt>before-input</dt>
