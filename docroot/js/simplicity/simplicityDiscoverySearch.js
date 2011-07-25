@@ -34,6 +34,10 @@
      *     The initial search response. Used when a page has a server-side search triggered during load.
      *     Defaults to <code>{}</code>.
      *   </dd>
+     *   <dt>dataType</dt>
+     *   <dd>
+     *     Defaults to 'json', change to 'jsonp' to allow for cross domain search controller support.
+     *     This requires that your search controller output valid JSONP.
      *   <dt>debug</dt>
      *   <dd>
      *     Enable logging of key events to <code>console.log</code>. Defaults to <code>false</code>.
@@ -45,6 +49,7 @@
       stateElement: 'body',
       searchOnStateChange: true,
       initialSearchResponse: {},
+      dataType: 'json',
       debug: false
     },
     _create : function () {
@@ -90,7 +95,7 @@
         type: 'GET',
         contentType: 'application/json',
         data: searchState,
-        dataType: 'json',
+        dataType: this.options.dataType,
         cache: false,
         error: $.proxy(function (xhr, textStatus, errorThrown) {
           if (this.options.debug) {
@@ -118,7 +123,7 @@
         type: 'POST',
         contentType: 'application/json',
         data: jsonString,
-        dataType: 'json',
+        dataType: this.options.dataType,
         cache: false,
         error: $.proxy(function (xhr, textStatus, errorThrown) {
           if (this.options.debug) {

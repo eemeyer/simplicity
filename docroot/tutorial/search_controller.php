@@ -205,5 +205,11 @@ if (!$renderParameters) {
   ob_end_clean();
 }
 
-header("Content-Type: application/json; charset=utf-8");
-echo json_encode($response);
+$json = json_encode($response);
+if (isset($_GET['callback'])) {
+  header("Content-Type: application/javascript; charset=utf-8");
+  echo "{$_GET['callback']}($json)";
+} else {
+  header("Content-Type: application/json; charset=utf-8");
+  echo $json;
+}
