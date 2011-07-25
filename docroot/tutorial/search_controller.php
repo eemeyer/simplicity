@@ -150,65 +150,60 @@ if (!empty($drillDown)) {
     $discoveryRequest["drillDown"] = $drillDown;
 }
 
-$error = false;
-try {
-  $webConfig = parse_ini_file("../../web.config.ini",  true);
-  $engineUrl = $webConfig["Application"]["discoveryEngineUrl"];
-  $queryUrl = $engineUrl . "/json/query";
-  $discoveryResponse = json_post($queryUrl, $discoveryRequest);
-}
-catch (Exception $e)
-{
-  $error = true;
-  echo $e;
-}
+$webConfig = parse_ini_file("../../web.config.ini",  true);
+$engineUrl = $webConfig["Application"]["discoveryEngineUrl"];
+$queryUrl = $engineUrl . "/json/query";
+$discoveryResponse = json_post($queryUrl, $discoveryRequest);
 
-if (!$error) {
-  try {
-    $response = array(
-      '_discovery' => array(
-        'request' => $discoveryRequest,
-        'response' => $discoveryResponse
-      )
-    );
+$response = array(
+  '_discovery' => array(
+    'request' => $discoveryRequest,
+    'response' => $discoveryResponse
+  )
+);
 
-    if (!$renderParameters) {
-      // Build results
-      $resultsHtml ='<html><body>';
-      $resultsHtml = '<div class="result-set ui-widget">';
-      $itemIds = $discoveryResponse['itemIds'];
-      if (!empty($itemIds)) {
-        for ($i = 0; $i < count($itemIds); $i++) {
-          $itemId = $itemIds[$i];
-          $properties = $discoveryResponse['properties'][$i];
-          $exactMatch = $discoveryResponse['exactMatches'][$i];
-          $relevance = $discoveryResponse['relevanceValues'][$i];
-          $resultsHtml .= '<div id="result-' . $itemId . '" class="result-row ' . ($exactMatch ? 'ui-state-active' : 'ui-priority-secondary') .' ui-widget-content ui-corner-all">';
-          $resultsHtml .= '  <div class="info1">';
-          $resultsHtml .= '    <span class="itemId">' . $itemId . '</span>';
-          $resultsHtml .= '    <span class="match">' . ($exactMatch ? 'exact' : 'close') . '</span>';
-          $resultsHtml .= '    <span class="type">' . $properties['type'] . '</span>';
-          $resultsHtml .= '  </div>';
-          $resultsHtml .= '  <div class="info2">';
-          $resultsHtml .= '    <span class="price">$' . ($properties[type] == 'sales' ? $properties['price'] : $properties['lease']). '</span>';
-          $resultsHtml .= '    <span class="beds">' . $properties['bedroom'] . ' BR</span>';
-          $resultsHtml .= '    <span class="baths">' . $properties['bath'] . ' BA</span>';
-          $resultsHtml .= '  </div>';
-          $resultsHtml .= '  <div class="info3">';
-          $resultsHtml .= '    <span class="condition">' . $properties['condition'] . '</span>';
-          $resultsHtml .= '    <span class="style">' . $properties['style'] . '</span>';
-          $resultsHtml .= '    <span class="zipcode">' . $properties['zipcode'] . '</span>';
-          $resultsHtml .= '  </div>';
-          $resultsHtml .= '</div>';
-        }
-      }
-      $resultsHtml .= '</div>';
-      $resultsHtml .= '</body></html>';
-      $response['resultsHtml'] = $resultsHtml;
+if (!$renderParameters) {
+  // Build results.
+  // Start buffering all output so it can be captured in a variable and put into the JSON response
+  ob_start();
+?>
+<html>
+  <body>
+    <div class="result-set ui-widget"><?php
+  $itemIds = $discoveryResponse['itemIds'];
+  if (!empty($itemIds)) {
+    for ($i = 0; $i < count($itemIds); $i++) {
+      $itemId = $itemIds[$i];
+      $properties = $discoveryResponse['properties'][$i];
+      $exactMatch = $discoveryResponse['exactMatches'][$i];
+      $relevance = $discoveryResponse['relevanceValues'][$i]; ?>
+      <div id="result-<?php echo $itemId ?>" class="result-row <?php echo $exactMatch ? 'ui-state-active' : 'ui-priority-secondary' ?> ui-widget-content ui-corner-all">
+        <div class="info1">
+          <span class="itemId"><?php echo $itemId ?></span>
+          <span class="match"><?php echo $exactMatch ? 'exact' : 'close' ?></span>
+          <span class="type"><?php echo $properties['type'] ?></span>
+        </div>
+        <div class="info2">
+          <span class="price">$<?php echo $properties[type] == 'sales' ? $properties['price'] : $properties['lease'] ?></span>
+          <span class="beds"><?php echo $properties['bedroom'] ?> BR</span>
+          <span class="baths"><?php echo $properties['bath'] ?> BA</span>
+        </div>
+        <div class="info3">
+          <span class="condition"><?php echo $properties['condition'] ?></span>
+          <span class="style"><?php echo $properties['style'] ?></span>
+          <span class="zipcode"><?php echo $properties['zipcode'] ?></span>
+        </div>
+      </div><?php
     }
-
-    echo json_encode($response);
-  } catch (Exception $e) {
-    echo $e;
-  }
+  } ?>
+    </div>
+  </body>
+</html>
+<?php
+  // Capture the buffered output and drop the temporary buffering
+  $response['resultsHtml'] = ob_get_contents();
+  ob_end_clean();
 }
+
+header("Content-Type: application/json; charset=utf-8");
+echo json_encode($response);
