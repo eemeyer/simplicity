@@ -54,7 +54,7 @@
       this.element.addClass('ui-simplicity-google-map-results');
       this._markers = [];
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityGoogleMap('map');
-      $(this.options.searchElement).bind('simplicityResultSet', $.proxy(this._resultSetHandler, this));
+      $(this.options.searchElement).bind('simplicitySearchResponse', $.proxy(this._resultSetHandler, this));
       this.element.bind('simplicitygooglemapboundscoordinatorcalculatebounds', $.proxy(this._calcBoundsHandler, this));
     },
     /**
@@ -67,7 +67,7 @@
       return this._map;
     },
     /**
-     * Makes the widget re-handle the last <code>simplicityResultSet</code> event to reapply
+     * Makes the widget re-handle the last <code>simplicitySearchResponse</code> event to reapply
      * any map markers.
      *
      * @name $.ui.simplicityGoogleMapResults.refreshMap
@@ -78,7 +78,7 @@
       this.addMarkers();
     },
     /**
-     * Event handler for the <code>simplicityResultSet</code> event. Extracts the coordinates
+     * Event handler for the <code>simplicitySearchResponse</code> event. Extracts the coordinates
      * of each result item by using the property fields defined by the
      * <code>latitudeField</code> and <code>longitudeField</code> options of this widget and
      * places a marker on the map for each valid coordinate. The map is then reset to best
@@ -88,9 +88,9 @@
      * @function
      * @private
      */
-    _resultSetHandler: function (evt, resultSet) {
+    _resultSetHandler: function (evt, searchResponse) {
       this.removeMarkers();
-      this.addMarkers(resultSet);
+      this.addMarkers(searchResponse.resultSet);
     },
     _calcBoundsHandler: function (evt, ui) {
       var bounds = ui.bounds;
@@ -153,7 +153,7 @@
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-google-map-results');
-      $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
+      $(this.options.searchElement).unbind('simplicitySearchResponse', this._resultSetHandler);
       this.element.unbind('simplicitygooglemapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
       $.Widget.prototype.destroy.apply(this, arguments);
     }

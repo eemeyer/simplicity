@@ -21,16 +21,16 @@ if (array_key_exists("page", $_GET)) {
      $startIndex = ($page - 1) * $pageSize;
 }
 
-$drillDown = array(
-  array("dimension" => "type"),
-  array("dimension" => "condition"),
-  array("dimension" => "bedroom"),
-  array(
-    "dimension" => "style",
-    "ids" => array(
-      "multi-family", "apartment", "condo", "co-op", "townhome",
-      "single-family", "colonial", "classical", "victorian", "contemporary"
-    )
+$facets = array(
+  "type" => array("includeLabel" => false),
+  "condition"=> array("includeLabel" => false),
+  "bedroom" => array("includeLabel" => false),
+  "style" => array(
+      "ids"=> array(
+          "multi-family", "apartment", "condo", "co-op", "townhome",
+          "single-family", "colonial", "classical", "victorian", "contemporary"
+       ),
+       "includeLabel" => false
   )
 );
 
@@ -146,8 +146,8 @@ if ($renderParameters) {
 if (!empty($criteria)) {
     $discoveryRequest["criteria"] = $criteria;
 }
-if (!empty($drillDown)) {
-    $discoveryRequest["drillDown"] = $drillDown;
+if (!empty($facets)) {
+    $discoveryRequest["facets"] = $facets;
 }
 
 $webConfig = parse_ini_file("../../web.config.ini",  true);

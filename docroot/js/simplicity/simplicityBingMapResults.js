@@ -2,7 +2,7 @@
  * @name $.ui.simplicityBingMapResults
  * @namespace A Bing map.
  * <p>
- * Widget that listens for <code>simplicityResultSet</code> events which it uses to add markers to the map for the search results.
+ * Widget that listens for <code>simplicitySearchResponse</code> events which it uses to add markers to the map for the search results.
  *
  * @example
  *   &lt;div id="map" style="position: absolute; width: 300px; height: 300px;">&lt;/div>
@@ -58,7 +58,7 @@
       this.element.addClass('ui-simplicity-bing-map-results');
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityBingMap('map');
       this._markers = [];
-      $(this.options.searchElement).bind('simplicityResultSet', $.proxy(this._resultSetHandler, this));
+      $(this.options.searchElement).bind('simplicitySearchResponse', $.proxy(this._resultSetHandler, this));
       this.element.bind('simplicitybingmapboundscoordinatorcalculatebounds', $.proxy(this._calcBoundsHandler, this));
     },
     /**
@@ -82,7 +82,7 @@
       this.addMarkers();
     },
     /**
-     * Event handler for the <code>simplicityResultSet</code> event. Extracts the coordinates
+     * Event handler for the <code>simplicitySearchResponse</code> event. Extracts the coordinates
      * of each result item by using the property fields defined by the
      * <code>latitudeField</code> and <code>longitudeField</code> options of this widget and
      * places a marker on the map for each valid coordinate. The map is then reset to best
@@ -92,9 +92,9 @@
      * @function
      * @private
      */
-    _resultSetHandler: function (evt, resultSet) {
+    _resultSetHandler: function (evt, searchResponse) {
       this.removeMarkers();
-      this.addMarkers(resultSet);
+      this.addMarkers(searchResponse.resultSet);
     },
     _calcBoundsHandler: function (evt, ui) {
       if ($.isArray(ui.locations) && this.options.updateBounds) {
@@ -153,7 +153,7 @@
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-bing-map-results');
-      $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
+      $(this.options.searchElement).unbind('simplicitySearchResponse', this._resultSetHandler);
       this.element.unbind('simplicitybingmapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
       delete this._map;
       $.Widget.prototype.destroy.apply(this, arguments);

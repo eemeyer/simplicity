@@ -2,7 +2,7 @@
  * @name $.ui.simplicityYahooMap
  * @namespace A Yahoo! map.
  * <p>
- * Yahho! Map widget that creates the map and listens for <code>simplicityResultSet</code> events
+ * Yahho! Map widget that creates the map and listens for <code>simplicitySearchResponse</code> events
  * which it uses to add markers to the map for the search results.
  *
  * @example

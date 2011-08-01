@@ -2,7 +2,7 @@
  * @name $.ui.simplicityFacetCount
  * @namespace Displays a single facet count based on the search results.
  *
- * Listens for simplicityFacetCounts events and updates element HTML with a templatized
+ * Listens for simplicitySearchResponse events and updates element HTML with a templatized
  * facet count. Also supports injecting the facet count into a select input.
  * <p>
  * This widget is generally used as a building block, you probably want to use
@@ -50,6 +50,10 @@
      *   <dd>
      *     Mandatory dimension from which the facet counts should be used.
      *   </dd>
+     *   <dt>facetsKey</dt>
+     *   <dd>
+     *     The key used in the facets request to identify the facets data. Defaults to <code>dimension</code>.
+     *   </dd>
      *   <dt>facetId</dt>
      *   <dd>
      *     Mandatory id of the facet whose count should be bound to this widget.
@@ -74,6 +78,7 @@
       searchElement: 'body',
       missingText: '?',
       dimension: '',
+      facetsKey: '',
       facetId: '',
       optionTemplate: '{option} {count}',
       /**
@@ -106,6 +111,7 @@
       if (this.options.facetId === '') {
         return;
       }
+      this.options.facetsKey = this.options.facetsKey || this.options.dimension;
       this.element.addClass('ui-simplicity-facet-count');
       if (this.element[0].nodeName === 'OPTION') {
         // If the option has no value attribute, create one so the
@@ -116,22 +122,38 @@
           this.element.attr('value', val);
         }
       }
-      $(this.options.searchElement).bind('simplicityFacetCounts', $.proxy(this._facetCountsHandler, this));
+      $(this.options.searchElement).bind('simplicitySearchResponse', $.proxy(this._searchResponseHandler, this));
     },
     /**
-     * Event handler for the <code>simplicityFacetCounts</code> event.
+     * Event handler for the <code>simplicitySearchResponse</code> event.
      * Extracts the configured facet count and displays it.
      *
-     * @name $.ui.simplicityFacetCount._facetCountsHandler
+     * @name $.ui.simplicityFacetCount._searchResponseHandler
      * @function
      * @private
      */
-    _facetCountsHandler: function (event, dimFacetCounts) {
+    _searchResponseHandler: function (event, searchResponse) {
       var result = undefined;
-      var facetCounts = dimFacetCounts[this.options.dimension];
-      if (facetCounts) {
-        var counts = facetCounts.exact;
-        result = counts[this.options.facetId];
+      var discoveryResponse = searchResponse._discovery || {};
+      var engineResponse = discoveryResponse.response || {};
+      var facets = engineResponse.facets;
+      if ('undefined' === typeof facets) {
+        var drillDownResponse = searchResponse.drillDown || {};
+        var drillDownData = drillDownResponse[this.options.facetsKey];
+        if (drillDownData) {
+          var counts = drillDownData.exact;
+          result = counts[this.options.facetId];
+        }
+      } else {
+        var facet = facets[this.options.facetsKey];
+        if (facet) {
+          if ('undefined' !== typeof facet.data) {
+            var facetData = facet.data[this.options.facetId];
+            if ('undefined' !== typeof facetData) {
+              result = facetData.count;
+            }
+          }
+        }
       }
       if ('undefined' === typeof result) {
         result = this.options.missingText;
@@ -155,7 +177,7 @@
         this.element.text(this._optionText);
         delete this._optionText;
       }
-      $(this.options.searchElement).unbind('simplicityFacetCounts', this._facetCountsHandler);
+      $(this.options.searchElement).unbind('simplicitySearchResponse', this._searchResponseHandler);
       $.Widget.prototype.destroy.apply(this, arguments);
     }
   });

@@ -2,7 +2,7 @@
  * @name $.ui.simplicityPagination
  * @namespace Pagination widget for simplicityDiscoverySearch.
  * <p>
- * Pagination widget bound to the <code>simplicityResultSet</code> event.
+ * Pagination widget bound to the <code>simplicitySearchResponse</code> event.
  * <p>
  * The current page can be bound either via an <code>input</code> element or
  * directly to the <code>simplicityState</code>.
@@ -65,38 +65,42 @@
     },
     _create : function () {
       this.element.addClass('ui-simplicity-pagination');
-      $(this.options.searchElement).bind('simplicityResultSet', $.proxy(this._resultSetHandler, this));
+      $(this.options.searchElement).bind('simplicitySearchResponse', $.proxy(this._searchResponseHandler, this));
       $(this.options.stateElement).bind('simplicityStateReset', $.proxy(this._stateResetHandler, this));
     },
     /**
-     * Event handler for the <code>simplicityResultSet</code> event. Recreates
+     * Event handler for the <code>simplicitySearchResponse</code> event. Recreates
      * the pagination widget to reflect the current search response.
      *
-     * @name $.ui.simplicityPagination._resultSetHandler
+     * @name $.ui.simplicityPagination._searchResponseHandler
      * @function
      * @private
      */
-    _resultSetHandler: function (evt, resultSet) {
+    _searchResponseHandler: function (evt, searchResponse) {
       var target = $('<div/>');
-      var numItems = resultSet.totalSize;
-      var itemsPerPage = resultSet.pageSize;
-      var currentPage = resultSet.startIndex / itemsPerPage;
-      try {
-        this._ignoreCallback = true;
-        target.pagination(
-          numItems,
-          {
-            current_page: currentPage,
-            items_per_page: itemsPerPage,
-            callback: $.proxy(this._paginationCallback, this)
-          }
-        );
-        target.find('a').addClass('ui-corner-all ui-state-default');
-        target.find('span.current').addClass('ui-corner-all ui-state-active');
-        this.element.find('div.pagination').remove();
-        this.element.append(target.find('div.pagination'));
-      } finally {
-        this._ignoreCallback = false;
+      if (searchResponse) {
+        var discoveryResponse = searchResponse._discovery || {};
+        var resultSet = discoveryResponse.response || {};
+        var numItems = resultSet.totalSize;
+        var itemsPerPage = resultSet.pageSize;
+        var currentPage = resultSet.startIndex / itemsPerPage;
+        try {
+          this._ignoreCallback = true;
+          target.pagination(
+            numItems,
+            {
+              current_page: currentPage,
+              items_per_page: itemsPerPage,
+              callback: $.proxy(this._paginationCallback, this)
+            }
+          );
+          target.find('a').addClass('ui-corner-all ui-state-default');
+          target.find('span.current').addClass('ui-corner-all ui-state-active');
+          this.element.find('div.pagination').remove();
+          this.element.append(target.find('div.pagination'));
+        } finally {
+          this._ignoreCallback = false;
+        }
       }
     },
     /**
@@ -145,7 +149,7 @@
     },
     destroy : function () {
       this.element.removeClass('ui-simplicity-pagination');
-      $(this.options.searchElement).unbind('simplicityResultSet', this._resultSetHandler);
+      $(this.options.searchElement).unbind('simplicitySearchResponse', this._resultSetHandler);
       $(this.options.stateElement).unbind('simplicityStateReset', this._stateResetHandler);
       $.Widget.prototype.destroy.apply(this, arguments);
     }

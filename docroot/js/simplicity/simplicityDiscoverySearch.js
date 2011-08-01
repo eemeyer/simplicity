@@ -182,15 +182,17 @@
       if (arguments.length === 0) {
         return JSON.parse(this._searchResponse);
       }
+      var discoveryResponse = searchResponse._discovery || {};
+      var response = discoveryResponse.response || {};
+      searchResponse.drillDown = this.extractFacetCounts(response);
+      searchResponse.resultSet = this.extractResultSet(response);
       this._searchResponse = JSON.stringify(searchResponse);
       if (triggerEvent !== false) {
         this.element.triggerHandler('simplicitySearchResponse',
-            [JSON.parse(this._searchResponse)]);
+          [JSON.parse(this._searchResponse)]);
       }
-      var discoveryResponse = searchResponse._discovery || {};
-      discoveryResponse = discoveryResponse.response || {};
-      this.facetCounts(this.extractFacetCounts(discoveryResponse), triggerEvent);
-      this.resultSet(this.extractResultSet(discoveryResponse), triggerEvent);
+      this.facetCounts(searchResponse.drillDown, triggerEvent);
+      this.resultSet(searchResponse.resultSet, triggerEvent);
       if (triggerEvent !== false) {
         this.element.triggerHandler('simplicitySearchResponseHandled');
       }
@@ -240,7 +242,8 @@
       }
     },
     /**
-     * Converts the search response to a facet counts object.
+     * Converts the search response to a facet counts object using
+     * the drillDown response.
      *
      * @example
      *   Input
