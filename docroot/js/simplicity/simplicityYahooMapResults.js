@@ -93,7 +93,7 @@
      */
     _resultSetHandler: function (evt, searchResponse) {
       this.removeMarkers();
-      this.addMarkers(searchResponse.resultSet);
+      this.addMarkers(searchResponse);
     },
     _calcBoundsHandler: function (evt, ui) {
       if ($.isArray(ui.locations) && this.options.updateBounds) {
@@ -115,40 +115,41 @@
       this._locations.length = 0;
     },
     /**
-     * Adds any markers that can be extracted from the given <code>resultSet</code>.
+     * Adds any markers that can be extracted from the given <code>searchResponse</code>.
      *
      * @name $.ui.simplicityYahooMapResults.addMarkers
      * @function
      * @private
      */
-    addMarkers: function (resultSet) {
-      if (resultSet.rows.length > 0) {
-        $.each(resultSet.rows, $.proxy(function (idx, row) {
-          var properties = row.properties;
-          if ('undefined' !== typeof properties) {
-            var latitude = properties[this.options.latitudeField];
-            var longitude = properties[this.options.longitudeField];
-            if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
-              latitude = Number(latitude);
-              longitude = Number(longitude);
-              var point = new YGeoPoint(latitude, longitude);
-              var marker = new YMarker(point);
-              var markerEvent = {
-                row: row,
-                map: this._map,
-                marker: marker
-              };
-              this._trigger('marker', {}, markerEvent);
-              marker = markerEvent.marker;
-              if ('undefined' !== typeof marker) {
-                this._locations.push(point);
-                this._markers.push(marker);
-                this._map.addOverlay(marker);
-              }
+    addMarkers: function (searchResponse) {
+      if ('undefined' === typeof searchResponse) {
+        searchResponse = $(this.options.searchElement).simplicityDiscoverySearch('searchResponse');
+      }
+      $.fn.simplicityDiscoverySearchItemEnumerator(searchResponse, $.proxy(function (idx, row) {
+        var properties = row.properties;
+        if ('undefined' !== typeof properties) {
+          var latitude = properties[this.options.latitudeField];
+          var longitude = properties[this.options.longitudeField];
+          if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
+            latitude = Number(latitude);
+            longitude = Number(longitude);
+            var point = new YGeoPoint(latitude, longitude);
+            var marker = new YMarker(point);
+            var markerEvent = {
+              row: row,
+              map: this._map,
+              marker: marker
+            };
+            this._trigger('marker', {}, markerEvent);
+            marker = markerEvent.marker;
+            if ('undefined' !== typeof marker) {
+              this._locations.push(point);
+              this._markers.push(marker);
+              this._map.addOverlay(marker);
             }
           }
-        }, this));
-      }
+        }
+      }, this));
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-yahoo-map-results');

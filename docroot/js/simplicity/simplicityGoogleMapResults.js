@@ -90,7 +90,7 @@
      */
     _resultSetHandler: function (evt, searchResponse) {
       this.removeMarkers();
-      this.addMarkers(searchResponse.resultSet);
+      this.addMarkers(searchResponse);
     },
     _calcBoundsHandler: function (evt, ui) {
       var bounds = ui.bounds;
@@ -114,42 +114,40 @@
       this._markers.length = 0;
     },
     /**
-     * Adds any markers that can be extracted from the given <code>resultSet</code>.
+     * Adds any markers that can be extracted from the given <code>searchResponse</code>.
      *
      * @name $.ui.simplicityGoogleMapResults.addMarkers
      * @function
      * @private
      */
-    addMarkers: function (resultSet) {
-      if ('undefined' === typeof resultSet) {
-        resultSet = $(this.options.searchElement).simplicityDiscoverySearch('resultSet');
+    addMarkers: function (searchResponse) {
+      if ('undefined' === typeof searchResponse) {
+        searchResponse = $(this.options.searchElement).simplicityDiscoverySearch('searchResponse');
       }
-      if (resultSet.rows.length > 0) {
-        $.each(resultSet.rows, $.proxy(function (idx, row) {
-          var properties = row.properties;
-          if ('undefined' !== typeof properties) {
-            var latitude = properties[this.options.latitudeField];
-            var longitude = properties[this.options.longitudeField];
-            if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
-              var point = new google.maps.LatLng(latitude, longitude);
-              var marker = new google.maps.Marker({
-                position: point
-              });
-              var markerEvent = {
-                row: row,
-                map: this._map,
-                marker: marker
-              };
-              this._trigger('marker', {}, markerEvent);
-              marker = markerEvent.marker;
-              if ('undefined' !== typeof marker) {
-                marker.setMap(this._map);
-                this._markers.push(marker);
-              }
+      $.fn.simplicityDiscoverySearchItemEnumerator(searchResponse, $.proxy(function (idx, row) {
+        var properties = row.properties;
+        if ('undefined' !== typeof properties) {
+          var latitude = properties[this.options.latitudeField];
+          var longitude = properties[this.options.longitudeField];
+          if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
+            var point = new google.maps.LatLng(latitude, longitude);
+            var marker = new google.maps.Marker({
+              position: point
+            });
+            var markerEvent = {
+              row: row,
+              map: this._map,
+              marker: marker
+            };
+            this._trigger('marker', {}, markerEvent);
+            marker = markerEvent.marker;
+            if ('undefined' !== typeof marker) {
+              marker.setMap(this._map);
+              this._markers.push(marker);
             }
           }
-        }, this));
-      }
+        }
+      }, this));
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-google-map-results');

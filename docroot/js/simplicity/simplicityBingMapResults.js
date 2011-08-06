@@ -94,7 +94,7 @@
      */
     _resultSetHandler: function (evt, searchResponse) {
       this.removeMarkers();
-      this.addMarkers(searchResponse.resultSet);
+      this.addMarkers(searchResponse);
     },
     _calcBoundsHandler: function (evt, ui) {
       if ($.isArray(ui.locations) && this.options.updateBounds) {
@@ -116,40 +116,41 @@
       this._markers.length = 0;
     },
     /**
-     * Adds any markers that can be extracted from the given <code>resultSet</code>.
+     * Adds any markers that can be extracted from the given <code>searchResponse</code>.
      *
      * @name $.ui.simplicityBingMapResults.addMarkers
      * @function
      */
-    addMarkers: function (resultSet) {
-      if (resultSet.rows.length > 0) {
-        var locations = this.options.fitOnResultSet ? [] : null;
-        $.each(resultSet.rows, $.proxy(function (idx, row) {
-          var properties = row.properties;
-          if ('undefined' !== typeof properties) {
-            var latitude = properties[this.options.latitudeField];
-            var longitude = properties[this.options.longitudeField];
-            if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
-              var point = new Microsoft.Maps.Location(latitude, longitude);
-              var pin = new Microsoft.Maps.Pushpin(point);
-              var markerEvent = {
-                  row: row,
-                  map: this._map,
-                  marker: pin
-                };
-              this._trigger('marker', {}, markerEvent);
-              marker = markerEvent.marker;
-              if ('undefined' !== typeof marker) {
-                if (locations !== null) {
-                  locations.push(point);
-                }
-                this._markers.push(pin);
-                this._map.entities.push(pin);
+    addMarkers: function (searchResponse) {
+      if ('undefined' === typeof searchResponse) {
+        searchResponse = $(this.options.searchElement).simplicityDiscoverySearch('searchResponse');
+      }
+      var locations = this.options.fitOnResultSet ? [] : null;
+      $.fn.simplicityDiscoverySearchItemEnumerator(searchResponse, $.proxy(function (idx, row) {
+        var properties = row.properties;
+        if ('undefined' !== typeof properties) {
+          var latitude = properties[this.options.latitudeField];
+          var longitude = properties[this.options.longitudeField];
+          if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
+            var point = new Microsoft.Maps.Location(latitude, longitude);
+            var pin = new Microsoft.Maps.Pushpin(point);
+            var markerEvent = {
+                row: row,
+                map: this._map,
+                marker: pin
+              };
+            this._trigger('marker', {}, markerEvent);
+            marker = markerEvent.marker;
+            if ('undefined' !== typeof marker) {
+              if (locations !== null) {
+                locations.push(point);
               }
+              this._markers.push(pin);
+              this._map.entities.push(pin);
             }
           }
-        }, this));
-      }
+        }
+      }, this));
     },
     destroy: function () {
       this.element.removeClass('ui-simplicity-bing-map-results');

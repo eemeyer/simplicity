@@ -417,4 +417,35 @@
       $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
+  $.fn.simplicityDiscoverySearchItemEnumerator = function (searchResponse, callback) {
+    var discovery = searchResponse._discovery || {};
+    var discoveryResponse = discovery.response || {};
+    if ('undefined' !== typeof discoveryResponse.itemIds) {
+      var itemIds = discoveryResponse.itemIds;
+      var exactMatches = discoveryResponse.exactMatches;
+      var relevanceValues = discoveryResponse.relevanceValues;
+      var properties = discoveryResponse.properties;
+      var highlighting = discoveryResponse.highlighting;
+      if (!$.isArray(properties)) {
+        properties = null;
+      }
+      if (!$.isArray(highlighting)) {
+        highlighting = null;
+      }
+      $.each(itemIds, function (idx, itemId) {
+        row = {
+          id: itemId,
+          exact: exactMatches[idx],
+          score: relevanceValues[idx]
+        };
+        if (properties !== null) {
+          row.properties = properties[idx];
+        }
+        if (highlighting !== null) {
+          row.highlighting = highlighting[idx];
+        }
+        callback(idx, row);
+      });
+    }
+  };
 }(jQuery));
