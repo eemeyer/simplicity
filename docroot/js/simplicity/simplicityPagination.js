@@ -116,7 +116,7 @@
         } else {
           // Store the page directly in the search state
           var state = $(this.options.stateElement).simplicityState('state');
-          state[this.options.pageParam] = page + 1;
+          state[this.options.pageParam] = String(page + 1);
           $(this.options.stateElement).simplicityState('state', state);
         }
         if (this.options.search !== '') {
