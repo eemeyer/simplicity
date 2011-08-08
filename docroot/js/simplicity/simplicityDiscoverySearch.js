@@ -50,7 +50,9 @@
       searchOnStateChange: true,
       initialSearchResponse: {},
       dataType: 'json',
-      debug: false
+      debug: false,
+      triggerFacetCountEvent: false,
+      triggerResultSetEvent: false
     },
     _create : function () {
       this.element.addClass('ui-simplicity-discovery-search');
@@ -184,15 +186,21 @@
       }
       var discoveryResponse = searchResponse._discovery || {};
       var response = discoveryResponse.response || {};
-      searchResponse.drillDown = this.extractFacetCounts(response);
+      if (this.options.triggerFacetCountEvent) {
+        searchResponse.drillDown = this.extractFacetCounts(response);
+      }
       searchResponse.resultSet = this.extractResultSet(response);
       this._searchResponse = JSON.stringify(searchResponse);
       if (triggerEvent !== false) {
         this.element.triggerHandler('simplicitySearchResponse',
           [JSON.parse(this._searchResponse)]);
       }
-      this.facetCounts(searchResponse.drillDown, triggerEvent);
-      this.resultSet(searchResponse.resultSet, triggerEvent);
+      if (this.options.triggerFacetCountEvent) {
+        this.facetCounts(searchResponse.drillDown, triggerEvent);
+      }
+      if (this.options.triggerResultSetEvent) {
+        this.resultSet(searchResponse.resultSet, triggerEvent);
+      }
       if (triggerEvent !== false) {
         this.element.triggerHandler('simplicitySearchResponseHandled');
       }
