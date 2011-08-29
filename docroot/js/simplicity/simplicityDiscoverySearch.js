@@ -52,7 +52,8 @@
       dataType: 'json',
       debug: false,
       triggerFacetCountEvent: false,
-      triggerResultSetEvent: false
+      triggerResultSetEvent: false,
+      getPayloadParam: ''
     },
     _create : function () {
       this.element.addClass('ui-simplicity-discovery-search');
@@ -120,11 +121,26 @@
     },
     query: function (jsonString)
     {
+      var data = jsonString;
+      if (this.options.dataType === 'jsonp') {
+        try {
+          if (this.options.getPayloadParam !== '') {
+            data = {};
+            data[this.options.getPayloadParam] = JSON.stringify(JSON.parse(jsonString));
+          } else {
+            data = JSON.parse(jsonString);
+          }
+        }
+        catch (e) {
+          this.searchResponse({error: true, message: "Invalid request JSON"});
+          return;
+        }
+      }
       $.ajax({
         url: this.options.url,
         type: 'POST',
         contentType: 'application/json',
-        data: jsonString,
+        data: data,
         dataType: this.options.dataType,
         cache: false,
         error: $.proxy(function (xhr, textStatus, errorThrown) {
