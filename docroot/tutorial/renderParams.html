@@ -183,7 +183,7 @@
       $('#debug').simplicityDebug();
 
       $('#searchResults').simplicityRenderParamsSearchResults({
-        url: 'search_results.php'
+        url: 'search_results_real_estate.php'
       });
 
       $('body')
@@ -192,7 +192,7 @@
         .simplicityState('triggerChangeEvent')
         .simplicityPageSnapBack()
         .simplicityDiscoverySearch({
-          url: 'search_controller.php?renderParameters=true'
+          url: 'search_controller_real_estate.php?renderParameters=true'
         })
         .simplicityDiscoverySearch('search');
     //]]>--></script>
