@@ -45,9 +45,13 @@
      *     field the state holds the current page number. Defaults to <code>'page'</code>.
      *   </dd>
      *   <dt>input</dt>
+     *   <dd>
      *     When set binds the current page to an <code>input</code> element instead of directly
      *     to the state via <code>pageParam</code>. Defaults to <code>''</code>.
+     *   </dd>
+     *   <dt>applyClass</dt>
      *   <dd>
+     *     Classes to apply to the Next, Prev and Page elements. Defaults to <code>ui-corner-all</code>.
      *   </dd>
      *   <dt>debug</dt>
      *   <dd>
@@ -61,6 +65,7 @@
       searchElement: 'body',
       pageParam: 'page',
       input: '',
+      applyClass: 'ui-corner-all',
       debug: false
     },
     _create : function () {
@@ -95,8 +100,21 @@
               callback: $.proxy(this._paginationCallback, this)
             }
           );
-          target.find('a').addClass('ui-corner-all ui-state-default');
-          target.find('span.current').addClass('ui-corner-all ui-state-active');
+          target.find('a')
+            .addClass('ui-state-default')
+            .addClass(this.options.applyClass);
+          target.find('span.current').each($.proxy(function (idx, ele) {
+            var span = $(ele);
+            if (span.hasClass("prev") || span.hasClass("next")) {
+              span
+                .addClass('ui-state-disabled ui-priority-primary')
+                .addClass(this.options.applyClass);
+            } else {
+              span
+                .addClass('ui-state-active ui-priority-primary')
+                .addClass(this.options.applyClass);
+            }
+          }, this));
           this.element.find('div.pagination').remove();
           this.element.append(target.find('div.pagination'));
         } finally {
