@@ -1,11 +1,5 @@
-.ui-simplicity-pagination .pagination {
-  font-size: 80%;
-}
-
 .ui-simplicity-pagination .pagination a {
   text-decoration: none;
-  border: solid 1px #AAE;
-  color: #15B;
 }
 
 .ui-simplicity-pagination .pagination a,
@@ -19,15 +13,6 @@
   text-align: center;
 }
 
-.ui-simplicity-pagination .pagination .current {
-  background: #26B;
-  color: #fff;
-  border: solid 1px #AAE;
-}
-
-.ui-simplicity-pagination .pagination .current.prev,
-.ui-simplicity-pagination .pagination .current.next {
-  color: #999;
-  border-color: #999;
-  background: #fff;
+.ui-simplicity-pagination .pagination span {
+  cursor: default;
 }
