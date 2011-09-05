@@ -60,6 +60,7 @@ groups:
     outputFileNameMinified: css/build/simplicity.min.css
     sourceFileNames:
       - css/simplicity/simplicityPagination.css
+      - css/simplicity/simplicitySlider.css
 
   - groupName: simplicityLoadJs_js
     mediaType: js
