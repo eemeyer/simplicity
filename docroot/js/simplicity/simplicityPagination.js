@@ -94,11 +94,11 @@
           this._ignoreCallback = true;
           target.pagination(
             numItems,
-            {
+            $.extend({
               current_page: currentPage,
               items_per_page: itemsPerPage,
               callback: $.proxy(this._paginationCallback, this)
-            }
+            }, this.options)
           );
           target.find('a')
             .addClass('ui-state-default')
