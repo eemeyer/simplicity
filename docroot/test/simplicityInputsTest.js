@@ -265,3 +265,79 @@ test("simplicityInputs trimming disabled", function() {
     {trim: ' '},
     'Just whitespace');
 });
+
+test("simplicityInputs lifecycle", function() {
+  expect(42);
+  this._squareCheckbox.checked = true;
+  $(this._squareCheckbox).change();
+  deepEqual(
+      $('#state').simplicityState('state'),
+      {shape: 'square'},
+      'Initial state');
+  equal(this._squareCheckbox.checked, true, 'Square checkbox is initially checked');
+  equal(this._squareCheckboxCopy.checked, true, 'Square copy is initially checked');
+
+  var squareDynamic = $('<input type="checkbox" name="shape" value="square"/>')[0];
+  $('#scratch').append(squareDynamic);
+  equal(false, $(squareDynamic).hasClass('ui-simplicity-inputs'), 'input is not initially a simplicityInputs');
+  $(squareDynamic).simplicityInputs({
+    stateElement: '#state'
+  });
+  equal(true, $(squareDynamic).hasClass('ui-simplicity-inputs'), 'simplicityInputs dynamically adds the css class');
+  deepEqual(
+      $('#state').simplicityState('state'),
+      {shape: 'square'},
+      'State after dynamic creation');
+  equal(this._squareCheckbox.checked, true, 'Square checkbox is checked after dynamic creation');
+  equal(this._squareCheckboxCopy.checked, true, 'Square copy is checked after dynamic creation');
+  equal(squareDynamic.checked, false, 'Square dynamic is initially unchecked');
+
+  $(squareDynamic).simplicityFromState($('#state').simplicityState('state'));
+  deepEqual(
+      $('#state').simplicityState('state'),
+      {shape: 'square'},
+      'State after dynamic creation');
+  equal(this._squareCheckbox.checked, true, 'Square checkbox is checked after dynamic state sync');
+  equal(this._squareCheckboxCopy.checked, true, 'Square copy is checked after dynamic state sync');
+  equal(squareDynamic.checked, true, 'Square dynamic is checked after dynamic state sync');
+
+  equal(true, $(squareDynamic).hasClass('ui-simplicity-inputs'), 'simplicityInputs still has the css class');
+  $('#scratch').children().remove();
+  equal(false, $(squareDynamic).hasClass('ui-simplicity-inputs'), 'simplicityInputs no longer has the css class');
+  deepEqual(
+      $('#state').simplicityState('state'),
+      {shape: 'square'},
+      'State after dynamic creation');
+  equal(this._squareCheckbox.checked, true, 'Square checkbox is checked after dynamic removal');
+  equal(this._squareCheckboxCopy.checked, true, 'Square copy is checked after dynamic removal');
+  equal(squareDynamic.checked, true, 'Square dynamic is checked after dynamic removal');
+
+  this._squareCheckbox.checked = false;
+  $(this._squareCheckbox).change();
+  deepEqual(
+      $('#state').simplicityState('state'),
+      {},
+      'State after dynamic removal and uncheck');
+  equal(this._squareCheckbox.checked, false, 'Square checkbox is unchecked');
+  equal(this._squareCheckboxCopy.checked, false, 'Square copy is unchecked');
+  equal(squareDynamic.checked, true, 'Square dynamic remains checked due to lack of widget');
+
+  this._squareCheckbox.checked = true;
+  $(this._squareCheckbox).change();
+  deepEqual(
+      $('#state').simplicityState('state'),
+      {shape: 'square'},
+      'State after rechecking');
+  equal(this._squareCheckbox.checked, true, 'Square checkbox is checked');
+  equal(this._squareCheckboxCopy.checked, true, 'Square copy is checked');
+  equal(squareDynamic.checked, true, 'Square dynamic remains checked due to lack of widget');
+
+  $('#state').simplicityState('reset');
+  deepEqual(
+      $('#state').simplicityState('state'),
+      {},
+      'State after reset');
+  equal(this._squareCheckbox.checked, false, 'Square checkbox is unchecked after reset');
+  equal(this._squareCheckboxCopy.checked, false, 'Square copy is unchecked after reset');
+  equal(squareDynamic.checked, true, 'Square dynamic remains checked due to lack of widget');
+});
