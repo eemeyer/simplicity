@@ -33,7 +33,7 @@
  *   &lt;/script>
  */
 (function ($) {
-  $.widget("ui.simplicityFacetCount", {
+  $.widget("ui.simplicityFacetCount", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -111,8 +111,8 @@
       if (this.options.facetId === '') {
         return;
       }
+      this._addClass('ui-simplicity-facet-count');
       this.options.facetsKey = this.options.facetsKey || this.options.dimension;
-      this.element.addClass('ui-simplicity-facet-count');
       if (this.element[0].nodeName === 'OPTION') {
         // If the option has no value attribute, create one so the
         // value doesn't change when we update the text.
@@ -122,7 +122,7 @@
           this.element.attr('value', val);
         }
       }
-      $(this.options.searchElement).bind('simplicitySearchResponse', $.proxy(this._searchResponseHandler, this));
+      this._bind(this.options.searchElement, 'simplicitySearchResponse', this._searchResponseHandler);
     },
     /**
      * Event handler for the <code>simplicitySearchResponse</code> event.
@@ -170,15 +170,6 @@
       } else {
         this.element.html(result);
       }
-    },
-    destroy : function () {
-      this.element.removeClass('ui-simplicity-facet-count');
-      if (this.element[0].nodeName === 'OPTION') {
-        this.element.text(this._optionText);
-        delete this._optionText;
-      }
-      $(this.options.searchElement).unbind('simplicitySearchResponse', this._searchResponseHandler);
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
