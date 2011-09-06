@@ -9,7 +9,7 @@
  * <code>simplicityFacetCount</code> widget from attributes on the wrapped input.
  */
 (function ($) {
-  $.widget("ui.simplicityFacetedInput", {
+  $.widget("ui.simplicityFacetedInput", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -89,16 +89,15 @@
      * </dl>
      * @name $.ui.simplicityFacetedInput.options
      */
-    options : {
+    options: {
       dimension: '',
       template: '<span/>',
       placement: 'after-label'
     },
-    _create : function () {
-      this.element.addClass('ui-simplicity-faceted-input');
+    _create: function () {
+      this._addClass('ui-simplicity-faceted-input');
       this.element.simplicityInputs($.extend({}, this.options));
       if (this.element[0].nodeName === 'SELECT') {
-        var options = this.element.find('option');
         this.element.find('option').each($.proxy(function (i, option) {
           $(option).simplicityFacetCount($.extend({}, this.options, {
             facetId: $(option).val()
@@ -131,10 +130,6 @@
           }
         }
       }
-    },
-    destroy : function () {
-      this.element.removeClass('ui-simplicity-faceted-input');
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
