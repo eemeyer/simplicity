@@ -10,7 +10,7 @@
  */
 (function ($) {
   var invalidInputSelector = ':button,:image,:file,:reset,:submit,:password';
-  $.widget("ui.simplicityInputs", {
+  $.widget("ui.simplicityInputs", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -65,10 +65,11 @@
         // kinds of elements or potentially hijack their change events.
         return;
       }
-      this.element.addClass('ui-simplicity-inputs');
-      this.element.bind(this.options.changeEvent, $.proxy(this._changeHandler, this));
-      $(this.options.stateElement).bind('simplicityStateChange', $.proxy(this._stateChangeHandler, this));
-      $(this.options.stateElement).bind('simplicityStateReset', $.proxy(this._stateResetHandler, this));
+      this
+        ._addClass('ui-simplicity-inputs')
+        ._bind(this.options.changeEvent, this._changeHandler)
+        ._bind(this.options.stateElement, 'simplicityStateChange', this._stateChangeHandler)
+        ._bind(this.options.stateElement, 'simplicityStateReset', this._stateResetHandler);
       if (this.options.exportStateOnCreate) {
         var state = $(this.options.stateElement).simplicityState('state');
         this.element.simplicityToState(state, this.options.trim, true);
@@ -168,14 +169,6 @@
           delete state[name];
         }
       }, this));
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-inputs');
-      this.element.unbind(this.options.changeEvent, this._changeHandler);
-      $(this.options.stateElement).unbind('simplicityStateChange', this._stateChangeHandler);
-      $(this.options.stateElement).unbind('simplicityStateReset', this._stateResetHandler);
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
-
 }(jQuery));
