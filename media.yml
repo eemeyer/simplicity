@@ -16,6 +16,8 @@ groups:
       - js/simplicity/simplicityHistory.js
       - js/simplicity/simplicityDiscoverySearch.js
       - js/simplicity/simplicityEquiv.js
+      - js/simplicity/simplicityProxy.js
+      - js/simplicity/simplicityWidget.js
       - js/simplicity/simplicityDebug.js
       # Widget sensitive to search
       - js/simplicity/simplicitySearchResults.js
