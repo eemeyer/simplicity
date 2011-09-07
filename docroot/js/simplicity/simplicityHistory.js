@@ -26,7 +26,7 @@
  *     .simplicityDiscoverySearch('search');
  */
 (function ($) {
-  $.widget("ui.simplicityHistory", {
+  $.widget("ui.simplicityHistory", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -54,7 +54,7 @@
       debug: false
     },
     _create : function () {
-      this.element.addClass('ui-simplicity-history');
+      this._addClass('ui-simplicity-history');
 
       if (this.options.noEscape !== '') {
         $.param.fragment.noEscape(this.options.noEscape);
@@ -79,8 +79,9 @@
           $(this.options.stateElement).simplicityState('state', state);
         }
       }
-      $(window).bind('hashchange', $.proxy(this._hashChangeHandler, this));
-      $(this.options.stateElement).bind('simplicityStateChange', $.proxy(this._stateChangeHandler, this));
+      this
+        ._bind(window, 'hashchange', this._hashChangeHandler)
+        ._bind(this.options.stateElement, 'simplicityStateChange', this._stateChangeHandler);
     },
     /**
      * Event handler for the <code>hashchange</code> event. Applies the new hash state to the
@@ -145,12 +146,6 @@
           $.bbq.pushState(newFragment);
         }
       }
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-history');
-      $(window).bind('hashchange', this._hashChangeHandler);
-      $(this.options.stateElement).unbind('simplicityStateChange', this._stateChangeHandler);
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
