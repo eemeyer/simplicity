@@ -16,7 +16,7 @@
  *     .simplicityDiscoverySearch('search');
  */
 (function ($) {
-  $.widget("ui.simplicityState", {
+  $.widget("ui.simplicityState", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -37,7 +37,7 @@
       debug: false
     },
     _create : function () {
-      this.element.addClass('ui-simplicity-state');
+      this._addClass('ui-simplicity-state');
       this._state = JSON.stringify(this.options.initialState);
       this._lastTriggeredState = undefined;
     },
@@ -149,10 +149,6 @@
       if (this.options.debug) {
         console.log('simplicityState: Reset state for', this.element, 'to state', state);
       }
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-state');
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
