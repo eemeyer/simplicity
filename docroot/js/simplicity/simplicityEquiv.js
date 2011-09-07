@@ -154,7 +154,7 @@
         },
 
         "object": function (b, a) {
-          var i;
+          var i = undefined;
           var eq = true; // unless we can proove it
           var aProperties = [], bProperties = []; // collection of strings
 
