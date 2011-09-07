@@ -63,9 +63,6 @@
               <option value="50">50</option>
             </select>
             <br />
-            <input id="renderParams" type="checkbox" name="renderParameters" value="true" />
-            <label for="renderParams">Render Parameters</label>
-            <br />
             <input id="autoSearch" type="checkbox" name="autoSearch" value="true" checked="checked"/>
             <label for="autoSearch">Auto Search</label>
           </fieldset>
@@ -246,20 +243,10 @@
             <legend>Pagination</legend>
             <div id="paginationWidget"></div>
           </fieldset>
-          <div class="yui3-g">
-            <div class="yui3-u-1-2">
-              <fieldset class="ui-widget">
-                <legend>Search Results</legend>
-                <div id="searchResults"></div>
-              </fieldset>
-            </div>
-            <div class="yui3-u-1-2">
-              <fieldset class="ui-widget">
-                <legend>Search Results 2</legend>
-                <div id="searchResults2"></div>
-              </fieldset>
-            </div>
-          </div>
+          <fieldset class="ui-widget">
+            <legend>Search Results</legend>
+            <div id="searchResults"></div>
+          </fieldset>
           <div class="yui3-g">
             <div id="debug"></div>
           </div>
@@ -291,7 +278,6 @@
     <script type="text/javascript" src="../js/simplicity/simplicityPagination.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityPageSnapBack.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicitySearchResults.js" charset="utf-8"></script>
-    <script type="text/javascript" src="../js/simplicity/simplicityRenderParamsSearchResults.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityFlyout.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
@@ -310,9 +296,6 @@
       $('body').simplicityState();
 
       $('#nav :input[name="pageSize"]').simplicityInputs();
-      $('#nav :input[name="renderParameters"]').simplicityInputs({
-        supportsReset: false
-      });
 
       $('#nav :input[name="type"]').simplicityFacetedInput({
         dimension: 'type',
@@ -465,11 +448,7 @@
 
       $('#debug').simplicityDebug();
 
-      // Rendered search results
       $('#searchResults').simplicitySearchResults();
-      $('#searchResults2').simplicityRenderParamsSearchResults({
-        url: 'search_results.php'
-      });
 
       $('#autoSearch').change(function (evt) {
         $('body').simplicityDiscoverySearch('option', 'searchOnStateChange', evt.target.checked);
