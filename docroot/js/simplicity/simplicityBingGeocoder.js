@@ -22,7 +22,7 @@
  * See the Bing Maps REST Services <a href="http://msdn.microsoft.com/en-us/library/ff701713.aspx">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityBingGeocoder", {
+  $.widget("ui.simplicityBingGeocoder", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -58,7 +58,7 @@
       debug: false
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-bing-geocoder');
+      this._addClass('ui-simplicity-bing-geocoder');
     },
     /**
      * Perform geocoding of the <code>geocodeRequest</code> calling the
@@ -215,10 +215,6 @@
         output = result.address.formattedAddress;
       }
       return output;
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-bing-geocoder');
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

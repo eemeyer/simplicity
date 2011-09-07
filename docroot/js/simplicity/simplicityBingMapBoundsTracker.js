@@ -16,7 +16,7 @@
  * @see Bing Maps AJAX Control v7 <a href="http://msdn.microsoft.com/en-us/library/gg427610.aspx">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityBingMapBoundsTracker", {
+  $.widget("ui.simplicityBingMapBoundsTracker", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -39,7 +39,7 @@
       mapMoveEvents: 'viewchangeend'
     },
     _create : function () {
-      this.element.addClass('ui-simplicity-bing-map-bounds-tracker');
+      this._addClass('ui-simplicity-bing-map-bounds-tracker');
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityBingMap('map');
       this._boundsShapes = [];
       this._boundsChangeListeners = {};
@@ -193,14 +193,12 @@
       }, this));
     },
     destroy: function () {
-      this.element.removeClass('ui-simplicity-bing-map-bounds-tracker');
       $.each(this._boundsChangeListeners, $.proxy(function (eventName, listener) {
         Microsoft.Maps.Events.removeHandler(listener);
       }, this));
       this._boundsChangeListeners = {};
-      delete this._map;
       delete this._boundsShapes;
-      $.Widget.prototype.destroy.apply(this, arguments);
+      $.ui.simplicityWidget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

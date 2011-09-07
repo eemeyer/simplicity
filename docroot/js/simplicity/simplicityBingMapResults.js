@@ -15,7 +15,7 @@
  * @see Bing Maps AJAX Control v7 <a href="http://msdn.microsoft.com/en-us/library/gg427610.aspx">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityBingMapResults", {
+  $.widget("ui.simplicityBingMapResults", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -55,11 +55,12 @@
       map: ''
     },
     _create : function () {
-      this.element.addClass('ui-simplicity-bing-map-results');
+      this._addClass('ui-simplicity-bing-map-results');
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityBingMap('map');
       this._markers = [];
-      $(this.options.searchElement).bind('simplicitySearchResponse', $.proxy(this._resultSetHandler, this));
-      this.element.bind('simplicitybingmapboundscoordinatorcalculatebounds', $.proxy(this._calcBoundsHandler, this));
+      this
+        ._bind(this.options.searchElement, 'simplicitySearchResponse', this._resultSetHandler)
+        ._bind('simplicitybingmapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
     },
     /**
      * Return the actual map object.
@@ -151,13 +152,6 @@
           }
         }
       }, this));
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-bing-map-results');
-      $(this.options.searchElement).unbind('simplicitySearchResponse', this._resultSetHandler);
-      this.element.unbind('simplicitybingmapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
-      delete this._map;
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

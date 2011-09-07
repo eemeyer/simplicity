@@ -16,7 +16,7 @@
  * @see Bing Maps AJAX Control v7 <a href="http://msdn.microsoft.com/en-us/library/gg427610.aspx">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityBingMap", {
+  $.widget("ui.simplicityBingMap", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -53,7 +53,7 @@
       mapVersion: '7.0'
     },
     _create : function () {
-      this.element.addClass('ui-simplicity-bing-map');
+      this._addClass('ui-simplicity-bing-map');
       if (this.options.map !== '') {
         this._map = this.options.map;
       } else {
@@ -132,9 +132,8 @@
       }
     },
     destroy: function () {
-      this.element.removeClass('ui-simplicity-bing-map');
       delete this._map;
-      $.Widget.prototype.destroy.apply(this, arguments);
+      $.ui.simplicityWidget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

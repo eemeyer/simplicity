@@ -18,7 +18,7 @@
  * @see Bing Maps AJAX Control v7 <a href="http://msdn.microsoft.com/en-us/library/gg427610.aspx">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityBingMapBoundsCoordinator", {
+  $.widget("ui.simplicityBingMapBoundsCoordinator", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -39,9 +39,11 @@
       map: ''
     },
     _create : function () {
-      this.element.addClass('ui-simplicity-bing-map-bounds-coordinator');
-      this._map = this.options.map !== '' ? this.options.map : this.element.simplicityBingMap('map'); // TODO: will this work if map API is not yet loaded?
-      $(this.options.searchElement).bind('simplicitySearchResponseHandled', $.proxy(this._handler, this));
+      this._addClass('ui-simplicity-bing-map-bounds-coordinator');
+      this._map = this.options.map !== '' ? this.options.map : this.element.simplicityBingMap('map');
+      this._bind(this.options.searchElement, 'simplicitySearchResponseHandled', function () {
+        this.updateBounds();
+      });
     },
     /**
      * Return the actual map object.
@@ -51,9 +53,6 @@
      */
     map: function () {
       return this._map;
-    },
-    _handler: function (evt) {
-      this.updateBounds();
     },
     /**
      * Triggers a simplicitybingmapboundscoordinatorcalculatebounds event. Handlers for that event receive a ui
@@ -71,12 +70,6 @@
       if ('undefined' !== typeof ui.locations && 0 !== ui.locations.length) {
         this._map.setView({bounds: Microsoft.Maps.LocationRect.fromLocations(ui.locations)});
       }
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-bing-map-bounds-coordinator');
-      $(this.options.searchElement).unbind('simplicitySearchResponseHandled', this._handler);
-      delete this._map;
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
