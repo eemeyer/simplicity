@@ -14,7 +14,7 @@
  * @see MapQuest JavaScript SDK v6 <a href="http://platform.beta.mapquest.com/sdk/js/v6.0.0/">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityMapQuestMap", {
+  $.widget("ui.simplicityMapQuestMap", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -47,7 +47,7 @@
       mapVersion: '6.0.0'
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-mapquest-map');
+      this._addClass('ui-simplicity-mapquest-map');
       if (this.options.map !== '') {
         this._map = this.options.map;
       } else {
@@ -132,9 +132,8 @@
       }
     },
     destroy: function () {
-      this.element.removeClass('ui-simplicity-mapquest-map');
       delete this._map;
-      $.Widget.prototype.destroy.apply(this, arguments);
+      $.ui.simplicityWidget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

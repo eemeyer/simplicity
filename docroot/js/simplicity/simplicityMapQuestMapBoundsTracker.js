@@ -14,7 +14,7 @@
  * @see MapQuest JavaScript SDK v6 <a href="http://platform.beta.mapquest.com/sdk/js/v6.0.0/">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityMapQuestMapBoundsTracker", {
+  $.widget("ui.simplicityMapQuestMapBoundsTracker", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -37,7 +37,7 @@
       mapMoveEvents: 'moveend,zoomend'
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-mapquest-map-bounds-tracker');
+      this._addClass('ui-simplicity-mapquest-map-bounds-tracker');
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityMapQuestMap('map');
       this._boundsChangeListeners = {};
       $.each(this.options.mapMoveEvents.split(','), $.proxy(function (idx, eventName) {
@@ -197,13 +197,11 @@
       }, this));
     },
     destroy: function () {
-      this.element.removeClass('ui-simplicity-mapquest-map-bounds-tracker');
       $.each(this._boundsChangeListeners, $.proxy(function (eventName, listener) {
         MQA.EventManager.removeListener(this._map, eventName, listener);
       }, this));
       delete this._boundsChangeListeners;
-      delete this._map;
-      $.Widget.prototype.destroy.apply(this, arguments);
+      $.ui.simplicityWidget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

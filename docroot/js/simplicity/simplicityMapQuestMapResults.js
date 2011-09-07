@@ -13,7 +13,7 @@
  * @see MapQuest JavaScript SDK v6 <a href="http://platform.beta.mapquest.com/sdk/js/v6.0.0/">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityMapQuestMapResults", {
+  $.widget("ui.simplicityMapQuestMapResults", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -51,11 +51,12 @@
       map: ''
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-mapquest-map-results');
+      this._addClass('ui-simplicity-mapquest-map-results');
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityMapQuestMap('map');
       this._markers = [];
-      $(this.options.searchElement).bind('simplicitySearchResponse', $.proxy(this._resultSetHandler, this));
-      this.element.bind('simplicitymapquestmapboundscoordinatorcalculatebounds', $.proxy(this._calcBoundsHandler, this));
+      this
+        ._bind(this.options.searchElement, 'simplicitySearchResponse', this._resultSetHandler)
+        ._bind('simplicitymapquestmapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
     },
     /**
      * Return the actual map object.
@@ -148,15 +149,11 @@
       }, this));
     },
     destroy: function () {
-      this.element.removeClass('ui-simplicity-mapquest-map-results');
-      $(this.options.searchElement).unbind('simplicitySearchResponse', this._resultSetHandler);
-      this.element.unbind('simplicitymapquestmapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
       $.each(this._boundsChangeListeners, $.proxy(function (eventName, listener) {
         MQA.EventManager.removeListener(this._map, eventName, listener);
       }, this));
       this._boundsChangeListeners = {};
-      delete this._map;
-      $.Widget.prototype.destroy.apply(this, arguments);
+      $.ui.simplicityWidget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

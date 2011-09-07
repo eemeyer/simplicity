@@ -16,7 +16,7 @@
  * @see MapQuest JavaScript SDK v6 <a href="http://platform.beta.mapquest.com/sdk/js/v6.0.0/">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityMapQuestMapBoundsCoordinator", {
+  $.widget("ui.simplicityMapQuestMapBoundsCoordinator", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -37,9 +37,11 @@
       map: ''
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-mapquest-map-bounds-coordinator');
+      this._addClass('ui-simplicity-mapquest-map-bounds-coordinator');
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityMapQuestMap('map');
-      $(this.options.searchElement).bind('simplicitySearchResponseHandled', $.proxy(this._handler, this));
+      this._bind(this.options.searchElement, 'simplicitySearchResponseHandled', function () {
+        this.updateBounds();
+      });
     },
     /**
      * Return the actual map object.
@@ -49,9 +51,6 @@
      */
     map: function () {
       return this._map;
-    },
-    _handler: function (evt) {
-      this.updateBounds();
     },
     updateBounds: function () {
       var ui = {
@@ -71,13 +70,6 @@
           this._map.zoomToRect(bounds);
         }
       }
-    },
-
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-mapquest-map-bounds-coordinator');
-      $(this.options.searchElement).unbind('simplicitySearchResponseHandled', this._handler);
-      delete this._map;
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

@@ -7,7 +7,7 @@
  * See the MapQuest JavaScript SDK v6 Geocoding <a href="http://platform.beta.mapquest.com/sdk/js/v6.0.0/geocoding.html">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityMapQuestGeocoder", {
+  $.widget("ui.simplicityMapQuestGeocoder", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -38,7 +38,7 @@
       debug: false
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-mapquest-geocoder');
+      this._addClass('ui-simplicity-mapquest-geocoder');
     },
     /**
      * Perform geocoding of the <code>geocodeRequest</code> calling the
@@ -225,10 +225,6 @@
         item.label = suggestionLabel;
       });
       return items;
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-mapquest-geocoder');
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
