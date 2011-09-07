@@ -8,7 +8,7 @@
  * results as HTML into it's response then consider using <code>simplicitySearchResults</code> instead.
 */
 (function ($) {
-  $.widget("ui.simplicityRenderParamsSearchResults", {
+  $.widget("ui.simplicityRenderParamsSearchResults", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -29,8 +29,9 @@
       url: ''
     },
     _create : function () {
-      this.element.addClass('ui-simplicity-render-params-search-results');
-      $(this.options.searchElement).bind('simplicitySearchResponse', $.proxy(this._searchResponseHandler, this));
+      this
+        ._addClass('ui-simplicity-render-params-search-results')
+        ._bind(this.options.searchElement, 'simplicitySearchResponse', this._searchResponseHandler);
     },
     /**
      * Event handler for the <code>simplicitySearchResponse</code> event. Expects the given
@@ -59,11 +60,6 @@
           }
         }, this));
       }
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-render-params-search-results');
-      $(this.options.searchElement).unbind('simplicitySearchResponse', this._searchResponseHandler);
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
