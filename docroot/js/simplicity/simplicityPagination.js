@@ -26,7 +26,7 @@
  *   &lt;/script>
  */
 (function ($) {
-  $.widget("ui.simplicityPagination", {
+  $.widget("ui.simplicityPagination", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -64,9 +64,10 @@
       debug: false
     },
     _create : function () {
-      this.element.addClass('ui-simplicity-pagination');
-      $(this.options.searchElement).bind('simplicitySearchResponse', $.proxy(this._searchResponseHandler, this));
-      $(this.options.stateElement).bind('simplicityStateReset', $.proxy(this._stateResetHandler, this));
+      this
+        ._addClass('ui-simplicity-pagination')
+        ._bind(this.options.searchElement, 'simplicitySearchResponse', this._searchResponseHandler)
+        ._bind(this.options.stateElement, 'simplicityStateReset', this._stateResetHandler);
     },
     /**
      * Event handler for the <code>simplicitySearchResponse</code> event. Recreates
@@ -146,12 +147,6 @@
         }
         delete state[this.options.pageParam];
       }
-    },
-    destroy : function () {
-      this.element.removeClass('ui-simplicity-pagination');
-      $(this.options.searchElement).unbind('simplicitySearchResponse', this._resultSetHandler);
-      $(this.options.stateElement).unbind('simplicityStateReset', this._stateResetHandler);
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
