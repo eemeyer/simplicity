@@ -11,7 +11,7 @@
  * to the element if available.
  */
 (function ($) {
-  $.widget("ui.simplicityFlyout", {
+  $.widget("ui.simplicityFlyout", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -37,15 +37,15 @@
       positionSelector: ''
     },
     _create : function () {
-      this.element.addClass('ui-simplicity-flyout');
+      this._addClass('ui-simplicity-flyout');
       this._isOpen = false;
       if ('undefined' !== typeof $.bgiframe) {
         this.element.bgiframe();
       }
-      this.element.find(this.options.closeSelector).click($.proxy(function (evt, ui) {
+      this._bind(this.element.find(this.options.closeSelector), 'click', function (evt, ui) {
         this.close();
         return false;
-      }, this));
+      });
     },
     /**
      * Returns <code>true</code> if the flyout is currently open, <code>false</code> otherwise.
@@ -112,10 +112,6 @@
             .show();
         }
       }
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-flyout');
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
