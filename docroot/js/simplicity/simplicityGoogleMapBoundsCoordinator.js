@@ -16,7 +16,7 @@
  * @see Google Maps JavaScript API V3 <a href="http://code.google.com/apis/maps/documentation/javascript/">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityGoogleMapBoundsCoordinator", {
+  $.widget("ui.simplicityGoogleMapBoundsCoordinator", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -37,9 +37,11 @@
       map: ''
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-google-map-bounds-coordinator');
+      this._addClass('ui-simplicity-google-map-bounds-coordinator');
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityGoogleMap('map');
-      $(this.options.searchElement).bind('simplicitySearchResponseHandled', $.proxy(this._handler, this));
+      this._bind(this.options.searchElement, 'simplicitySearchResponseHandled', function () {
+        this.updateBounds();
+      });
     },
     /**
      * Return the actual map object.
@@ -49,9 +51,6 @@
      */
     map: function () {
       return this._map;
-    },
-    _handler: function (evt) {
-      this.updateBounds();
     },
     /**
      * Triggers a simplicitygooglemapboundscoordinatorcalculatebounds event. Handlers for that event receive a ui
@@ -71,11 +70,6 @@
       if ('undefined' !== typeof bounds && !bounds.isEmpty()) {
         this._map.fitBounds(bounds);
       }
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-google-map-bounds-coordinator');
-      $(this.options.searchElement).unbind('simplicitySearchResponseHandled', this._handler);
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

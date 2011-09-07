@@ -7,7 +7,7 @@
  * See the Google Maps JavaScript API v3 <a href="http://code.google.com/apis/maps/documentation/javascript/services.html#Geocoding">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityGoogleGeocoder", {
+  $.widget("ui.simplicityGoogleGeocoder", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -23,7 +23,7 @@
       debug: false
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-google-geocoder');
+      this._addClass('ui-simplicity-google-geocoder');
       this._geocoder = new google.maps.Geocoder();
     },
     /**
@@ -166,10 +166,6 @@
         output = result.formatted_address;
       }
       return output;
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-google-geocoder');
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

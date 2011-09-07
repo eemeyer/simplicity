@@ -13,7 +13,7 @@
  * @see Google Maps JavaScript API V3 <a href="http://code.google.com/apis/maps/documentation/javascript/">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityGoogleMapLoader", {
+  $.widget("ui.simplicityGoogleMapLoader", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -27,7 +27,7 @@
       mapParams: 'sensor=false'
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-google-map-loader');
+      this._addClass('ui-simplicity-google-map-loader');
       this.loadLoader();
       this.loadMapsApi();
     },
@@ -53,10 +53,6 @@
           }, this)
         });
       }
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-google-map-loader');
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

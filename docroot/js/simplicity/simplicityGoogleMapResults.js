@@ -13,7 +13,7 @@
  * @see Google Maps JavaScript API V3 <a href="http://code.google.com/apis/maps/documentation/javascript/">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityGoogleMapResults", {
+  $.widget("ui.simplicityGoogleMapResults", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -51,11 +51,12 @@
       map: ''
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-google-map-results');
+      this._addClass('ui-simplicity-google-map-results');
       this._markers = [];
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityGoogleMap('map');
-      $(this.options.searchElement).bind('simplicitySearchResponse', $.proxy(this._resultSetHandler, this));
-      this.element.bind('simplicitygooglemapboundscoordinatorcalculatebounds', $.proxy(this._calcBoundsHandler, this));
+      this
+        ._bind(this.options.searchElement, 'simplicitySearchResponse', this._resultSetHandler)
+        ._bind('simplicitygooglemapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
     },
     /**
      * Return the actual map object.
@@ -148,12 +149,6 @@
           }
         }
       }, this));
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-google-map-results');
-      $(this.options.searchElement).unbind('simplicitySearchResponse', this._resultSetHandler);
-      this.element.unbind('simplicitygooglemapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

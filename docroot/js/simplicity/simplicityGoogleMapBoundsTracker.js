@@ -14,7 +14,7 @@
  * @see Google Maps JavaScript API V3 <a href="http://code.google.com/apis/maps/documentation/javascript/">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityGoogleMapBoundsTracker", {
+  $.widget("ui.simplicityGoogleMapBoundsTracker", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -36,7 +36,7 @@
       mapMoveEvents: 'idle'
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-google-map-bounds-tracker');
+      this._addClass('ui-simplicity-google-map-bounds-tracker');
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityGoogleMap('map');
       this._boundsShapes = [];
       this._boundsChangeListeners = {};
@@ -191,12 +191,11 @@
       }, this));
     },
     destroy: function () {
-      this.element.removeClass('ui-simplicity-google-map-bounds-tracker');
       $.each(this._boundsChangeListeners, $.proxy(function (eventName, listener) {
         google.maps.event.removeListener(listener);
       }, this));
       this._boundsChangeListeners = {};
-      $.Widget.prototype.destroy.apply(this, arguments);
+      $.ui.simplicityWidget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
