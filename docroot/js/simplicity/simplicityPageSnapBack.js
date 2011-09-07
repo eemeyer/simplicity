@@ -61,7 +61,6 @@
      * @private
      */
     _stateChangingHandler: function (evt, prevState, newState) {
-      var pageParam = 'page';
       var prevCopy = JSON.parse(JSON.stringify(prevState));
       var newCopy = JSON.parse(JSON.stringify(newState));
       delete prevCopy[this.options.pageParam];
