@@ -84,7 +84,7 @@
           mapOptions = $.extend(defaultMapOptions, this.options.mapOptions);
         }
         this._map = new MQA.TileMap(this.element[0],
-          this.options.zoom, this.options.center, this.options.mapType);
+            mapOptions.zoom, mapOptions.center, mapOptions.mapType);
         this._trigger('create', {}, {
           map: this._map
         });
