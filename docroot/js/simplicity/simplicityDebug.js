@@ -4,18 +4,19 @@
  * @private
  */
 (function ($) {
-  $.widget("ui.simplicityDebug", {
+  $.widget("ui.simplicityDebug", $.ui.simplicityWidget, {
     options : {
       stateElement: 'body',
       searchElement: 'body',
       template: '<div class="yui3-u-1-2"><fieldset class="ui-widget ui-widget-content"><legend/><textarea cols="68" rows="30"/></fieldset></div>'
     },
     _create : function () {
-      this.element.addClass('ui-simplicity-debug');
+      this._addClass('ui-simplicity-debug');
       this.element.children().remove();
 
-      $(this.options.stateElement).bind('simplicityStateChange', $.proxy(this._stateChangeHandler, this));
-      $(this.options.searchElement).bind('simplicitySearchResponse', $.proxy(this._searchResponseHandler, this));
+      this
+        ._bind(this.options.stateElement, 'simplicityStateChange', this._stateChangeHandler)
+        ._bind(this.options.searchElement, 'simplicitySearchResponse', this._searchResponseHandler);
       this._addChild('State', '_state', this._stateChanger);
       this._addChild('SearchResponse', '_searchResponse', this._searchResponseChanger);
     },
@@ -23,7 +24,7 @@
       var state = $(this.options.template);
       state.find('legend').text(label);
       this[name] = state.find('textarea');
-      this[name].bind('change', $.proxy(handler, this));
+      this._bind(this[name], 'change', handler);
       this.element.append(state);
     },
     _stateChangeHandler: function (evt, state) {
@@ -39,13 +40,8 @@
       $(this.options.searchElement).simplicityDiscoverySearch('searchResponse', JSON.parse($(evt.target).val()));
     },
     destroy: function () {
-      this.element.removeClass('ui-simplicity-debug');
-      this._state.unbind('change', this._stateChanger);
-      this._searchResponse.unbind('change', this._searchResponseChanger);
-      $(this.options.stateElement).unbind('simplicityStateChange', this._stateChangeHandler);
-      $(this.options.searchElement).unbind('simplicitySearchResponse', this._searchResponseHandler);
       this.element.children().remove();
-      $.Widget.prototype.destroy.apply(this, arguments);
+      $.ui.simplicityWidget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
