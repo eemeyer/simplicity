@@ -37,7 +37,7 @@
  *   &lt;/script>
  */
 (function ($) {
-  $.widget("ui.simplicitySlider", {
+  $.widget("ui.simplicitySlider", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -82,19 +82,20 @@
       sliderImpl: 'slider'
     },
     _create : function () {
-      this.element.addClass('ui-simplicity-slider');
+      this._addClass('ui-simplicity-slider');
       if (this.options.sliderImpl !== '') {
         this.element[this.options.sliderImpl](this.options);
       }
-      this.element.bind('slidechange', $.proxy(this._sliderChangeHandler, this));
+      this._bind('slidechange', this._sliderChangeHandler);
       if (this.options.changeOnSlide) {
-        this.element.bind('slide', $.proxy(this._sliderChangeHandler, this));
+        this._bind('slide', this._sliderChangeHandler);
       }
       this._inputMinChangeHandler = this._inputValuesChangeHandlerFactory(0);
       this._inputMaxChangeHandler = this._inputValuesChangeHandlerFactory(1);
       if ($.isArray(this.options.input)) {
-        $(this.options.input[0]).bind('change', $.proxy(this._inputMinChangeHandler, this));
-        $(this.options.input[1]).bind('change', $.proxy(this._inputMaxChangeHandler, this));
+        this
+          ._bind(this.options.input[0], 'change', this._inputMinChangeHandler)
+          ._bind(this.options.input[1], 'change', this._inputMaxChangeHandler);
         $(this.options.input[0]).each($.proxy(function (i, elem) {
           this._inputMinChangeHandler.call(this, {target: elem});
         }, this));
@@ -102,7 +103,7 @@
           this._inputMaxChangeHandler.call(this, {target: elem});
         }, this));
       } else {
-        $(this.options.input).bind('change', $.proxy(this._inputValueChangeHandler, this));
+        this._bind(this.options.input, 'change', this._inputValueChangeHandler);
         $(this.options.input).each($.proxy(function (i, elem) {
           this._inputValueChangeHandler.call(this, {target: elem});
         }, this));
@@ -200,19 +201,10 @@
       }
     },
     destroy: function () {
-      this.element.removeClass('ui-simplicity-slider');
-      if ($.isArray(this.options.input)) {
-        $(this.options.input[0]).unbind('change', this._inputMinChangeHandler);
-        $(this.options.input[1]).unbind('change', this._inputMaxChangeHandler);
-      } else {
-        $(this.options.input).unbind('change', this._inputValueChangeHandler);
-      }
-      this.element.unbind('change', this._sliderChangeHandler);
-      this.element.unbind('slide', this._sliderChangeHandler);
       if (this.options.sliderImpl !== '') {
         this.element[this.options.sliderImpl]('destroy');
       }
-      $.Widget.prototype.destroy.apply(this, arguments);
+      $.ui.simplicityWidget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
