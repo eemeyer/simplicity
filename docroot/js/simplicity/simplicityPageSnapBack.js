@@ -22,7 +22,7 @@
  *     .simplicityDiscoverySearch('search');
  */
 (function ($) {
-  $.widget("ui.simplicityPageSnapBack", {
+  $.widget("ui.simplicityPageSnapBack", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -48,8 +48,9 @@
       debug: false
     },
     _create : function () {
-      this.element.addClass('ui-simplicity-page-snap-back');
-      $(this.options.stateElement).bind('simplicityStateChanging', $.proxy(this._stateChangingHandler, this));
+      this
+        ._addClass('ui-simplicity-page-snap-back')
+        ._bind(this.options.stateElement, 'simplicityStateChanging', this._stateChangingHandler);
     },
     /**
      * Event handler for the <code>simplicityStateChanging</code> event. Removes the page parameter,
@@ -71,11 +72,6 @@
         }
         delete newState[this.options.pageParam];
       }
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-page-snap-back');
-      $(this.options.stateElement).unbind('simplicityStateChanging', this._stateChangingHandler);
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
