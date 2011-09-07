@@ -16,7 +16,7 @@
  *     <b>.simplicityDiscoverySearch('search');</b>
  */
 (function ($) {
-  $.widget("ui.simplicityDiscoverySearch", {
+  $.widget("ui.simplicityDiscoverySearch", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -56,9 +56,9 @@
       getPayloadParam: ''
     },
     _create : function () {
-      this.element.addClass('ui-simplicity-discovery-search');
+      this._addClass('ui-simplicity-discovery-search');
       this.searchResponse(JSON.stringify(this.options.initialSearchResponse), false);
-      $(this.options.stateElement).bind('simplicityStateChange', $.proxy(this._stateChangeHandler, this));
+      this._bind(this.options.stateElement, 'simplicityStateChange', this._stateChangeHandler);
     },
     _stateChangeHandler: function (evt, state) {
       if (this.options.searchOnStateChange) {
@@ -426,11 +426,6 @@
       resultSet.numRows = rows.length;
       resultSet.rows = rows;
       return resultSet;
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-discovery-search');
-      $(this.options.stateElement).unbind('simplicityStateChange', this._stateChangeHandler);
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
   $.fn.simplicityDiscoverySearchItemEnumerator = function (searchResponse, callback) {
