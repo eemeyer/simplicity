@@ -14,7 +14,7 @@
  * @see Yahoo! Maps Web Services - AJAX API <a href="http://developer.yahoo.com/maps/ajax/">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityYahooMap", {
+  $.widget("ui.simplicityYahooMap", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -47,7 +47,7 @@
       mapVersion: '3.8'
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-yahoo-map');
+      this._addClass('ui-simplicity-yahoo-map');
       if (this.options.map !== '') {
         this._map = this.options.map;
       } else {
@@ -131,9 +131,8 @@
       }
     },
     destroy: function () {
-      this.element.removeClass('ui-simplicity-yahoo-map');
       delete this._map;
-      $.Widget.prototype.destroy.apply(this, arguments);
+      $.ui.simplicityWidget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

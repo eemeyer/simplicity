@@ -16,7 +16,7 @@
  * @see Yahoo! Maps Web Services - AJAX API <a href="http://developer.yahoo.com/maps/ajax/">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityYahooMapBoundsCoordinator", {
+  $.widget("ui.simplicityYahooMapBoundsCoordinator", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -37,9 +37,11 @@
       map: ''
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-yahoo-map-bounds-coordinator');
+      this._addClass('ui-simplicity-yahoo-map-bounds-coordinator');
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityYahooMap('map'); // TODO: will this work if map API is not yet loaded?
-      $(this.options.searchElement).bind('simplicitySearchResponseHandled', $.proxy(this._handler, this));
+      this._bind(this.options.searchElement, 'simplicitySearchResponseHandled', function () {
+        this.updateBounds();
+      });
     },
     /**
      * Return the actual map object.
@@ -49,9 +51,6 @@
      */
     map: function () {
       return this._map;
-    },
-    _handler: function (evt) {
-      this.updateBounds();
     },
     /**
      * Triggers a simplicityyahoomapboundscoordinatorcalculatebounds event. Handlers for that event receive a ui
@@ -70,12 +69,6 @@
         var bounds = this._map.getBestZoomAndCenter(ui.locations);
         this._map.drawZoomAndCenter(bounds.YGeoPoint, bounds.zoomLevel);
       }
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-yahoo-map-bounds-coordinator');
-      $(this.options.searchElement).unbind('simplicitySearchResponseHandled', this._handler);
-      delete this._map;
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

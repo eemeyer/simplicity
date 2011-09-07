@@ -22,7 +22,7 @@
  * See the Yahoo! PlaceFinder <a href="http://developer.yahoo.com/geo/placefinder/">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityYahooGeocoder", {
+  $.widget("ui.simplicityYahooGeocoder", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -59,7 +59,7 @@
       debug: false
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-yahoo-geocoder');
+      this._addClass('ui-simplicity-yahoo-geocoder');
     },
     /**
      * Perform geocoding of the <code>geocodeRequest</code> calling the
@@ -218,10 +218,6 @@
         output = result.line1 + ' ' + result.line2;
       }
       return output;
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-yahoo-geocoder');
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

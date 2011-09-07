@@ -14,7 +14,7 @@
  * @see Yahoo! Maps Web Services - AJAX API <a href="http://developer.yahoo.com/maps/ajax/">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityYahooMapBoundsTracker", {
+  $.widget("ui.simplicityYahooMapBoundsTracker", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -37,7 +37,7 @@
       mapMoveEvents: 'endPan,endAutoPan,changeZoom'
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-yahoo-map-bounds-tracker');
+      this._addClass('ui-simplicity-yahoo-map-bounds-tracker');
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityYahooMap('map');
       this._boundsShapes = [];
       $.each(this.options.mapMoveEvents.split(','), $.proxy(function (idx, eventName) {
@@ -167,10 +167,8 @@
       }, this));
     },
     destroy: function () {
-      this.element.removeClass('ui-simplicity-yahoo-map-bounds-tracker');
-      delete this._map;
       delete this._boundsShapes;
-      $.Widget.prototype.destroy.apply(this, arguments);
+      $.ui.simplicityWidget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));

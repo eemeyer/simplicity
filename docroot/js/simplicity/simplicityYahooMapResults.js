@@ -13,7 +13,7 @@
  * @see Yahoo! Maps Web Services - AJAX API <a href="http://developer.yahoo.com/maps/ajax/">documentation</a>.
  */
 (function ($) {
-  $.widget("ui.simplicityYahooMapResults", {
+  $.widget("ui.simplicityYahooMapResults", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -53,12 +53,13 @@
       updateBounds: true
     },
     _create: function () {
-      this.element.addClass('ui-simplicity-yahoo-map-results');
+      this._addClass('ui-simplicity-yahoo-map-results');
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityYahooMap('map');
       this._markers = [];
       this._locations = [];
-      $(this.options.searchElement).bind('simplicitySearchResponse', $.proxy(this._resultSetHandler, this));
-      this.element.bind('simplicityyahoomapboundscoordinatorcalculatebounds', $.proxy(this._calcBoundsHandler, this));
+      this
+        ._bind(this.options.searchElement, 'simplicitySearchResponse', this._resultSetHandler)
+        ._bind('simplicityyahoomapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
     },
     /**
      * Return the actual map object.
@@ -150,15 +151,6 @@
           }
         }
       }, this));
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-yahoo-map-results');
-      $(this.options.searchElement).unbind('simplicitySearchResponse', this._resultSetHandler);
-      this.element.unbind('simplicityyahoomapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
-      delete this._map;
-      delete this._markers;
-      delete this._locations;
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
