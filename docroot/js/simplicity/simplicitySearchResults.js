@@ -10,7 +10,7 @@
  * then consider using <code>simplicityRenderParamsSearchResults</code> instead.
  */
 (function ($) {
-  $.widget("ui.simplicitySearchResults", {
+  $.widget("ui.simplicitySearchResults", $.ui.simplicityWidget, {
     /**
      * Widget options.
      *
@@ -26,8 +26,9 @@
       searchElement: 'body'
     },
     _create : function () {
-      this.element.addClass('ui-simplicity-search-results');
-      $(this.options.searchElement).bind('simplicitySearchResponse', $.proxy(this._searchResponseHandler, this));
+      this
+        ._addClass('ui-simplicity-search-results')
+        ._bind(this.options.searchElement, 'simplicitySearchResponse', this._searchResponseHandler);
     },
     /**
      * Event handler for the <code>simplicitySearchResponse</code> event. Expects the given
@@ -47,11 +48,6 @@
       } else {
         this.element.html(resultsHtml);
       }
-    },
-    destroy: function () {
-      this.element.removeClass('ui-simplicity-search-results');
-      $(this.options.searchElement).unbind('simplicitySearchResponse', this._searchResponseHandler);
-      $.Widget.prototype.destroy.apply(this, arguments);
     }
   });
 }(jQuery));
