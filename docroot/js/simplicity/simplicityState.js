@@ -52,7 +52,6 @@
       var state = this.state();
       $.extend(state, $.deparam($.param.querystring()));
       // Remove any properties from this object whose value is the empty string
-      var keysToRemove = [];
       for (var k in state) {
         if (state[k] === '') {
           delete state[k];
