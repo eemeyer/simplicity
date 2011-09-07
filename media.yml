@@ -9,15 +9,15 @@ groups:
     outputFileNameMinified: js/build/simplicity.min.js
     sourceFileNames:
       # Core
-      - js/simplicity/simplicityState.js
-      - js/simplicity/simplicityFromState.js
-      - js/simplicity/simplicityToState.js
-      - js/simplicity/simplicityInputs.js
-      - js/simplicity/simplicityHistory.js
-      - js/simplicity/simplicityDiscoverySearch.js
       - js/simplicity/simplicityEquiv.js
       - js/simplicity/simplicityProxy.js
       - js/simplicity/simplicityWidget.js
+      - js/simplicity/simplicityFromState.js
+      - js/simplicity/simplicityToState.js
+      - js/simplicity/simplicityState.js
+      - js/simplicity/simplicityInputs.js
+      - js/simplicity/simplicityHistory.js
+      - js/simplicity/simplicityDiscoverySearch.js
       - js/simplicity/simplicityDebug.js
       # Widget sensitive to search
       - js/simplicity/simplicitySearchResults.js
