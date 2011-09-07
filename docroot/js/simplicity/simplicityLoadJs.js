@@ -31,8 +31,8 @@
  */
 (function ($) {
   var nestingCounter = 0;
-  var oldDocumentWrite;
-  var oldDocumentWriteln;
+  var oldDocumentWrite = undefined;
+  var oldDocumentWriteln = undefined;
 
   var uninstall = function () {
     if ('undefined' !== typeof oldDocumentWrite) {
