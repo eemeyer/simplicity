@@ -432,6 +432,7 @@
     var discovery = searchResponse._discovery || {};
     var discoveryResponse = discovery.response || {};
     if ('undefined' !== typeof discoveryResponse.itemIds) {
+      var startIndex = discoveryResponse.startIndex;
       var itemIds = discoveryResponse.itemIds;
       var exactMatches = discoveryResponse.exactMatches;
       var relevanceValues = discoveryResponse.relevanceValues;
@@ -447,7 +448,10 @@
         row = {
           id: itemId,
           exact: exactMatches[idx],
-          score: relevanceValues[idx]
+          score: relevanceValues[idx],
+          resultsIndex0: idx + startIndex,
+          index0: idx,
+          index1: idx + 1
         };
         if (properties !== null) {
           row.properties = properties[idx];
