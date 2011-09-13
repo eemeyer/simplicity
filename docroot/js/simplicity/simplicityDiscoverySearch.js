@@ -101,21 +101,20 @@
         dataType: this.options.dataType,
         cache: false,
         error: $.proxy(function (xhr, textStatus, errorThrown) {
-          if (this.options.debug) {
-            console.log('Search error for', this.element, '[' + xhr.status + '] ' + xhr.statusText, arguments);
-          }
-          this.searchResponse({
-            error: true,
-            statusText: xhr.statusText,
-            status: xhr.status,
-            resultsHtml: xhr.responseText
-          });
-        }, this),
+            if (this.options.debug) {
+              console.log('Search error for', this.element, 'textStatus:', textStatus, 'arguments', arguments);
+            }
+            this._errorHandler(xhr, textStatus, errorThrown);
+          }, this),
         success: $.proxy(function (data, textStatus, xhr) {
-          if (this.options.debug) {
-            console.log('Search success for', this.element, 'with response', data);
+          if (data === null || ('undefined' === typeof data)) {
+            this._errorHandler(xhr, textStatus, 'Response was null or undefined.');
+          } else {
+            if (this.options.debug) {
+              console.log('Search success for', this.element, 'with response', data);
+            }
+            this.searchResponse(data);
           }
-          this.searchResponse(data);
         }, this)
       });
     },
@@ -145,26 +144,34 @@
         cache: false,
         error: $.proxy(function (xhr, textStatus, errorThrown) {
           if (this.options.debug) {
-            console.log('Search error for', this.element, '[' + xhr.status + '] ' + xhr.statusText, arguments);
+            console.log('Search error for', this.element, 'textStatus:', textStatus, 'arguments', arguments);
           }
-          this.searchResponse({
-            error: true,
-            statusText: xhr.statusText,
-            status: xhr.status,
-            resultsHtml: xhr.responseText
-          });
+          this._errorHandler(xhr, textStatus, errorThrown);
         }, this),
         success: $.proxy(function (data, textStatus, xhr) {
-          if (this.options.debug) {
-            console.log('Search success for', this.element, 'with response', data);
-          }
-          this.searchResponse({
-            _discovery: {
-              request: JSON.parse(jsonString),
-              response: data
+          if (data === null || ('undefined' === typeof data)) {
+            this._errorHandler(xhr, textStatus, 'Response was null or undefined.');
+          } else {
+            if (this.options.debug) {
+              console.log('Search success for', this.element, 'with response', data);
             }
-          });
+            this.searchResponse({
+              _discovery: {
+                request: JSON.parse(jsonString),
+                response: data
+              }
+            });
+          }
         }, this)
+      });
+    },
+    _errorHandler: function (xhr, textStatus, message) {
+      this.searchResponse({
+        error: true,
+        xhr: xhr,
+        status: xhr.status,
+        statusText: textStatus,
+        message: message
       });
     },
     /**

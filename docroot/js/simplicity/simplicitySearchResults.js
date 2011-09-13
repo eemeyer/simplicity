@@ -43,7 +43,7 @@
       var resultsHtml = searchResponse.resultsHtml || '';
       if (searchResponse.error) {
         var error = $('<div class="ui-state-error-text"/>');
-        error.text('[' + searchResponse.status + '] ' + searchResponse.statusText);
+        error.text('[' + searchResponse.status + '] ' + searchResponse.statusText + ((searchResponse.message) ? ", " + searchResponse.message : ""));
         this.element.append(error);
       } else {
         this.element.html(resultsHtml);
