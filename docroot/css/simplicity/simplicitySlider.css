@@ -1,3 +1,70 @@
 .ui-simplicity-slider .ui-slider-handle {
   outline: none;
 }
+.ui-simplicity-slider .scale ol,
+.ui-simplicity-slider .scale li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ui-simplicity-slider .scale ol {
+  position: relative;
+  width: 100%;
+}
+.ui-simplicity-slider .scale li {
+  position: absolute;
+  overflow: visible;
+}
+.ui-simplicity-slider .tick,
+.ui-simplicity-slider .label {
+  position: absolute;
+}
+.ui-simplicity-slider .tick {
+  left: 0;
+  height: 0.7em; /* See .ui-slider .ui-slider-range */
+}
+.ui-simplicity-slider .label {
+  top: 1.2em; /* See .ui-slider .ui-slider-handle */
+  white-space: nowrap;
+}
+.ui-simplicity-slider .first .tick,
+.ui-simplicity-slider .last .tick {
+  display: none;
+}
+.ui-simplicity-slider .tooltip {
+  display: block;
+  position: absolute;
+  padding: 0.4em 0.8em 0.6em;
+  bottom: 2.0em;
+  text-align: center;
+  white-space: nowrap;
+}
+.ui-simplicity-slider .tooltip .tooltip-pointer-down,
+.ui-simplicity-slider .tooltip .tooltip-pointer-down-inner {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-bottom-width: 0;
+  background: none;
+}
+.ui-simplicity-slider .tooltip .tooltip-pointer-down {
+  border-left: 7px dashed transparent;
+  border-right: 7px dashed transparent;
+  border-top-width: 8px;
+  bottom: -8px;
+  right: auto;
+  left: 50%;
+  margin-left: -7px;
+}
+.ui-simplicity-slider .tooltip .tooltip-pointer-down-inner {
+  border-left: 6px dashed transparent;
+  border-right: 6px dashed transparent;
+  border-top: 7px solid #fff;
+  bottom: auto;
+  top: -9px;
+  left: -6px;
+}
+.ui-simplicity-slider a {
+  text-decoration: none;
+}

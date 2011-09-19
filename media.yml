@@ -28,6 +28,7 @@ groups:
       - js/simplicity/simplicityFacetedInput.js
       # UI only
       - js/simplicity/simplicitySlider.js
+      - js/simplicity/simplicitySelectSlider.js
       - js/simplicity/simplicityFlyout.js
       # Maps
       - js/simplicity/simplicityHaversineDistance.js
