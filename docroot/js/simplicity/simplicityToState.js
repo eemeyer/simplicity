@@ -56,6 +56,11 @@
           if ('undefined' === typeof value || value === '' || value === null) {
             value = [];
           }
+          if ($.isArray(value)) {
+            value = $.grep(value, function (elem) {
+              return elem !== '';
+            });
+          }
           if (value.length > 0) {
             state[name] = value;
           } else if (!ignoreEmptyValues) {
