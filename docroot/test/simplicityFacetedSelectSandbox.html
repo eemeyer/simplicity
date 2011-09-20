@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>simplicityFacetedSelect sandbox</title>
+    <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/redmond/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+    <style>
+      body {
+        font-size:62.5%;
+      }
+      textarea {
+        width: 100%;
+      }
+  </style>
+  </head>
+  <body>
+    <h1><a href="../index.html">home</a> | simplicityFacetedSelect sandbox</h1>
+    <form id="navForm" onsubmit="return false;">
+      <div class="yui3-g">
+        <div id="nav" class="yui3-u-1-3">
+          <fieldset>
+            <legend>Single Select</legend>
+            <select name="cat">
+              <option value="">Select...</option>
+            </select>
+          </fieldset>
+          <fieldset>
+            <legend>Multi Select</legend>
+            <select name="cat" multiple="multiple">
+              <option value="">Select...</option>
+            </select>
+          </fieldset>
+        </div>
+        <div id="nav" class="yui3-u-1-3">
+          <fieldset>
+            <legend>State</legend>
+            <textarea id='state' name="state" rows="10"></textarea>
+          </fieldset>
+          <fieldset>
+            <legend>Response</legend>
+            <textarea id='response' name="response" rows="30">{
+  "_discovery": {
+    "response": {
+      "facets": {
+        "cat": {
+          "childIds": ["B", "A"],
+          "data": {
+            "A": {
+              "count": 7,
+              "childIds": ["AC", "AB", "AA"]
+            },
+            "AA": {
+              "count": 1,
+              "parentId": "A"
+            },
+            "AB": {
+              "count": 3,
+              "parentId": "A",
+              "childIds": ["ABB", "ABA"]
+            },
+            "ABA": {
+              "count": 0,
+              "parentId": "AB"
+            },
+            "ABB": {
+              "count": 3,
+              "parentId": "AB"
+            },
+            "AC": {
+              "count": 2,
+              "parentId": "A",
+              "childIds": ["ACA"]
+            },
+            "ACA": {
+              "count": 2,
+              "parentId": "AC"
+            },
+            "B": {
+              "count": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+            </textarea>
+          </fieldset>
+        </div>
+        <div id="nav" class="yui3-u-1-3">
+          <fieldset>
+            <legend>Single Select (copy)</legend>
+            <select name="cat">
+              <option value="">Select...</option>
+            </select>
+          </fieldset>
+          <fieldset>
+            <legend>Multi Select (copy)</legend>
+            <select name="cat" multiple="multiple">
+              <option value="">Select...</option>
+            </select>
+          </fieldset>
+        </div>
+      </div>
+    </form>
+    <script type="text/javascript" src="../js/lib/jquery-1.6.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.16.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="../js/simplicity/simplicityEquiv.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityProxy.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityWidget.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFromState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityToState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityInputs.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFacetedSelect.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+      $(function () {
+        $('body').simplicityState();
+
+        $(':input').not('textarea').simplicityInputs();
+
+        $('select').simplicityFacetedSelect({
+          indent: '-'
+        });
+
+        $('body').bind('simplicityStateChange', function (evt, state) {
+          $('#state').val(JSON.stringify(state, null, '  '));
+        });
+        $('#state').change(function (evt) {
+          $('body').simplicityState('state', JSON.parse($(evt.target).val()));
+        });
+        $('#response').change(function (evt) {
+          $('body').triggerHandler('simplicitySearchResponse', JSON.parse($(evt.target).val()));
+        });
+
+        $('body').simplicityState('triggerChangeEvent');
+        $('#response').change();
+      });
+    </script>
+  </body>
+</html>
