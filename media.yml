@@ -26,6 +26,7 @@ groups:
       - js/simplicity/simplicityPageSnapBack.js
       - js/simplicity/simplicityFacetCount.js
       - js/simplicity/simplicityFacetedInput.js
+      - js/simplicity/simplicityFacetedSelect.js
       # UI only
       - js/simplicity/simplicitySlider.js
       - js/simplicity/simplicitySelectSlider.js
