@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>Tutorial Search - Facet Driven</title>
+    <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/jquery-ui-1.8.7.custom.css" rel="stylesheet" type="text/css" />
+    <link href="../css/simplicity/simplicityPagination.css" rel="stylesheet" type="text/css" />
+    <link href="../css/simplicity/simplicitySlider.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="../images/favicon.jpg"/>
+    <style>
+      body {
+        font-size:62.5%;
+      }
+      #layout {
+        padding-left: 360px;
+      }
+      #nav {
+        margin-left: -360px;
+        width: 360px;
+      }
+      #main {
+        width: 100%;
+      }
+      #themeSwitcher {
+        float: right;
+      }
+      #themeSwitcherButton {
+        float: right;
+      }
+      select {
+        width: 100%;
+      }
+      .result-set .result-row {
+        margin-top: 6px;
+        margin-bottom: 6px;
+      }
+      .ui-simplicity-slider {
+        margin: 1.4em;
+      }
+      fieldset {
+        margin-bottom: 1em;
+      }
+      fieldset legend {
+        font-weight: bold;
+        font-size: larger;
+      }
+      #agencySlider, #privacySlider {
+        margin-top: 3.4em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="themeSwitcher" class="ui-helper-clearfix">
+      <button id="themeSwitcherButton">Theme</button>
+    </div>
+    <h1><a href="index.html">home</a> | Tutorial Search - Facet Driven</h1>
+    <form id="myForm" onsubmit="return false;">
+      <div id="layout" class="yui3-g">
+        <div id="nav" class="yui3-u">
+          <fieldset>
+            <legend>Search Controls</legend>
+            <button id="searchButton">Search</button>
+            <button id="resetButton">Reset</button>
+          </fieldset>
+          <fieldset>
+            <legend>Keyword</legend>
+            <input id="keywordInput" name="dataset_freetext">
+          </fieldset>
+          <fieldset>
+            <legend>Category Type</legend>
+            <select id="catSelect" name="category_type">
+              <option value="">Any</option>
+            </select>
+            <div id="catSlider" class='make-slider'></div>
+          </fieldset>
+          <fieldset>
+            <legend>Formats Available</legend>
+            <select id="formatsSelect" name="formats_avail">
+              <option value="">Any</option>
+            </select>
+            <div id="formatsSlider" class='make-slider'></div>
+          </fieldset>
+          <fieldset>
+            <legend>Privacy</legend>
+            <select id="privacySelect" name="privacy">
+              <option value="">Any</option>
+            </select>
+            <div id="privacySlider" class='make-slider'></div>
+          </fieldset>
+          <fieldset>
+            <legend>Agency</legend>
+            <select id="agencySelect" name="agency">
+              <option value="">Any</option>
+            </select>
+            <div id="agencySlider" class='make-slider'></div>
+          </fieldset>
+        </div>
+        <div id="main" class="yui3-u">
+          <fieldset class="ui-widget ui-widget-content">
+            <legend>Pagination</legend>
+            <div id="paginationWidget"></div>
+          </fieldset>
+          <fieldset class="ui-widget">
+            <legend>Search Results</legend>
+            <div id="searchResults"></div>
+          </fieldset>
+          <div class="yui3-g">
+            <div id="debug"></div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <script type="text/javascript" src="../js/lib/jquery-1.5.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.7.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.pagination-2.1.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.bgiframe-2.1.2.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.numberformatter-1.1.0.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="../js/simplicity/simplicityEquiv.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityProxy.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityWidget.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityLoadJs.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFromState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityToState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityHistory.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityInputs.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityDebug.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityPagination.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityPageSnapBack.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicitySearchResults.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFacetedSelect.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicitySelectSlider.js" charset="utf-8"></script>
+    <script type="text/javascript"><!--//<![CDATA[
+      $('#nav fieldset').addClass("ui-widget ui-widget-content");
+      $('#themeSwitcherButton').button().click(function (evt) {
+        $('#themeSwitcherButton').remove()
+        $.simplicityLoadJs('http://jqueryui.com/themeroller/themeswitchertool/', function () {
+          $('#themeSwitcher').themeswitcher({
+            width: 200,
+            height: 600,
+            closeOnSelect: false
+          });
+        });
+      });
+
+      $('body').simplicityState();
+
+      $('#keywordInput').simplicityInputs();
+
+      $('#catSelect')
+        .simplicityInputs()
+        .simplicityFacetedSelect({
+          facetKeys: 'data_category_type_id'
+        });
+      $('#catSlider').simplicitySelectSlider({
+        select: '#catSelect',
+        showTooltip: false,
+        animate: true
+      });
+
+      $('#formatsSelect')
+        .simplicityInputs()
+        .simplicityFacetedSelect();
+      $('#formatsSlider').simplicitySelectSlider({
+        select: '#formatsSelect',
+        showTooltip: false,
+        animate: true
+      });
+
+      $('#privacySelect')
+        .simplicityInputs()
+        .simplicityFacetedSelect();
+      $('#privacySlider').simplicitySelectSlider({
+        select: '#privacySelect'
+      });
+
+      $('#agencySelect')
+        .simplicityInputs()
+        .simplicityFacetedSelect();
+      $('#agencySlider').simplicitySelectSlider({
+        select: '#agencySelect',
+        showLabels: false,
+        showTicks: false
+      });
+
+      $('.make-slider').removeClass('make-slider').simplicitySelectSlider();
+
+      $('#paginationWidget').simplicityPagination();
+      $('#searchButton').button().click(function (evt) {
+        $('body').simplicityDiscoverySearch('search');
+        evt.stopPropagation();
+      });
+      $('#resetButton').button().click(function (evt) {
+        $('body').simplicityState('reset');
+        evt.stopPropagation();
+      });
+      $('#debug').simplicityDebug();
+      $('#searchResults').simplicitySearchResults();
+      $('body')
+        .simplicityState('mergeQueryParams')
+        .simplicityHistory()
+        .simplicityState('triggerChangeEvent')
+        .simplicityPageSnapBack()
+        .simplicityDiscoverySearch({
+          url: 'search_controller_gsa.php'
+        })
+        .simplicityDiscoverySearch('search');
+    //]]>--></script>
+  </body>
+</html>
