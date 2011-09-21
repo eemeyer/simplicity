@@ -1,0 +1,474 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>Tutorial Search - Facet Driven</title>
+    <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/redmond/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+    <link href="../css/simplicity/simplicityPagination.css" rel="stylesheet" type="text/css" />
+    <link href="../css/simplicity/simplicitySlider.css" rel="stylesheet" type="text/css" />
+    <link href="../css/simplicity/simplicityFancySelect.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="../images/favicon.jpg"/>
+    <style>
+      body {
+        font-size:62.5%;
+      }
+      #layout {
+        padding-left: 360px;
+      }
+      #nav {
+        margin-left: -360px;
+        width: 360px;
+      }
+      #main {
+        width: 100%;
+      }
+      #themeSwitcher {
+        float: right;
+      }
+      #themeSwitcherButton {
+        float: right;
+      }
+      .result-set .result-row {
+        margin-top: 6px;
+        margin-bottom: 6px;
+      }
+      .ui-simplicity-slider {
+        margin: 1.4em;
+      }
+      fieldset {
+        margin-bottom: 1em;
+      }
+      fieldset legend {
+        font-weight: bold;
+        font-size: larger;
+      }
+      #privacySlider {
+        margin-top: 3.4em;
+      }
+      #catFancy .option,
+      #agencyFancy .option {
+        padding-top: 0.4em;
+        padding-bottom: 0.4em;
+      }
+      /* fancy facets */
+      .ui-simplicity-fancy-facets .path-container,
+      .ui-simplicity-fancy-facets .selected-container,
+      .ui-simplicity-fancy-facets .available-container,
+      .ui-simplicity-fancy-facets .overflow-container {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .ui-simplicity-fancy-facets .path-container {
+        margin-top: 0.4em;
+        margin-bottom: 0.4em;
+        padding-bottom: 0.8em;
+        border-bottom: 2px dashed #A6C9E2;
+      }
+      .ui-simplicity-fancy-facets .path-container ul {
+        list-style-type: none;
+        padding-left: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      .ui-simplicity-fancy-facets .path-container li {
+        display: block;
+        float: left;
+        padding-left: 0;
+        padding-right: 2em;
+        white-space: nowrap;
+      }
+      .ui-simplicity-fancy-facets .path-container .count {
+        display: none;
+      }
+      .ui-simplicity-fancy-facets .path-container .option a {
+        text-decoration: none;
+      }
+
+      .ui-simplicity-fancy-facets .selected-container {
+        padding-bottom: 0.8em;
+        margin-bottom: 0.4em;
+        border-bottom: 2px dashed #A6C9E2;
+      }
+
+      .ui-simplicity-fancy-facets .overflow-contains-selected {
+        font-weight: bold;
+      }
+      .ui-simplicity-fancy-facets .overflow-opener,
+      .ui-simplicity-fancy-facets .overflow-closer {
+        padding: 0.4em;
+      }
+
+      /** border and icon for the opener and closer */
+      .ui-simplicity-fancy-facets .overflow-opener,
+      .ui-simplicity-fancy-facets .overflow-closer {
+        margin-top: 0.4em;
+        margin-bottom: 0.4em;
+        border: 1px solid #A6C9E2;
+      }
+      .ui-simplicity-fancy-facets .overflow-opener .ui-icon,
+      .ui-simplicity-fancy-facets .overflow-closer .ui-icon {
+        float: right;
+      }
+
+      /* Look and feel customizations for the various configurations inline/dropdown/flyout/blocks. */
+      .ui-simplicity-flyout-dropdown,
+      .ui-simplicity-flyout-flyout {
+        padding: 1em;
+        border: 1px solid #A6C9E2;
+        background-color: #FFFFFF;
+        z-index: 900;
+      }
+
+      /* Flyout blocks */
+      .ui-simplicity-fancy-facets .ui-simplicity-flyout-blocks {
+        border: none;
+        background-color: transparent;
+      }
+      .ui-simplicity-fancy-facets .ui-simplicity-flyout-blocks .overflow-closer {
+        background-color: #FFFFFF;
+        margin-top: 0;
+        margin-bottom: 0;
+        width: 17.2em;
+      }
+      .ui-simplicity-fancy-facets .ui-simplicity-flyout-blocks .options li {
+        display: block;
+        float: left;
+        padding: 0.8em;
+        width: 16em;
+        height: 2em;
+        overflow: hidden;
+        border: 1px solid #A6C9E2;
+        background-color: #FFFFFF;
+      }
+      .ui-simplicity-fancy-facets .ui-simplicity-flyout-blocks ..options .count {
+        float: right;
+        padding-left: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="themeSwitcher" class="ui-helper-clearfix">
+      <button id="themeSwitcherButton">Theme</button>
+    </div>
+    <h1><a href="index.html">home</a> | Tutorial Search - Facet Driven</h1>
+    <form id="myForm" onsubmit="return false;">
+      <div id="layout" class="yui3-g">
+        <div id="nav" class="yui3-u">
+          <fieldset>
+            <legend>Search Controls</legend>
+            <button id="searchButton">Search</button>
+            <button id="resetButton">Reset</button>
+          </fieldset>
+          <fieldset>
+            <legend>Keyword</legend>
+            <input id="keywordInput" name="dataset_freetext">
+          </fieldset>
+          <fieldset>
+            <legend>Category Type</legend>
+            <select id="catSelect" name="category_type" class="ui-helper-hidden-accessible">
+              <option value="">Any</option>
+            </select>
+            <div id="catFancy"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Category Type with checkboxes</legend>
+            <ul id="catFancyWithCheckboxes">
+              <li class="option ui-helper-clearfix">
+                <label>
+                  <input type="checkbox" class="option-checkbox"/>
+                  <span class="label"></span>
+                </label>
+                <span class="count"></span>
+              </li>
+            </ul>
+          </fieldset>
+          <fieldset id="agencyControls">
+            <legend>Agency Controls</legend>
+            <div>
+              <label>
+                Overflow style
+                <select id="agencyOverflowKind">
+                  <option>inline</option>
+                  <option>dropdown</option>
+                  <option>flyout</option>
+                  <option>blocks</option>
+                </select>
+              </label>
+            </div>
+            <div>
+              <label>
+                Available limit
+                <select id="agencyAvailableLimit">
+                  <option value="-1">All</option>
+                  <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+                  <option selected="selected">5</option>
+                  <option>6</option><option>7</option><option>8</option><option>9</option>
+                  <option>10</option><option>20</option><option>30</option><option>40</option><option>50</option>
+                </select>
+              </label>
+            </div>
+            <div>
+              <label>
+                <input id="agencySelectedArea" type="checkbox">
+                selected area
+              </label>
+            </div>
+            <div>
+              <label>
+                <input id="agencyAvailableContainsSelected" type="checkbox" checked="checked">
+                available contains selected
+              </label>
+            </div>
+            <div>
+              <label>
+                <input id="agencyOverflowContainsAvailable" type="checkbox">
+                overflow contains available
+              </label>
+            </div>
+            <div>
+              <label>
+                <input id="agencyOverflowContainsSelected" type="checkbox" checked="checked">
+                overflow contains selected
+              </label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Agency</legend>
+            <select id="agencySelect" name="agency" multiple="multiple">
+              <option value="">Any</option>
+            </select>
+            <div id="agencyFancy"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Formats Available</legend>
+            <select id="formatsSelect" name="formats_avail">
+              <option value="">Any</option>
+            </select>
+            <div id="formatsSlider"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Privacy</legend>
+            <select id="privacySelect" name="privacy">
+              <option value="">Any</option>
+            </select>
+            <div id="privacySlider"></div>
+          </fieldset>
+        </div>
+        <div id="main" class="yui3-u">
+          <fieldset class="ui-widget ui-widget-content">
+            <legend>Pagination</legend>
+            <div id="paginationWidget"></div>
+          </fieldset>
+          <fieldset class="ui-widget">
+            <legend>Search Results</legend>
+            <div id="searchResults"></div>
+          </fieldset>
+          <div class="yui3-g">
+            <div id="debug"></div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <script type="text/javascript" src="../js/lib/jquery-1.6.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.16.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.pagination-2.1.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.bgiframe-2.1.2.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.numberformatter-1.1.0.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="../js/simplicity/simplicityEquiv.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityProxy.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityWidget.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityLoadJs.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFromState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityToState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityHistory.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityInputs.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityDebug.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityPagination.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityPageSnapBack.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicitySearchResults.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFacetedSelect.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicitySelectSlider.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFancySelect.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFancyFacets.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFlyout.js" charset="utf-8"></script>
+    <script type="text/javascript"><!--//<![CDATA[
+      $('#nav fieldset').addClass("ui-widget ui-widget-content");
+      $('#themeSwitcherButton').button().click(function (evt) {
+        $('#themeSwitcherButton').remove()
+        $.simplicityLoadJs('http://jqueryui.com/themeroller/themeswitchertool/', function () {
+          $('#themeSwitcher').themeswitcher({
+            width: 200,
+            height: 600,
+            closeOnSelect: false
+          });
+        });
+      });
+
+      $('body').simplicityState();
+
+      $('#keywordInput').simplicityInputs();
+
+      $('#catSelect')
+        .simplicityInputs()
+        .simplicityFacetedSelect({
+          facetsKey: 'data_category_type_id'
+        });
+      $('#catFancy').simplicityFancySelect({
+        select: '#catSelect'
+      });
+      $('#catFancyWithCheckboxes').simplicityFancySelect({
+        select: '#catSelect',
+        template: ''
+      });
+
+      $('#formatsSelect')
+        .simplicityInputs()
+        .simplicityFacetedSelect();
+      $('#formatsSlider').simplicitySelectSlider({
+        select: '#formatsSelect',
+        showTooltip: false,
+        animate: true
+      });
+
+      $('#privacySelect')
+        .simplicityInputs()
+        .simplicityFacetedSelect();
+      $('#privacySlider').simplicitySelectSlider({
+        select: '#privacySelect'
+      });
+
+      $('#agencySelect')
+        .simplicityInputs()
+        .simplicityFacetedSelect({
+          firstPathOnly: true
+        })
+        .hide();
+      $('#agencyFancy').simplicityFancyFacets({
+        'select': '#agencySelect'
+      });
+
+      // The following chunk of code deals with reconfiguring the fancy select to
+      // help demonstrate the different configuration options.
+      $('#agencyFancy .overflow-closer').append($('<div class="ui-icon"/>'));
+      $('#agencyFancy .overflow-opener').append($('<div class="ui-icon"/>'));
+      $('#agencyOverflowKind').change(function (evt) {
+        var val = $(evt.target).val();
+        $('#agencyFancy').simplicityFancyFacets('closeOverflow');
+        $('#agencyFancy .overflow-closer .ui-icon').removeClass('ui-icon-triangle-1-n');
+        $('#agencyFancy .overflow-closer .ui-icon').removeClass('ui-icon-triangle-1-w');
+        $('#agencyFancy .overflow-opener .ui-icon').removeClass('ui-icon-triangle-1-s');
+        $('#agencyFancy .overflow-opener .ui-icon').removeClass('ui-icon-triangle-1-e');
+        $('#agencyFancy .overflow-flyout').removeClass('ui-simplicity-flyout-inline');
+        $('#agencyFancy .overflow-flyout').removeClass('ui-simplicity-flyout-dropdown');
+        $('#agencyFancy .overflow-flyout').removeClass('ui-simplicity-flyout-flyout');
+        $('#agencyFancy .overflow-flyout').removeClass('ui-simplicity-flyout-blocks');
+        if (val === 'inline') {
+          $('#agencyFancy .overflow-flyout').simplicityFlyout('option', {
+            position: '',
+            effect: 'slide',
+            effectOptions: {
+              direction: 'up',
+              duration: 500
+            }
+          });
+          $('#agencyFancy .overflow-flyout').addClass('ui-simplicity-flyout-inline');
+          $('#agencyFancy .overflow-closer .ui-icon').addClass('ui-icon-triangle-1-n');
+          $('#agencyFancy .overflow-opener .ui-icon').addClass('ui-icon-triangle-1-s');
+        } else if (val === 'dropdown') {
+          $('#agencyFancy .overflow-flyout').simplicityFlyout('option', {
+            position: {
+              my: 'left top',
+              at: 'left bottom',
+              of: '#agencyFancy .overflow-closer',
+              collision: 'none'
+            },
+            effect: 'slide',
+            effectOptions: {
+              direction: 'up',
+              duration: 500
+            }
+          });
+          $('#agencyFancy .overflow-flyout').addClass('ui-simplicity-flyout-dropdown');
+          $('#agencyFancy .overflow-closer .ui-icon').addClass('ui-icon-triangle-1-n');
+          $('#agencyFancy .overflow-opener .ui-icon').addClass('ui-icon-triangle-1-s');
+        } else if (val === 'flyout') {
+          $('#agencyFancy .overflow-flyout').simplicityFlyout('option', {
+            position: {
+              my: 'left top',
+              at: 'right top',
+              of: $('#agencyFancy').parent(),
+              collision: 'none'
+            },
+            effect: 'slide',
+            effectOptions: {
+              direction: 'left',
+              duration: 500
+            }
+          });
+          $('#agencyFancy .overflow-flyout').addClass('ui-simplicity-flyout-flyout');
+          $('#agencyFancy .overflow-closer .ui-icon').addClass('ui-icon-triangle-1-w');
+          $('#agencyFancy .overflow-opener .ui-icon').addClass('ui-icon-triangle-1-e');
+        } else if (val === 'blocks') {
+          $('#agencyFancy .overflow-flyout').simplicityFlyout('option', {
+            position: {
+              my: 'left top',
+              at: 'right top',
+              of: $('#agencyFancy').parent(),
+              collision: 'none'
+            },
+            effect: 'slide',
+            effectOptions: {
+              direction: 'left',
+              duration: 500
+            }
+          });
+          $('#agencyFancy .overflow-flyout').addClass('ui-simplicity-flyout-blocks');
+          $('#agencyFancy .overflow-closer .ui-icon').addClass('ui-icon-triangle-1-w');
+          $('#agencyFancy .overflow-opener .ui-icon').addClass('ui-icon-triangle-1-e');
+        $('#agencyFancy .overflow-flyout').addClass('ui-simplicity-flyout-blocks');
+        }
+      });
+      $('#agencyAvailableLimit, #agencySelectedArea, ' +
+        '#agencyAvailableContainsSelected, #agencyOverflowContainsAvailable, #agencyOverflowContainsSelected').change(function (evt) {
+        $('#agencyFancy')
+          .simplicityFancyFacets('closeOverflow')
+          .simplicityFancyFacets('option', {
+            availableLimit: $('#agencyAvailableLimit').val(),
+            selectedArea: $('#agencySelectedArea')[0].checked,
+            availableContainsSelected: $('#agencyAvailableContainsSelected')[0].checked,
+            overflowContainsAvailable: $('#agencyOverflowContainsAvailable')[0].checked,
+            overflowContainsSelected: $('#agencyOverflowContainsSelected')[0].checked
+          });
+      });
+      $('#agencyControls :input').change();
+
+      $('#paginationWidget').simplicityPagination();
+      $('#searchButton').button().click(function (evt) {
+        $('body').simplicityDiscoverySearch('search');
+        evt.stopPropagation();
+      });
+      $('#resetButton').button().click(function (evt) {
+        $('body').simplicityState('reset');
+        evt.stopPropagation();
+      });
+      $('#debug').simplicityDebug();
+      $('#searchResults').simplicitySearchResults();
+      $('body')
+        .simplicityState('mergeQueryParams')
+        .simplicityHistory()
+        .simplicityState('triggerChangeEvent')
+        .simplicityPageSnapBack()
+        .simplicityDiscoverySearch({
+          url: 'search_controller_gsa.php'
+        })
+        .simplicityDiscoverySearch('search');
+    //]]>--></script>
+  </body>
+</html>
