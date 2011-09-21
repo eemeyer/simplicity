@@ -42,7 +42,7 @@
      *   <dd>
      *     The location of the simplicityDiscoverySearch widget. Defaults to <code>'body'</code>.
      *   </dd>
-     *   <dt>missingText</dt>
+     *   <dt>missingCount</dt>
      *   <dd>
      *     Text to use when there is no associated facet count. Defaults to <code>'?'</code>.
      *   </dd>
@@ -76,7 +76,7 @@
      */
     options : {
       searchElement: 'body',
-      missingText: '?',
+      missingCount: '?',
       dimension: '',
       facetsKey: '',
       facetId: '',
@@ -156,7 +156,7 @@
         }
       }
       if ('undefined' === typeof result) {
-        result = this.options.missingText;
+        result = this.options.missingCount;
       } else if ($.isFunction(this.options.numberFormatter)) {
         result = this.options.numberFormatter(result);
       } else {
