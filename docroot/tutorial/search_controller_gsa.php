@@ -70,7 +70,7 @@ if (array_key_exists("privacy", $_GET)) {
 
 $facets = array(
   "data_category_type_id" => array("minCount"=>1, "includeLabel" => true, "markSelected" => true),
-  "agency" => array("topN"=> 100, "minCount"=>1, "includeLabel" => true, "markSelected" => true),
+  "agency" => array("topN"=> 100, "minCount"=>1, "includeLabel" => true, "markSelected" => true, "depth" => -1),
   "formats_avail" => array("minCount"=>1, "markSelected" => true),
   "privacy" => array("dimension" => "privacy_and_confidentiality", "markSelected" => true)
 );

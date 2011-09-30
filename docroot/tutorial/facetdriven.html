@@ -181,7 +181,16 @@
 
       $('#agencySelect')
         .simplicityInputs()
-        .simplicityFacetedSelect();
+        .simplicityFacetedSelect({optionFormatter: function (ui) {
+          var result = ' ' + (ui.facet.label || ui.id);
+          if ('undefined' !== typeof ui.facet.count) {
+            result += $('<span/>').text(ui.facet.count).format({
+                format: ' (#,###)',
+                locale: 'us'
+              }).text();
+          }
+          return result;
+      }});
       $('#agencySlider').simplicitySelectSlider({
         select: '#agencySelect',
         showLabels: false,
