@@ -59,6 +59,12 @@
      *     and <code>facet</code> entries. The <code>facet</code> entry consists of the returned
      *     data for the facet from the <code>simplicitySearchResponse</code> event.
      *   </dd>
+     *   <dt>indent</dt>
+     *   <dd>
+     *     If set to a non-empty string, then this will be used as a leading indentation for each level of descendant facets.
+     *     Note that actual whitespace characters are not rendered by most browsers.
+     *     Defaults to '-'. Setting to an empty string results in no indentation being applied for descendant facets.
+     *   </dd>
      *   <dt>nextResponseOnly</dt>
      *   <dd>
      *     Option that causes the dynamic <code>option</code> population to trigger for the
@@ -75,6 +81,7 @@
       optionTemplate: '{option}',
       missingCount: '?',
       optionFormatter: '',
+      indent: '-',
       nextResponseOnly: false
     },
     _create: function () {
@@ -139,22 +146,7 @@
           this.element.find('option[value!=""]').remove();
           if ($.isArray(facets.ids) && facets.data) {
             $.each(facets.ids, $.proxy(function (idx, id) {
-              var facet = facets.data[id] || {};
-              var text;
-              if ($.isFunction(this.options.optionFormatter)) {
-                text = this.options.optionFormatter.call(this, {
-                  id: id,
-                  facet: facet
-                });
-              } else {
-                text = this.options.optionTemplate
-                  .replace(/\{option\}/g, facet.label || id)
-                  .replace(/\{count\}/g, 'undefined' !== typeof facet.count ? facet.count : this.options.missingCount);
-              }
-              $('<option/>')
-                .val(id)
-                .text(text)
-                .appendTo(this.element);
+              this._addFacet(facets, id, 0);
             }, this));
           }
           if (selected !== null) {
@@ -165,6 +157,42 @@
         }
       }
       return refreshed;
+    },
+    /**
+     * Recursive method for adding facet hierarchies to the select element.
+     */
+    _addFacet: function (facets, id, depth) {
+      depth = typeof depth !== 'undefined' ? depth : 0;
+      var facet = facets.data[id] || {};
+      var text;
+      if ($.isFunction(this.options.optionFormatter)) {
+        text = this.options.optionFormatter.call(this, {
+          id: id,
+          facet: facet,
+          depth: depth
+        });
+      } else {
+        var leading = "";
+        var idx;
+        if ('' !== this.options.indent)
+        {
+          for (idx = 0; idx < depth; idx += 1) {
+            leading += this.options.indent;
+          }
+        }
+        text = leading + (this.options.optionTemplate
+          .replace(/\{option\}/g, facet.label || id)
+          .replace(/\{count\}/g, 'undefined' !== typeof facet.count ? facet.count : this.options.missingCount));
+      }
+      $('<option/>')
+        .val(id)
+        .text(text)
+        .appendTo(this.element);
+      if ($.isArray(facet.children)) {
+        $.each(facet.children, $.proxy(function (idx, id) {
+          this._addFacet(facets, id, depth + 1);
+        }, this));
+      }
     }
   });
 }(jQuery));

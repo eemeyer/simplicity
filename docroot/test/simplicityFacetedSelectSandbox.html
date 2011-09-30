@@ -40,34 +40,52 @@
           <fieldset>
             <legend>Response</legend>
             <textarea id='response' name="response" rows="30">{
-"_discovery": {
-  "response": {
+  "_discovery": {
+    "response": {
       "facets": {
         "cat": {
-          "ids": [
-            "foo",
-            "bar",
-            "baz"
-          ],
           "data": {
-            "foo": {
-              "label": "Foo foo foo",
-              "count": 10
-            },
-            "bar": {
-              "label": "Bar bar bar",
+            "A": {
+              "children": ["AC", "AB", "AA"],
               "count": 7
             },
-            "baz": {
-              "label": "Baz baz baz",
-              "count": 2
+            "AA": {
+              "count": 1,
+              "parentId": "A"
+            },
+            "AB": {
+              "children": ["ABB", "ABA"],
+              "count": 3,
+              "parentId": "A"
+            },
+            "ABA": {
+              "count": 0,
+              "parentId": "AB"
+            },
+            "ABB": {
+              "count": 3,
+              "parentId": "AB"
+            },
+            "AC": {
+              "children": ["ACA"],
+              "count": 2,
+              "parentId": "A"
+            },
+            "ACA": {
+              "count": 2,
+              "parentId": "AC"
+            },
+            "B": {
+              "count": 1
             }
-          }
+          },
+          "ids": ["B", "A"]
         }
       }
     }
   }
 }
+
             </textarea>
           </fieldset>
         </div>
