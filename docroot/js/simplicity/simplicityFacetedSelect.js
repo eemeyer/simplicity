@@ -172,21 +172,21 @@
           depth: depth
         });
       } else {
-        var leading = "";
-        var idx;
-        if ('' !== this.options.indent)
-        {
-          for (idx = 0; idx < depth; idx += 1) {
-            leading += this.options.indent;
-          }
-        }
-        text = leading + (this.options.optionTemplate
+        text = this.options.optionTemplate
           .replace(/\{option\}/g, facet.label || id)
-          .replace(/\{count\}/g, 'undefined' !== typeof facet.count ? facet.count : this.options.missingCount));
+          .replace(/\{count\}/g, 'undefined' !== typeof facet.count ? facet.count : this.options.missingCount);
+      }
+      var leading = "";
+      var idx;
+      if ('' !== this.options.indent)
+      {
+        for (idx = 0; idx < depth; idx += 1) {
+          leading += this.options.indent;
+        }
       }
       $('<option/>')
         .val(id)
-        .text(text)
+        .text(leading + text)
         .appendTo(this.element);
       if ($.isArray(facet.children)) {
         $.each(facet.children, $.proxy(function (idx, id) {
