@@ -48,6 +48,24 @@
           }
         } else {
           if (element.val() !== searchValue) {
+            if (element.is('select') && 'undefined' !== typeof searchValue && searchValue !== null) {
+              // Automatically add any missing options to a select input
+              var options = {};
+              element.find('option').each(function (idx, option) {
+                options[$(option).val()] = true;
+              });
+              $.each($.isArray(searchValue) ? searchValue : [searchValue], function (idx, value) {
+                if (!options[value]) {
+                  if (debug) {
+                    console.log('simplicityFromState: Adding dynamic option', value, 'to select', element);
+                  }
+                  options[value] = true;
+                  $('<option/>')
+                    .val(value)
+                    .appendTo(element);
+                }
+              });
+            }
             element.val(searchValue);
             changed = true;
           }
