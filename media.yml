@@ -71,10 +71,10 @@ groups:
 
   - groupName: jquery_ui_css
     mediaType: css
-    outputFileName: css/build/jquery-ui-1.8.7.custom.css
-    outputFileNameMinified: css/build/jquery-ui-1.8.7.custom.min.css
+    outputFileName: css/build/jquery-ui-1.8.16.custom.css
+    outputFileNameMinified: css/build/jquery-ui-1.8.16.custom.min.css
     sourceFileNames:
-      - css/lib/jquery-ui-1.8.7.custom.css
+      - css/lib/redmond/jquery-ui-1.8.16.custom.css
 
   - groupName: jquery_pagination_js
     mediaType: js

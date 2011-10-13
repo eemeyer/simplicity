@@ -73,7 +73,7 @@
         <exclude name="yui-grids-*.css"/>
         <exclude name="jquery.pagination-*.css"/>
       </zipfileset>
-      <zipfileset prefix="simplicity-${version}/css/" dir="docroot/css/build">
+      <zipfileset prefix="simplicity-${version}/css/redmond/" dir="docroot/css/build">
         <include name="jquery-ui-*.min.css"/>
       </zipfileset>
       <!-- JsDoc -->
