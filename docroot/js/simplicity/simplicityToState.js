@@ -60,6 +60,9 @@
             value = $.grep(value, function (elem) {
               return elem !== '';
             });
+            if (value.length === 1) {
+              value = value[0];
+            }
           }
           if (value.length > 0) {
             state[name] = value;
