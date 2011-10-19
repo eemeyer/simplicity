@@ -31,6 +31,7 @@ groups:
       - js/simplicity/simplicitySlider.js
       - js/simplicity/simplicitySelectSlider.js
       - js/simplicity/simplicityFlyout.js
+      - js/simplicity/simplicityFancySelect.js
       # Maps
       - js/simplicity/simplicityHaversineDistance.js
       - js/simplicity/simplicityGoogleMap.js
@@ -63,6 +64,7 @@ groups:
     sourceFileNames:
       - css/simplicity/simplicityPagination.css
       - css/simplicity/simplicitySlider.css
+      - css/simplicity/simplicityFancySelect.css
 
   - groupName: simplicityLoadJs_js
     mediaType: js

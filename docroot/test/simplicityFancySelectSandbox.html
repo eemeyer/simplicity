@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>simplicityFancySelect sandbox</title>
+    <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/redmond/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+    <link href="../css/simplicity/simplicityFancySelect.css" rel="stylesheet" type="text/css" />
+    <style>
+      body {
+        font-size:62.5%;
+      }
+      textarea {
+        width: 100%;
+      }
+      select {
+        width: 96%;
+      }
+      .ui-simplicity-fancy-select {
+        padding-left: 1em;
+        padding-right: 1em;
+        margin-right: 1em;
+        font-size: larger;
+        background-color: #A6C9E2;
+      }
+      .ui-simplicity-fancy-select .option {
+        padding-top: 0.4em;
+        padding-bottom: 0.4em;
+      }
+  </style>
+  </head>
+  <body>
+    <h1><a href="../index.html">home</a> | simplicityFancySelect sandbox</h1>
+    <form id="navForm" onsubmit="return false;">
+      <div class="yui3-g">
+        <div id="nav" class="yui3-u-1-2">
+          <fieldset>
+            <legend>Single Select</legend>
+            <div class="yui3-g">
+              <div class="yui3-u-1-4">
+                <select id="singleSelect"></select>
+              </div>
+              <div class="yui3-u-3-4">
+                <textarea id="singleSelectHtml" rows="10"><option value="">Select...</option>
+<option value="1">first</option>
+<option value="2">second</option>
+<option value="3" selected="selected">third</option>
+<option value="4" data-count="123">fourth</option>
+<option value="5">fifth</option>
+</textarea>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Fancy Single Select</legend>
+            <div class="yui3-g">
+              <div class="yui3-u-1-2">
+                <div id="singleFancy"></div>
+              </div>
+              <div class="yui3-u-1-2">
+                <textarea id="singleFancyOptions" rows="20">{
+  "displaySelected": true,
+  "displayUnselected": true,
+  "displayCount": -1,
+  "skipSelected": true,
+  "skipUnselected": true,
+  "skipCount": 0,
+  "firstPathOnly": false,
+  "ignorePath": false,
+  "firstPathSelections": false,
+  "refreshOnChange": true,
+  "hideWhenEmpty": false
+}
+</textarea>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+        <div id="nav" class="yui3-u-1-2">
+          <fieldset>
+            <legend>Multi Select</legend>
+            <div class="yui3-g">
+              <div class="yui3-u-1-4">
+                <select id="multiSelect" multiple="multiple" size="10"></select>
+              </div>
+              <div class="yui3-u-3-4">
+                <textarea id="multiSelectHtml" rows="10"><option value="">Select...</option>
+<option value="A" selected="selected"
+  data-is-path="true" data-path='[]'>AAA</option>
+<option value="B" selected="selected"
+  data-is-path="true" data-path='["A"]'>BBB</option>
+<option value="C" selected="selected"
+  data-is-path="true" data-path='["A","B"]'>CCC</option>
+<option value="1">first</option>
+<option value="2"
+  data-count="123">second</option>
+<option value="3">third</option>
+</textarea>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Fancy Multi Select</legend>
+            <div class="yui3-g">
+              <div class="yui3-u-1-2">
+                <div id="multiFancy"></div>
+              </div>
+              <div class="yui3-u-1-2">
+                <textarea id="multiFancyOptions" rows="20">{
+  "displaySelected": true,
+  "displayUnselected": true,
+  "displayCount": -1,
+  "skipSelected": true,
+  "skipUnselected": true,
+  "skipCount": 0,
+  "firstPathOnly": false,
+  "ignorePath": false,
+  "firstPathSelections": true,
+  "refreshOnChange": true,
+  "hideWhenEmpty": false
+}
+</textarea>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </form>
+    <script type="text/javascript" src="../js/lib/jquery-1.6.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.16.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="../js/simplicity/simplicityEquiv.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityProxy.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityWidget.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFancySelect.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+      $(function () {
+        $('#singleSelectHtml')
+          .change(function () {
+            $('#singleSelect')
+              .html($('#singleSelectHtml').val())
+              .change();
+          })
+          .change();
+        $('#multiSelectHtml')
+          .change(function () {
+            $('#multiSelect')
+              .html($('#multiSelectHtml').val())
+              .change();
+          })
+          .change();
+
+        $('#singleFancy').simplicityFancySelect({
+          select: '#singleSelect',
+          refreshOnCreate: false
+        });
+        $('#multiFancy').simplicityFancySelect({
+          select: '#multiSelect',
+          refreshOnCreate: false
+        });
+
+        $('#singleFancyOptions')
+          .change(function () {
+            var options = JSON.parse($('#singleFancyOptions').val());
+            $('#singleFancy').simplicityFancySelect('option', options);
+          })
+          .change();
+        $('#multiFancyOptions')
+          .change(function () {
+            var options = JSON.parse($('#multiFancyOptions').val());
+            $('#multiFancy').simplicityFancySelect('option', options);
+          })
+          .change();
+      });
+    </script>
+  </body>
+</html>

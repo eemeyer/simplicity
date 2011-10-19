@@ -1,0 +1,22 @@
+ul.ui-simplicity-fancy-select,
+.ui-simplicity-fancy-select ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+.ui-simplicity-fancy-select li {
+  text-indent: 0;
+}
+.ui-simplicity-fancy-select li li {
+  text-indent: 1em;
+}
+.ui-simplicity-fancy-select .option,
+.ui-simplicity-fancy-select .option .label {
+  cursor: pointer;
+}
+
+.ui-simplicity-fancy-select .selected .label {
+  font-weight: bold;
+}
+.ui-simplicity-fancy-select .count {
+  float: right;
+}
