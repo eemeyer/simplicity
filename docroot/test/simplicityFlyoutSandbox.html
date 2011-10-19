@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>simplicityFlyout sandbox</title>
+    <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/redmond/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+    <style>
+      body {
+        font-size:62.5%;
+      }
+      #header,
+      #footer {
+        height: 8em;
+        width: 100%;
+        text-align: center;
+        background-color: #79B7E7;
+      }
+      #leftCol,
+      #rightCol {
+        height: 30em;
+        text-align: center;
+        background-color: #A6C9E2;
+      }
+      #centerCol {
+        background-color: #E17009;
+        height: 30em;
+      }
+      .rect {
+        color: #FFF;
+        background-color: #555;
+        font-size: larger;
+        width: 8em;
+        padding-top: 1em;
+        padding-bottom: 1em;
+        padding-left: 1em;
+        padding-right: 1em;
+        margin: auto;
+        text-align: center;
+      }
+      #left, #right {
+        margin-top: 6em;
+      }
+      #top, #bottom {
+        margin-top: 1em;
+      }
+      .ui-simplicity-flyout {
+        background-color: #DDD;
+      }
+      textarea {
+        width: 30em;
+        height: 20em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1><a href="../index.html">home</a> | simplicityFlyout sandbox</h1>
+    <div id="header">
+      HEADER
+      <div id="top" class="rect">#top</div>
+    </div>
+    <div class="yui3-g">
+      <div id="leftCol" class="yui3-u-1-3">
+        LEFT COLUMN
+        <div id="left" class="rect">#left</div>
+      </div>
+      <div id="centerCol" class="yui3-u-1-3">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dolor turpis, tempus nec luctus suscipit, accumsan ut enim. Nullam euismod ipsum nec ipsum tempus et malesuada ipsum luctus. Duis ut quam in sem accumsan semper at eget nunc. Sed metus mi, semper vitae congue laoreet, volutpat id velit. Sed malesuada, turpis vel consectetur mollis, purus tellus blandit quam, ac scelerisque leo elit ac tortor. Suspendisse potenti. Donec semper euismod nisl, vel mollis nunc vestibulum ut.
+        <p>
+        <div id="center" class="rect">#center</div>
+        <p>
+        Duis ullamcorper mauris ac turpis vestibulum vehicula. Pellentesque felis eros, adipiscing vitae mattis in, hendrerit sed mauris. Integer in risus sed nulla condimentum varius. Vivamus blandit porttitor diam, ut ullamcorper nunc convallis sed. Nunc luctus vestibulum tincidunt. Praesent vitae nunc a metus ultrices suscipit et vitae purus. Nam tristique bibendum sagittis. In urna leo, pretium ut suscipit ut, interdum ut massa. Nam nibh orci, rhoncus sit amet auctor nec, dictum suscipit nibh. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+        <p>
+        <div id="flyout" class="ui-helper-hidden-accessible">
+          <ul>
+            <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+            <li>Nam eget metus vitae orci sagittis tempus.</li>
+            <li>Nullam eget leo sed dolor porta hendrerit.</li>
+            <li>Nunc sit amet metus vitae nisi gravida blandit.</li>
+            <li>Vivamus blandit quam lobortis erat tristique et molestie purus sodales.</li>
+          </ul>
+          <ul>
+            <li>Quisque aliquam massa et tellus tempor egestas.</li>
+            <li>Cras at quam turpis, in aliquam mi.</li>
+            <li>Curabitur vitae augue est, quis hendrerit leo.</li>
+          </ul>
+          <ul>
+            <li>Integer rhoncus ipsum non leo dignissim sodales.</li>
+            <li>In nec dolor quis est imperdiet fermentum.</li>
+            <li>In aliquam pellentesque leo, eget commodo diam eleifend non.</li>
+            <li>Etiam scelerisque dui in odio consectetur vehicula.</li>
+            <li>Etiam vel orci leo, et porttitor tellus.</li>
+            <li>Fusce eget mi adipiscing risus mattis mollis.</li>
+          </ul>
+          <ul>
+            <li>Duis adipiscing tincidunt nunc, quis consectetur libero mollis eu.</li>
+          </ul>
+          <ul>
+            <li>Praesent quis elit a lacus eleifend tempus.</li>
+            <li>Proin aliquam felis eget leo malesuada egestas.</li>
+            <li>Integer dapibus tortor in erat sagittis quis tincidunt justo cursus.</li>
+            <li>Quisque rutrum porta velit, nec rutrum ante varius non.</li>
+            <li>Nunc commodo enim at neque iaculis sed tempor turpis blandit.</li>
+          </ul>
+        </div>
+
+      </div>
+      <div id="rightCol" class="yui3-u-1-3">
+        RIGHT COLUMN
+        <div id="right" class="rect">#right</div>
+      </div>
+    </div>
+    <div id="footer">
+      FOOTER
+      <div id="bottom" class="rect">#bottom</div>
+    </div>
+    <div>
+      <fieldset>
+        <legend>Options</legend>
+        <button id="toggle">Toggle</button>
+        <p>
+        <textarea id="options">{
+  "effect": "slide",
+  "effectOptions": {
+    "direction": "up",
+    "duration": 1000
+  },
+  "position": {
+    "my": "left top",
+    "at": "right center",
+    "of": "#center",
+    "collision": "none"
+  },
+  "hiddenAccessible": true
+}
+</textarea>
+      </fieldset>
+    </div>
+    <script type="text/javascript" src="../js/lib/jquery-1.6.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.16.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="../js/simplicity/simplicityEquiv.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityProxy.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityWidget.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFlyout.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+      $(function () {
+        $('.rect').draggable();
+        $('#flyout').simplicityFlyout();
+        $('#toggle').click(function () {
+          $('#flyout').simplicityFlyout('toggle');
+        });
+        $('#options')
+          .change(function () {
+            var options = JSON.parse($('#options').val());
+            $('#flyout').simplicityFlyout('option', options);
+          })
+          .change();
+      });
+    </script>
+  </body>
+</html>

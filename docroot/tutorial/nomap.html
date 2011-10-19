@@ -31,12 +31,27 @@
         margin-bottom: 6px;
       }
       .ui-simplicity-facet-count {
+        padding-left: 1em;
+        padding-right: 0.5em;
         float: right;
       }
       #styleCheckboxes ul,
       #styleCheckboxesFlyout ul {
         list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+      #styleCheckboxes ul li,
+      #styleCheckboxesFlyout ul li {
+        padding-left: 0;
+      }
+      #styleCheckboxes li li,
+      #styleCheckboxesFlyout li li {
         padding-left: 1em;
+      }
+      #styleCheckboxesFlyout {
+        width: 220px;
+        z-index: 900;
       }
     </style>
   </head>
@@ -428,8 +443,16 @@
       });
 
       $('#styleCheckboxesFlyout').simplicityFlyout({
-        positionSelector: '#styleCheckboxes',
-        width: '200px'
+        effect: 'slide',
+        effectOptions: {
+          direction: 'left',
+          duration: 1000
+        },
+        position: {
+          my: 'left bottom',
+          at: 'right bottom',
+          of: '#styleCheckboxes'
+        }
       });
       $('#styleCheckboxesMore').click(function (evt, ui) {
         $('#styleCheckboxesFlyout').simplicityFlyout('toggle');
