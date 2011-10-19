@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>simplicityFancyFacets sandbox</title>
+    <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/redmond/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+    <link href="../css/simplicity/simplicityFancySelect.css" rel="stylesheet" type="text/css" />
+    <style>
+      body {
+        font-size:62.5%;
+      }
+      textarea {
+        width: 100%;
+      }
+      select {
+        width: 96%;
+      }
+      .ui-simplicity-fancy-select {
+        padding-left: 1em;
+        padding-right: 1em;
+        margin-right: 1em;
+        font-size: larger;
+        background-color: #A6C9E2;
+      }
+      .ui-simplicity-fancy-select .option {
+        padding-top: 0.4em;
+        padding-bottom: 0.4em;
+      }
+  </style>
+  </head>
+  <body>
+    <h1><a href="../index.html">home</a> | simplicityFancyFacets sandbox</h1>
+    <form id="navForm" onsubmit="return false;">
+      <div class="yui3-g">
+        <div id="nav" class="yui3-u-1-2">
+          <fieldset>
+            <legend>Flat Select</legend>
+            <div class="yui3-g">
+              <div class="yui3-u-1-4">
+                <select id="flatSelect" multiple="multiple" size="10"></select>
+              </div>
+              <div class="yui3-u-3-4">
+                <textarea id="flatSelectHtml" rows="10"><option value="">Select...</option>
+<option value="1">one</option>
+<option value="2">two</option>
+<option value="3" selected="selected">three</option>
+<option value="4" data-count="123">four</option>
+<option value="5">five</option>
+<option value="6">six</option>
+<option value="7">seven</option>
+<option value="8">eight</option>
+<option value="9">nine</option>
+<option value="10">ten</option>
+<option value="11">eleven</option>
+<option value="12">tweleve</option>
+<option value="13">thirteen</option>
+<option value="14">fourteen</option>
+<option value="15">fifteen</option>
+</textarea>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Flat Fancy Select</legend>
+            <div class="yui3-g">
+              <div class="yui3-u-1-2">
+                <div id="flatFancy"></div>
+              </div>
+              <div class="yui3-u-1-2">
+                <textarea id="flatFancyOptions" rows="20">{
+  "selectedArea": false,
+  "availableContainsSelected": true,
+  "overflowContainsAvailable": false,
+  "overflowContainsSelected": true,
+  "availableLimit": 5
+}
+</textarea>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+        <div id="nav" class="yui3-u-1-2">
+          <fieldset>
+            <legend>Path Select</legend>
+            <div class="yui3-g">
+              <div class="yui3-u-1-4">
+                <select id="pathSelect" multiple="multiple" size="10"></select>
+              </div>
+              <div class="yui3-u-3-4">
+                <textarea id="pathSelectHtml" rows="10"><option value="">Select...</option>
+<option value="A" selected="selected"
+  data-is-path="true" data-path='[]'>AAA</option>
+<option value="B" selected="selected"
+  data-is-path="true" data-path='["A"]'>BBB</option>
+<option value="C" selected="selected"
+  data-is-path="true" data-path='["A","B"]'>CCC</option>
+<option value="1">first</option>
+<option value="2"
+  data-count="123">second</option>
+<option value="3">third</option>
+</textarea>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Path Fancy Select</legend>
+            <div class="yui3-g">
+              <div class="yui3-u-1-2">
+                <div id="pathFancy"></div>
+              </div>
+              <div class="yui3-u-1-2">
+                <textarea id="pathFancyOptions" rows="20">{
+  "selectedArea": false,
+  "availableContainsSelected": true,
+  "overflowContainsAvailable": false,
+  "overflowContainsSelected": true,
+  "availableLimit": -1
+}
+</textarea>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </form>
+    <script type="text/javascript" src="../js/lib/jquery-1.6.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.16.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="../js/simplicity/simplicityEquiv.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityProxy.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityWidget.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFancySelect.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFlyout.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFancyFacets.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+      $(function () {
+        $('#flatSelectHtml')
+          .change(function () {
+            $('#flatSelect')
+              .html($('#flatSelectHtml').val())
+              .change();
+          })
+          .change();
+      $('#pathSelectHtml')
+        .change(function () {
+          $('#pathSelect')
+            .html($('#pathSelectHtml').val())
+            .change();
+        })
+        .change();
+
+        $('#flatFancy').simplicityFancyFacets({
+          select: '#flatSelect'
+        });
+        $('#pathFancy').simplicityFancyFacets({
+          select: '#pathSelect'
+        });
+
+        $('#flatFancyOptions')
+          .change(function () {
+            var options = JSON.parse($('#flatFancyOptions').val());
+            $('#flatFancy').simplicityFancyFacets('option', options);
+          })
+          .change();
+        $('#pathFancyOptions')
+          .change(function () {
+            var options = JSON.parse($('#pathFancyOptions').val());
+            $('#pathFancy').simplicityFancyFacets('option', options);
+          })
+          .change();
+      });
+    </script>
+  </body>
+</html>

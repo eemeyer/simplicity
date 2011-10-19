@@ -32,6 +32,7 @@ groups:
       - js/simplicity/simplicitySelectSlider.js
       - js/simplicity/simplicityFlyout.js
       - js/simplicity/simplicityFancySelect.js
+      - js/simplicity/simplicityFancyFacets.js
       # Maps
       - js/simplicity/simplicityHaversineDistance.js
       - js/simplicity/simplicityGoogleMap.js
