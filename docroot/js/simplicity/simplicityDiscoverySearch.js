@@ -59,6 +59,12 @@
       this._addClass('ui-simplicity-discovery-search');
       this.searchResponse(JSON.stringify(this.options.initialSearchResponse), false);
       this._bind(this.options.stateElement, 'simplicityStateChange', this._stateChangeHandler);
+      this._numSearches = 0;
+      this._numSuccessSearches = 0;
+      this._numErrorSearches = 0;
+      this._numQueries = 0;
+      this._numSuccessQueries = 0;
+      this._numErrorQueries = 0;
     },
     _stateChangeHandler: function (evt, state) {
       if (this.options.searchOnStateChange) {
@@ -93,6 +99,7 @@
       if (this.options.debug) {
         console.log('Searching for ', this.element, 'with state', searchState);
       }
+      this._numSearches += 1;
       $.ajax({
         url: this.options.url,
         type: 'GET',
@@ -101,6 +108,7 @@
         dataType: this.options.dataType,
         cache: false,
         error: $.proxy(function (xhr, textStatus, errorThrown) {
+            this._numErrorSearches += 1;
             if (this.options.debug) {
               console.log('Search error for', this.element, 'textStatus:', textStatus, 'arguments', arguments);
             }
@@ -108,8 +116,10 @@
           }, this),
         success: $.proxy(function (data, textStatus, xhr) {
           if (data === null || ('undefined' === typeof data)) {
+            this._numErrorSearches += 1;
             this._errorHandler(xhr, textStatus, 'Response was null or undefined.');
           } else {
+            this._numSuccessSearches += 1;
             if (this.options.debug) {
               console.log('Search success for', this.element, 'with response', data);
             }
@@ -118,8 +128,7 @@
         }, this)
       });
     },
-    query: function (jsonString)
-    {
+    query: function (jsonString) {
       var data = jsonString;
       if (this.options.dataType === 'jsonp') {
         try {
@@ -135,6 +144,7 @@
           return;
         }
       }
+      this._numQueries += 1;
       $.ajax({
         url: this.options.url,
         type: 'POST',
@@ -143,6 +153,7 @@
         dataType: this.options.dataType,
         cache: false,
         error: $.proxy(function (xhr, textStatus, errorThrown) {
+          this._numErrorQueries += 1;
           if (this.options.debug) {
             console.log('Search error for', this.element, 'textStatus:', textStatus, 'arguments', arguments);
           }
@@ -150,8 +161,10 @@
         }, this),
         success: $.proxy(function (data, textStatus, xhr) {
           if (data === null || ('undefined' === typeof data)) {
+            this._numErrorQueries += 1;
             this._errorHandler(xhr, textStatus, 'Response was null or undefined.');
           } else {
+            this._numSuccessQueries += 1;
             if (this.options.debug) {
               console.log('Search success for', this.element, 'with response', data);
             }
@@ -433,6 +446,20 @@
       resultSet.numRows = rows.length;
       resultSet.rows = rows;
       return resultSet;
+    },
+    searchStats: function () {
+      return {
+        count: this._numSearches,
+        success: this._numSuccessSearches,
+        error: this._numErrorSearches
+      };
+    },
+    queryStats: function () {
+      return {
+        count: this._numQueries,
+        success: this._numSuccessQueries,
+        error: this._numErrorQueries
+      };
     }
   });
   $.fn.simplicityDiscoverySearchItemEnumerator = function (searchResponse, callback) {
