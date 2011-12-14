@@ -59,12 +59,8 @@
       this._addClass('ui-simplicity-discovery-search');
       this.searchResponse(JSON.stringify(this.options.initialSearchResponse), false);
       this._bind(this.options.stateElement, 'simplicityStateChange', this._stateChangeHandler);
-      this._numSearches = 0;
-      this._numSuccessSearches = 0;
-      this._numErrorSearches = 0;
-      this._numQueries = 0;
-      this._numSuccessQueries = 0;
-      this._numErrorQueries = 0;
+      this._ajaxHelperSearch = $.simplicityAjaxHelper(this);
+      this._ajaxHelperQuery = $.simplicityAjaxHelper(this);
     },
     _stateChangeHandler: function (evt, state) {
       if (this.options.searchOnStateChange) {
@@ -99,33 +95,21 @@
       if (this.options.debug) {
         console.log('Searching for ', this.element, 'with state', searchState);
       }
-      this._numSearches += 1;
-      $.ajax({
+      this._ajaxHelperSearch.ajax({
         url: this.options.url,
         type: 'GET',
         contentType: 'application/json',
         data: searchState,
         dataType: this.options.dataType,
         cache: false,
-        error: $.proxy(function (xhr, textStatus, errorThrown) {
-            this._numErrorSearches += 1;
-            if (this.options.debug) {
-              console.log('Search error for', this.element, 'textStatus:', textStatus, 'arguments', arguments);
-            }
-            this._errorHandler(xhr, textStatus, errorThrown);
-          }, this),
-        success: $.proxy(function (data, textStatus, xhr) {
-          if (data === null || ('undefined' === typeof data)) {
-            this._numErrorSearches += 1;
-            this._errorHandler(xhr, textStatus, 'Response was null or undefined.');
-          } else {
-            this._numSuccessSearches += 1;
+        debug: this.options.debug,
+        error: this._errorHandler,
+        success: function (data, textStatus, xhr) {
             if (this.options.debug) {
               console.log('Search success for', this.element, 'with response', data);
             }
             this.searchResponse(data);
           }
-        }, this)
       });
     },
     query: function (jsonString) {
@@ -144,27 +128,16 @@
           return;
         }
       }
-      this._numQueries += 1;
-      $.ajax({
+      this._ajaxHelperQuery.ajax({
         url: this.options.url,
         type: 'POST',
         contentType: 'application/json',
         data: data,
         dataType: this.options.dataType,
         cache: false,
-        error: $.proxy(function (xhr, textStatus, errorThrown) {
-          this._numErrorQueries += 1;
-          if (this.options.debug) {
-            console.log('Search error for', this.element, 'textStatus:', textStatus, 'arguments', arguments);
-          }
-          this._errorHandler(xhr, textStatus, errorThrown);
-        }, this),
-        success: $.proxy(function (data, textStatus, xhr) {
-          if (data === null || ('undefined' === typeof data)) {
-            this._numErrorQueries += 1;
-            this._errorHandler(xhr, textStatus, 'Response was null or undefined.');
-          } else {
-            this._numSuccessQueries += 1;
+        debug: this.options.debug,
+        error: this._errorHandler,
+        success: function (data, textStatus, xhr) {
             if (this.options.debug) {
               console.log('Search success for', this.element, 'with response', data);
             }
@@ -175,10 +148,12 @@
               }
             });
           }
-        }, this)
       });
     },
     _errorHandler: function (xhr, textStatus, message) {
+      if (this.options.debug) {
+        console.log('Search error for', this.element, 'textStatus:', textStatus, 'arguments', arguments);
+      }
       this.searchResponse({
         error: true,
         xhr: xhr,
@@ -448,18 +423,10 @@
       return resultSet;
     },
     searchStats: function () {
-      return {
-        count: this._numSearches,
-        success: this._numSuccessSearches,
-        error: this._numErrorSearches
-      };
+      return this._ajaxHelperSearch.getStats();
     },
     queryStats: function () {
-      return {
-        count: this._numQueries,
-        success: this._numSuccessQueries,
-        error: this._numErrorQueries
-      };
+      return this._ajaxHelperQuery.getStats();
     }
   });
   $.fn.simplicityDiscoverySearchItemEnumerator = function (searchResponse, callback) {
