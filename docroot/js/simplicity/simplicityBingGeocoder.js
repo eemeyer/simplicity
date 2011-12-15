@@ -74,7 +74,7 @@
      *   <dt><code>response</code></dt>
      *   <dd>
      *     Final step before calling the <code>callback</code> with the
-     *     geocode response to allow for manipulaton.
+     *     geocode response to allow for manipulation.
      *     Triggered after any normalization phase.
      *     <p>
      *     The custom object passed to this event looks like so:
@@ -94,7 +94,7 @@
      * @param geocodeRequest
      *   The request as expected by the upstream geocode vendor.
      * @param callback
-     *   The callback triggered at geocode completion. Is give one
+     *   The callback triggered at geocode completion. Is given one
      *   argument which is the same as custom <code>Object</code>
      *   passed to the <code>response</code> event.
      *

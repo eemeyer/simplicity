@@ -54,7 +54,7 @@
      *   <dt><code>response</code></dt>
      *   <dd>
      *     Final step before calling the <code>callback</code> with the
-     *     geocode response to allow for manipulaton.
+     *     geocode response to allow for manipulation.
      *     Triggered after any normalization phase.
      *     <p>
      *     The custom object passed to this event looks like so:
