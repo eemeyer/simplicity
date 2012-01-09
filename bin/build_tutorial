@@ -3,11 +3,12 @@ set -e
 
 # Simple build script, should get replaced with an ant target at some point
 
-if [ $# -ne 1 ]; then
-  echo >&2 "Usage: $2 engine-port"
+if [ $# -ne 2 ]; then
+  echo >&2 "Usage: $2 port-re port-gsa"
   exit 1
 fi
-PORT="$1"
+PORT_RE="$1"
+PORT_GSA="$2"
 
 ant clean compress-media
 
@@ -27,10 +28,11 @@ rm $TMP_DIR/docroot/*.bak
 
 cat >$TMP_DIR/web.config.ini <<EOF
 [Application]
-discoveryEngineUrl=http://localhost:$PORT
+discoveryEngineUrl=http://localhost:$PORT_RE
+discoveryEngineGsaUrl=http://localhost:$PORT_GSA
 EOF
 
-env COPYFILE_DISABLE=true tar -C $TMP_DIR -c . | gzip -9 >tutorial-$PORT.tar.gz
+env COPYFILE_DISABLE=true tar -C $TMP_DIR -c . | gzip -9 >tutorial.tar.gz
 
 rm -rf $TMP_DIR
-echo tutorial-$PORT.tar.gz
+echo tutorial.tar.gz
