@@ -53,11 +53,16 @@ groups:
       - js/simplicity/simplicityYahooMapResults.js
       - js/simplicity/simplicityYahooMapBoundsCoordinator.js
       - js/simplicity/simplicityYahooMapBoundsTracker.js
+      - js/simplicity/simplicityNokiaMap.js
+      - js/simplicity/simplicityNokiaMapResults.js
+      - js/simplicity/simplicityNokiaMapBoundsCoordinator.js
+      - js/simplicity/simplicityNokiaMapBoundsTracker.js
       # Geocoders
       - js/simplicity/simplicityGoogleGeocoder.js
       - js/simplicity/simplicityBingGeocoder.js
-      - js/simplicity/simplicityYahooGeocoder.js
       - js/simplicity/simplicityMapQuestGeocoder.js
+      - js/simplicity/simplicityYahooGeocoder.js
+      - js/simplicity/simplicityNokiaGeocoder.js
 
   - groupName: simplicity_css
     mediaType: css

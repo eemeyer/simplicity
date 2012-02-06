@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=7; IE=EmulateIE9" />
+    <title>Nokia Geocoder Sandbox</title>
+    <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/redmond/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+      #map { width: 400px; height: 400px; }
+    </style>
+  </head>
+  <body>
+    <h1><a href="../index.html">home</a> | Nokia Geocoder Sandbox</h1>
+    <form id="myForm" onsubmit="return false;">
+      <div class="yui3-g">
+        <div class="yui3-u-1-2">
+          <fieldset>
+            <legend>Global Geocoder</legend>
+            <input id="geocodeGlobal" name="geocodeGlobal" />
+          </fieldset>
+          <fieldset>
+            <legend>Local Geocoder</legend>
+            <input id="geocodeLocal" name="geocodeLocal" />
+            near Springfield, MI
+          </fieldset>
+          <fieldset>
+            <legend>Map</legend>
+            <div id="map"></div>
+          </fieldset>
+        </div>
+        <div class="yui3-u-1-2">
+          <fieldset>
+            <legend>Geocode Response</legend>
+            <textarea id="response" cols="72" rows="36"></textarea>
+          </fieldset>
+        </div>
+      </div>
+    </form>
+    <script type="text/javascript" src="../js/lib/jquery-1.6.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.16.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+    <script type="text/javascript" src="http://api.maps.nokia.com/2.1.0/jsl.js"></script>
+    <script type="text/javascript">//<![CDATA[
+      $(function () {
+        var map = new nokia.maps.map.Display($('#map')[0], {
+          components: [
+            new nokia.maps.map.component.Behavior(),
+            new nokia.maps.map.component.ZoomBar()
+          ]
+        });
+        var autoCompleteCallback = function (response, responseCallback) {
+          var items = [];
+          if ($.isArray(response.locations)) {
+            $.each(response.locations, function (i, location) {
+              items.push({
+                label: location.label,
+                latitude: location.displayPosition.latitude,
+                longitude: location.displayPosition.longitude,
+                response: location
+              });
+            });
+            responseCallback(items);
+          }
+        };
+        var markers = [];
+        var selectCallback = function (evt, ui) {
+          $.each(markers, function (i, marker) {
+            map.objects.remove(marker);
+          });
+          markers.length = 0;
+          if (ui.item) {
+            if ('undefined' !== typeof ui.item.response.mapView) {
+              map.zoomTo(ui.item.response.mapView);
+            }
+            var marker = new nokia.maps.map.Marker([ui.item.latitude, ui.item.longitude]);
+            map.objects.add(marker);
+            markers.push(marker);
+          }
+        };
+        (function () {
+          var mySearchManager = new nokia.maps.search.Manager();
+          mySearchManager.maxResults = 5;
+          var myResponseCallback = null;
+          mySearchManager.addObserver("state", function(observedManager, key, value) {
+            if (value === 'finished' || value == 'failed') {
+              $('#response').text(JSON.stringify(observedManager, null, '  '));
+              if (myResponseCallback !== null) {
+                autoCompleteCallback(observedManager, myResponseCallback);
+              }
+              $('#response').val(JSON.stringify(observedManager, null, '  '));
+            }
+          });
+          $('#geocodeGlobal').autocomplete({
+            source: function (request, responseCallback) {
+              myResponseCallback = responseCallback;
+              mySearchManager.search(request.term);
+            },
+            select: selectCallback,
+            change: selectCallback
+          });
+        }());
+        (function () {
+          var mySearchManager = new nokia.maps.search.Manager();
+          mySearchManager.maxResults = 5;
+          var myResponseCallback = null;
+          mySearchManager.addObserver("state", function(observedManager, key, value) {
+            if (value === 'finished' || value == 'failed') {
+              $('#response').text(JSON.stringify(observedManager, null, '  '));
+              if (myResponseCallback !== null) {
+                autoCompleteCallback(observedManager, myResponseCallback);
+              }
+              $('#response').val(JSON.stringify(observedManager, null, '  '));
+            }
+          });
+          $('#geocodeLocal').autocomplete({
+            source: function (request, responseCallback) {
+              myResponseCallback = responseCallback;
+              mySearchManager.search(request.term, {
+                center: new nokia.maps.geo.Coordinate(42.32463145, -85.2422825),
+                radius: 16094 // 10 miles, in meters
+              });
+            },
+            select: selectCallback,
+            change: selectCallback
+          });
+        }());
+      });
+    //]]></script>
+  </body>
+</html>

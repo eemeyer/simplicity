@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=7; IE=EmulateIE9" />
+    <title>Nokia Map Sandbox</title>
+    <style type="text/css">
+      #map { width: 400px; height: 400px; border: 2px dashed red; }
+    </style>
+  </head>
+  <body>
+    <h1><a href="../index.html">home</a> | Nokia Map Sandbox</h1>
+    <div id="map"></div>
+    <script type="text/javascript" src="../js/lib/jquery-1.6.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="http://api.maps.nokia.com/2.1.0/jsl.js"></script>
+    <script type="text/javascript">//<![CDATA[
+      $(function () {
+        var map = new nokia.maps.map.Display($('#map')[0], {
+            'zoomLevel': 10,
+            'center': [40.69847032728747, -73.9514422416687]
+        });
+      });
+    //]]></script>
+  </body>
+</html>
