@@ -111,7 +111,15 @@
      */
     removeMarkers: function () {
       $.each(this._markers, $.proxy(function (idx, marker) {
-        this._map.objects.remove(marker);
+        var eventData = {
+          map: this._map,
+          marker: marker
+        };
+        this._trigger('removemarker', {}, eventData);
+        marker = eventData.marker;
+        if ('undefined' !== typeof marker) {
+          this._map.objects.remove(marker);
+        }
       }, this));
       this._markers.length = 0;
     },
@@ -133,13 +141,13 @@
           var longitude = properties[this.options.longitudeField];
           if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
             var marker = new nokia.maps.map.Marker([Number(latitude), Number(longitude)]);
-            var markerEvent = {
+            var eventData = {
               row: row,
               map: this._map,
               marker: marker
             };
-            this._trigger('marker', {}, markerEvent);
-            marker = markerEvent.marker;
+            this._trigger('marker', {}, eventData);
+            marker = eventData.marker;
             if ('undefined' !== typeof marker) {
               this._markers.push(marker);
               this._map.objects.add(marker);

@@ -112,7 +112,15 @@
      */
     removeMarkers: function () {
       $.each(this._markers, $.proxy(function (idx, marker) {
-        this._map.entities.remove(marker);
+        var eventData = {
+          map: this._map,
+          marker: marker
+        };
+        this._trigger('removemarker', {}, eventData);
+        marker = eventData.marker;
+        if ('undefined' !== typeof marker) {
+          this._map.entities.remove(marker);
+        }
       }, this));
       this._markers.length = 0;
     },
@@ -135,13 +143,13 @@
           if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
             var point = new Microsoft.Maps.Location(latitude, longitude);
             var pin = new Microsoft.Maps.Pushpin(point);
-            var markerEvent = {
+            var eventData = {
                 row: row,
                 map: this._map,
                 marker: pin
               };
-            this._trigger('marker', {}, markerEvent);
-            marker = markerEvent.marker;
+            this._trigger('marker', {}, eventData);
+            marker = eventData.marker;
             if ('undefined' !== typeof marker) {
               if (locations !== null) {
                 locations.push(point);

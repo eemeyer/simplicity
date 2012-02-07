@@ -109,9 +109,17 @@
      * @private
      */
     removeMarkers: function () {
-      $.each(this._markers, function (idx, marker) {
-        marker.setMap(null);
-      });
+      $.each(this._markers, $.proxy(function (idx, marker) {
+        var eventData = {
+          map: this._map,
+          marker: marker
+        };
+        this._trigger('removemarker', {}, eventData);
+        marker = eventData.marker;
+        if ('undefined' !== typeof marker) {
+          marker.setMap(null);
+        }
+      }, this));
       this._markers.length = 0;
     },
     /**
@@ -135,13 +143,13 @@
             var marker = new google.maps.Marker({
               position: point
             });
-            var markerEvent = {
+            var eventData = {
               row: row,
               map: this._map,
               marker: marker
             };
-            this._trigger('marker', {}, markerEvent);
-            marker = markerEvent.marker;
+            this._trigger('marker', {}, eventData);
+            marker = eventData.marker;
             if ('undefined' !== typeof marker) {
               marker.setMap(this._map);
               this._markers.push(marker);
