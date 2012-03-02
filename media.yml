@@ -119,14 +119,6 @@ groups:
     sourceFileNames:
       - js/lib/jquery.ui.autocomplete.autoSelect-2010-10-25.js
 
-  - groupName: jquery_ui_autocomplete_selectfirst_js
-    mediaType: js
-    jslint: off
-    outputFileName: js/build/jquery.ui.autocomplete.selectFirst-2010-10-25.js
-    outputFileNameMinified: js/build/jquery.ui.autocomplete.selectFirst-2010-10-25.min.js
-    sourceFileNames:
-      - js/lib/jquery.ui.autocomplete.selectFirst-2010-10-25.js
-
   - groupName: jquery_ui_autocomplete_html_js
     mediaType: js
     jslint: off
