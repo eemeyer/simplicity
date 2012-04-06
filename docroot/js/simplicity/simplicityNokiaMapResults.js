@@ -140,7 +140,10 @@
           var latitude = properties[this.options.latitudeField];
           var longitude = properties[this.options.longitudeField];
           if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
-            var marker = new nokia.maps.map.Marker([Number(latitude), Number(longitude)]);
+            var marker = new nokia.maps.map.StandardMarker(
+                [Number(latitude), Number(longitude)],
+                {text: row.index1, zIndex: -row.index1}
+              );
             var eventData = {
               row: row,
               map: this._map,

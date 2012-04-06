@@ -206,7 +206,7 @@
       $('#map').bind('simplicitynokiamapresultsmarker', function (evt, ui) {
         var marker = ui.marker;
         var properties = ui.row.properties;
-        marker.icon = new nokia.maps.gfx.BitmapImage('images/markers/nokia/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png');
+        marker.set({brush: {color: ui.row.exact ? '#e47009' : '#49afcd'}});
         marker.addListener('click', function (evt) {
           $('#result-' + ui.row.id).effect("highlight", {}, 3000);
         }, true);

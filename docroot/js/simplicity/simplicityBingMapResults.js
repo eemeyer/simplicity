@@ -142,7 +142,7 @@
           var longitude = properties[this.options.longitudeField];
           if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
             var point = new Microsoft.Maps.Location(latitude, longitude);
-            var pin = new Microsoft.Maps.Pushpin(point);
+            var pin = new Microsoft.Maps.Pushpin(point,  { text: row.index1.toString(), zIndex: -row.index1 });
             var eventData = {
                 row: row,
                 map: this._map,

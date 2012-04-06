@@ -141,7 +141,8 @@
           if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
             var point = new google.maps.LatLng(latitude, longitude);
             var marker = new google.maps.Marker({
-              position: point
+              position: point,
+              zIndex: -row.index1
             });
             var eventData = {
               row: row,
