@@ -41,6 +41,10 @@
      *     This is just a convenience that calls <code>$.param.fragment.noEscape</code> when
      *     not the empty string.
      *   </dd>
+     *   <dt>acceptMissingBang</dt>
+     *   <dd>
+     *     Determines if URLs without a bang (!) should be accepted. Defaults to <code>true</code>.
+     *   </dd>
      *   <dt>debug</dt>
      *   <dd>
      *     Enable logging of key events to <code>console.log</code>. Defaults to <code>false</code>.
@@ -51,6 +55,7 @@
     options : {
       stateElement: 'body',
       noEscape: '',
+      acceptMissingBang: false,
       debug: false
     },
     _create : function () {
@@ -65,7 +70,8 @@
         console.log('simplicityHistory: Initial state is', this.initialState);
       }
 
-      var fragment = $.param.fragment();
+      var fragment = this._handleBang($.param.fragment());
+
       if (fragment !== '') {
         var state = $.deparam(fragment);
         if ($.isEmptyObject(state)) {
@@ -99,7 +105,7 @@
           console.log('simplicityHistory: Hash state is empty, restoring initial page state', state);
         }
       } else {
-        state = $.deparam(evt.fragment);
+        state = $.deparam(this._handleBang(evt.fragment));
         if (this.options.debug) {
           console.log('simplicityHistory: Back or forward button was activated, applying state', state);
         }
@@ -143,9 +149,37 @@
           if (this.options.debug) {
             console.log('simplicityHistory: Updating hash state', state, newFragment);
           }
-          $.bbq.pushState(newFragment);
+          $.bbq.pushState('#!' + newFragment.substr(1));
         }
       }
+    },
+    /**
+     * Follows widget options regarding bangs (!). Normally bangs are expected
+     * and will be removed. For backward compatibility, a fragment without a bang
+     * can still be used.
+     *
+     * @name $.ui.simplicityHistory._handleBang
+     * @function
+     * @param {string} fragment The fragment containing query string values
+     * @private
+     */
+    _handleBang: function (fragment) {
+      // Remove !
+      var result;
+      if (!/^!/.test(fragment)) {
+        if (this.options.debug) {
+          if (this.options.acceptMissingBang) {
+            console.log('simplicityHistory: Bang not found, using the same fragment: "' + fragment + '"');
+          } else {
+            console.log('simplicityHistory: Bang not found, fragment will be ignored: "' + fragment + '"');
+          }
+        }
+        result = this.options.acceptMissingBang ? fragment : '';
+      } else {
+        // remove bang (!)
+        result = fragment.substr(1);
+      }
+      return result;
     }
   });
 }(jQuery));
