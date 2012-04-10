@@ -68,6 +68,39 @@
      *     Replaces the contents otherwise.
      *     See source code for default value.
      *   </dd>
+     *   <dt>availableTemplate</dt>
+     *   <dd>
+     *     The default template to use for the available facets block of <code>simplicityFancySelect</code>,
+     *     (selector '.available-container'). Also acts as the default for <code>selectedTemplate</code>
+     *     and <code>overflowTemplate</code>.
+     *     <p>Default:</p>
+     *     <code>
+     *      &lt;ul class="options ui-helper-clearfix"><br/>
+     *        &nbsp;&lt;li class="option ui-helper-clearfix"><br/>
+     *        &nbsp;&nbsp;&lt;a href="#" class="label"/><br/>
+     *        &nbsp;&nbsp;&lt;span class="count"/><br/>
+     *        &nbsp;&lt;/li><br/>
+     *      &lt;/ul><br/>
+     *     </code>
+     *   </dd>
+     *   <dt>selectedTemplate</dt>
+     *   <dd>
+     *     When <code>''</code> falls back to the value for option <code>availableTemplate</code>.
+     *     Otherwise it determines the template to use for <code>simplicityFancySelect</code>
+     *     when rendering the selected facets (selector '.selected-container'). Default is <code>''</code>.
+     *   </dd>
+     *   <dt>overflowTemplate</dt>
+     *   <dd>
+     *     When <code>''</code> falls back to the value for option <code>availableTemplate</code>.
+     *     Otherwise it determines the template to use for <code>simplicityFancySelect</code>
+     *     when rendering the overflow facets (selector '.overflow-container'). Default is <code>''</code>.
+     *   </dd>
+     *   <dt>pathTemplate</dt>
+     *   <dd>
+     *     When <code>''</code> falls back to the value for option <code>availableTemplate</code>.
+     *     Otherwise it determines the template to use for <code>simplicityFancySelect</code>
+     *     when rendering the facets navigation path (selector '.path-container'). Default is <code>''</code>.
+     *   </dd>
      * </dl>
      * @name $.ui.simplicityFancyFacets.options
      */
@@ -88,7 +121,17 @@
         '<div class="overflow-flyout">' +
           '<div class="overflow-container"/>' +
           '<div class="overflow-closer">Less&hellip;</div>' +
-        '</div>'
+        '</div>',
+      availableTemplate: '' +
+        '<ul class="options ui-helper-clearfix">' +
+          '<li class="option ui-helper-clearfix">' +
+            '<a href="#" class="label"/>' +
+            '<span class="count"/>' +
+          '</li>' +
+        '</ul>',
+      selectedTemplate: '',
+      overflowTemplate: '',
+      pathTemplate: ''
     },
     _create : function () {
       var select = $(this.options.select);
@@ -105,28 +148,32 @@
           select: select,
           firstPathOnly: true,
           firstPathSelections: true,
-          hideWhenEmpty: true
+          hideWhenEmpty: true,
+          template: this.options.pathTemplate || this.options.availableTemplate
         });
       this.element.find('.selected-container')
         .simplicityFancySelect({
           select: select,
           refreshOnCreate: false,
           ignorePath: true,
-          firstPathSelections: true
+          firstPathSelections: true,
+          template: this.options.selectedTemplate || this.options.availableTemplate
         });
       this.element.find('.available-container')
         .simplicityFancySelect({
           select: select,
           refreshOnCreate: false,
           ignorePath: true,
-          firstPathSelections: true
+          firstPathSelections: true,
+          template: this.options.overflowTemplate || this.options.availableTemplate
         });
       this.element.find('.overflow-container')
         .simplicityFancySelect({
           select: select,
           refreshOnCreate: false,
           ignorePath: true,
-          firstPathSelections: true
+          firstPathSelections: true,
+          template: this.options.availableTemplate
         });
       // This change handler must be bound *after* the contained widgets are
       // created so we can be sure it is called after their change handlers.
@@ -251,14 +298,16 @@
           displayUnselected: false,
           displayCount: this.options.selectedArea ? -1 : 0,
           skipCount: 0,
-          hideWhenEmpty: true
+          hideWhenEmpty: true,
+          template: this.options.selectedTemplate || this.options.availableTemplate
         });
       this.element.find('.available-container')
         .simplicityFancySelect({
           displaySelected: this.options.availableContainsSelected,
           displayUnselected: true,
           displayCount: this.options.availableLimit,
-          skipCount: 0
+          skipCount: 0,
+          template: this.options.availableTemplate
         });
       this.element.find('.overflow-container')
         .simplicityFancySelect({
@@ -267,7 +316,8 @@
           displayCount: Number(this.options.availableLimit) === -1 ? 0 : -1,
           skipSelected: true,
           skipUnselected: true,
-          skipCount: this.options.overflowContainsAvailable ? 0 : this.options.availableLimit
+          skipCount: this.options.overflowContainsAvailable ? 0 : this.options.availableLimit,
+          template: this.options.overflowTemplate || this.options.availableTemplate
         });
     },
     destroy: function () {
