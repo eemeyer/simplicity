@@ -4,7 +4,7 @@
  * <p>
  * Google geocoder widget. Also provides a jQueri UI autocomplete source.
  * <p>
- * See the Google Maps JavaScript API v3 <a href="http://code.google.com/apis/maps/documentation/javascript/services.html#Geocoding">documentation</a>.
+ * See the Google Maps JavaScript API v3 <a href="https://developers.google.com/maps/documentation/javascript/geocoding">documentation</a>.
  */
 (function ($) {
   $.widget("ui.simplicityGoogleGeocoder", $.ui.simplicityWidget, {

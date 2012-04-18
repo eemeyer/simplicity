@@ -13,7 +13,7 @@
  *     $('#map').simplicityGoogleMapBoundsCoordinator();
  *   &lt;/script>
  *
- * @see Google Maps JavaScript API V3 <a href="http://code.google.com/apis/maps/documentation/javascript/">documentation</a>.
+ * @see Google Maps JavaScript API V3 <a href="https://developers.google.com/maps/documentation/javascript/reference">documentation</a>.
  */
 (function ($) {
   $.widget("ui.simplicityGoogleMapBoundsCoordinator", $.ui.simplicityWidget, {
