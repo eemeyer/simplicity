@@ -120,7 +120,7 @@
         url: this.options.url,
         data: geocodeRequest,
         dataType: 'json',
-        error: function (request, textStatus, errorThrown) {
+        error: function (xhr, textStatus, errorThrown) {
           ajaxHandler({
             error: true,
             statusText: xhr.statusText,
