@@ -108,6 +108,16 @@
      *     options drops to zero and shown when it is larger.
      *     Defaults to <code>false</code>.
      *   </dd>
+     *   <dt>checkableInputSelector</dt>
+     *   <dd>
+     *     Determines the selector (within the option template) to use to identify a checkable DOM input that reflects the current
+     *     widget state. Defaults to <code>:checkbox.option-checkbox</code>.
+     *   </dd>
+     *   <dt>radioStyle</dt>
+     *   <dd>
+     *     Determines that the single select must always have a value selected, as would be the case for a radio button group.
+     *     Defaults to <code>false</code>.
+     *   </dd>
      *   <dt>template</dt>
      *   <dd>
      *     When <code>''</code> falls back on the original DOM contents of the attached element.
@@ -131,6 +141,8 @@
       refreshOnChange: true,
       refreshOnCreate: true,
       hideWhenEmpty: false,
+      radioStyle: false,
+      checkableInputSelector: ':checkbox.option-checkbox',
       template: '' +
         '<ul class="options ui-helper-clearfix">' +
           '<li class="option ui-helper-clearfix">' +
@@ -157,6 +169,12 @@
         template = $('<div class="option"/>');
       }
       this._optionTemplate = template.detach();
+      this._checkableInputSelector = '';
+      if (this.options.checkableInputSelector !== '') {
+        if (this._optionTemplate.find(this.options.checkableInputSelector).length > 0) {
+          this._checkableInputSelector = this.options.checkableInputSelector;
+        }
+      }
       if (this.options.refreshOnCreate) {
         this.refresh();
       }
@@ -295,7 +313,7 @@
     /**
      * Marks the given DOM node as either selected or unselected. Currently
      * toggles a <code>selected</code> class and looks for any contained
-     * checkboxes (with a class of <code>option-checkbox</code>) and
+     * inputs (identified by selector <code>checkableInputSelector</code>) and
      * (un)checks them as appropriate.
      *
      * @name $.ui.simplicityFancySelect._markOptionSelected
@@ -305,13 +323,12 @@
     _markOptionSelected: function (option, selected) {
       if (selected) {
         option.addClass('selected');
-        option.find(':checkbox.option-checkbox').each(function () {
-          this.checked = true;
-        });
       } else {
         option.removeClass('selected');
-        option.find(':checkbox.option-checkbox').each(function () {
-          this.checked = false;
+      }
+      if (this._checkableInputSelector !== '') {
+        option.find(this._checkableInputSelector).each(function () {
+          this.checked = selected;
         });
       }
     },
@@ -364,7 +381,7 @@
           }
           selected = facetId;
           this._markOptionSelected(option, true);
-        } else {
+        } else if (!this.options.radioStyle) {
           // Single select clear
           if (isPath && this.options.firstPathSelections) {
             selected = path.length === 0 ? null : path[path.length - 1];

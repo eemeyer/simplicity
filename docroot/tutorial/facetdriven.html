@@ -184,6 +184,18 @@
               </li>
             </ul>
           </fieldset>
+          <fieldset>
+            <legend>Category Type with radio</legend>
+            <ul id="catFancyWithRadios">
+              <li class="option ui-helper-clearfix">
+                <label>
+                  <input type="radio" class="option-radio"/>
+                  <span class="label"></span>
+                </label>
+                <span class="count"></span>
+              </li>
+            </ul>
+          </fieldset>
           <fieldset id="agencyControls">
             <legend>Agency Controls</legend>
             <div>
@@ -328,7 +340,12 @@
         select: '#catSelect',
         template: ''
       });
-
+      $('#catFancyWithRadios').simplicityFancySelect({
+        select: '#catSelect',
+        template: '',
+        checkableInputSelector: ':radio.option-radio',
+        radioStyle: true
+      });
       $('#formatsSelect')
         .simplicityInputs()
         .simplicityFacetedSelect();
