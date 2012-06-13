@@ -167,8 +167,9 @@
      * last response. Called with arguments to process the current response (called by
      * <code>search</code> on success or failure).
      *
-     * In processing mode, this method triggers a <code>simplicitySearchResponse</code>
-     * event and then calls <code>facetCounts</code> and <code>resultSet</code>.
+     * In processing mode, this method triggers <code>simplicitySearchResponse</code>
+     * and <code>simplicitySearchResponseHandled</code> events, then calls
+     * <code>facetCounts</code> and <code>resultSet</code>.
      *
      *
      * @param searchResponse
