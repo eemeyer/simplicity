@@ -42,6 +42,19 @@
      *   <dd>
      *     Enable logging of key events to <code>console.log</code>. Defaults to <code>false</code>.
      *   </dd>
+     *   <dt>profile</dt>
+     *   <dd>
+     *     When <code>true</code> requests query profile data from the engine. The profile data
+     *     can be used to analyze engine query response times. Defaults to <code>false</code>.
+     *   </dd>
+     *   <dt>triggerFacetCountEvent</dt>
+     *   <dd>
+     *     When <code>true</code> enables triggering of facet count events. Defaults to <code>false</code>.
+     *   </dd>
+     *   <dt>triggerResultSetEvent</dt>
+     *   <dd>
+     *     When <code>true</code> enables triggering of the simplicitySearchResultSet event. Defaults to <code>false</code>.
+     *   </dd>
      * </dl>
      * @name $.ui.simplicityDiscoverySearch.options
      */
@@ -53,6 +66,7 @@
       debug: false,
       triggerFacetCountEvent: false,
       triggerResultSetEvent: false,
+      profile: false,
       getPayloadParam: ''
     },
     _create : function () {
@@ -71,6 +85,9 @@
      * Runs a search. The search happens asynchronously and will trigger multiple events.
      * <ul>
      *   <li>simplicitySearchResponse (original response)</li>
+     *   <li>ajaxSetup</li>
+     *   <li>ajaxSuccess</li>
+     *   <li>ajaxError</li>
      *   <li>simplicityFacetCounts</li>
      *   <li>simplicityResultSet</li>
      * </ul>
@@ -95,22 +112,27 @@
       if (this.options.debug) {
         console.log('Searching for ', this.element, 'with state', searchState);
       }
-      this._ajaxHelperSearch.ajax({
-        url: this.options.url,
-        type: 'GET',
-        contentType: 'application/json',
-        data: searchState,
-        dataType: this.options.dataType,
-        cache: false,
-        debug: this.options.debug,
-        error: this._errorHandler,
-        success: function (data, textStatus, xhr) {
+      var ajaxOptions = {
+          url: this.options.url,
+          type: 'GET',
+          contentType: 'application/json',
+          data: searchState,
+          dataType: this.options.dataType,
+          cache: false,
+          beforeSend: $.proxy(this._beforeSend, this),
+          debug: this.options.debug,
+          error: this._errorHandler,
+          success: function (data, textStatus, xhr) {
             if (this.options.debug) {
               console.log('Search success for', this.element, 'with response', data);
             }
+            this.element.triggerHandler('ajaxSuccess', data, textStatus, xhr);
+            this._addHeadersToResponse(data, xhr);
             this.searchResponse(data);
           }
-      });
+        };
+      this.element.triggerHandler('ajaxSetup', ajaxOptions);
+      this._ajaxHelperSearch.ajax(ajaxOptions);
     },
     query: function (jsonString) {
       var data = jsonString;
@@ -128,32 +150,50 @@
           return;
         }
       }
-      this._ajaxHelperQuery.ajax({
-        url: this.options.url,
-        type: 'POST',
-        contentType: 'application/json',
-        data: data,
-        dataType: this.options.dataType,
-        cache: false,
-        debug: this.options.debug,
-        error: this._errorHandler,
-        success: function (data, textStatus, xhr) {
-            if (this.options.debug) {
-              console.log('Search success for', this.element, 'with response', data);
-            }
-            this.searchResponse({
-              _discovery: {
-                request: JSON.parse(jsonString),
-                response: data
+      var ajaxOptions = {
+          url: this.options.url,
+          type: 'POST',
+          contentType: 'application/json',
+          data: data,
+          dataType: this.options.dataType,
+          cache: false,
+          beforeSend: $.proxy(this._beforeSend, this),
+          debug: this.options.debug,
+          error: this._errorHandler,
+          success: function (data, textStatus, xhr) {
+              if (this.options.debug) {
+                console.log('Search success for', this.element, 'with response', data);
               }
-            });
-          }
-      });
+              this.element.triggerHandler('ajaxSuccess', data, textStatus, xhr);
+              var response = {
+                  _discovery: {
+                    request: JSON.parse(jsonString),
+                    response: data
+                  }
+                };
+              this._addHeadersToResponse(response, xhr);
+              this.searchResponse(response);
+            }
+        };
+      this.element.triggerHandler('ajaxSetup', ajaxOptions);
+      this._ajaxHelperQuery.ajax(ajaxOptions);
+    },
+    _beforeSend: function (xhr) {
+      if (this.options.profile) {
+        xhr.setRequestHeader('X-Profile', 1);
+      }
+    },
+    _addHeadersToResponse: function (response, xhr) {
+      var profile = xhr.getResponseHeader('X-Profiling-Trace');
+      if (profile > '') {
+        response._discovery.profile = profile.substr(5).split(', >>>   ');
+      }
     },
     _errorHandler: function (xhr, textStatus, message) {
       if (this.options.debug) {
         console.log('Search error for', this.element, 'textStatus:', textStatus, 'arguments', arguments);
       }
+      this.element.triggerHandler('ajaxError', xhr, textStatus, message);
       this.searchResponse({
         error: true,
         xhr: xhr,
