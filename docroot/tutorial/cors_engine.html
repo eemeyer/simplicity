@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>Direct Engine Query via JSONP</title>
+    <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/redmond/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="../images/favicon.jpg"/>
+    <style>
+      body {
+        font-size:62.5%;
+      }
+      #engineUrl {
+        width: 40em;
+      }
+      textarea {
+        width: 100%;
+        height: 40em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1><a href="index.html">home</a> | Direct Engine Query via JSONP</h1>
+    <div id="main">
+      <form id="myForm" onsubmit="return false;">
+        <fieldset class="ui-widget ui-widget-content">
+          <legend>JSONP</legend>
+          <button id="searchButton">Search</button>
+          <input id="engineUrl" value="http://gsa.discoverysearchengine.com:8090/json/query"></input>
+        </fieldset>
+        <div class="yui3-g">
+          <div class="yui3-u-1-2">
+            <fieldset class="ui-widget ui-widget-content">
+              <legend>Request</legend>
+              <textarea id="request">{
+  "criteria": [
+    {
+      "dimension": ""
+    }
+  ],
+  "properties": "",
+  "startIndex": 0,
+  "pageSize": 10
+}</textarea>
+            </fieldset>
+          </div>
+          <div class="yui3-u-1-2">
+            <fieldset class="ui-widget ui-widget-content">
+              <legend>Response</legend>
+              <textarea id="response"></textarea>
+            </fieldset>
+          </div>
+        </div>
+      </form>
+    </div>
+    <script type="text/javascript" src="../js/lib/jquery-1.6.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.16.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityEquiv.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityProxy.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityWidget.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityAjaxHelper.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
+    <script type="text/javascript">
+      $('#body fieldset').addClass("ui-widget ui-widget-content");
+
+      $('body').simplicityDiscoverySearch({
+        url: $('#engineUrl').val()
+      });
+      $('#engineUrl').change(function (evt) {
+        $('body').simplicityDiscoverySearch('option', 'url', $('#engineUrl').val());
+      });
+      $('body').bind('simplicitySearchResponse', function (evt, ui) {
+        if (ui._discovery) {
+          $('#request').val(JSON.stringify(ui._discovery.request, null, '  '));
+        }
+        if (ui.error) {
+          $('#response').addClass('ui-state-error').val(JSON.stringify(ui, null, '  '));
+        } else {
+          var text = ui.message || JSON.stringify(ui._discovery.response, null, '  ');
+          $('#response').removeClass('ui-state-error').val(text);
+        }
+      });
+      $('#searchButton').button().click(function (evt) {
+        $('body').simplicityDiscoverySearch('searchResponse', {message: "Searching..."});
+        $('body').simplicityDiscoverySearch('query', $('#request').val());
+        evt.stopPropagation();
+      });
+    </script>
+  </body>
+</html>
