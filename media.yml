@@ -35,7 +35,7 @@ groups:
       - js/simplicity/simplicityFancySelect.js
       - js/simplicity/simplicityFancyFacets.js
       # Maps
-      - js/simplicity/simplicityHaversineDistance.js
+      - js/simplicity/simplicityGeoFn.js
       - js/simplicity/simplicityGoogleMap.js
       - js/simplicity/simplicityGoogleMapResults.js
       - js/simplicity/simplicityGoogleMapBoundsCoordinator.js

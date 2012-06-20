@@ -106,9 +106,9 @@
         radiusMeters2 = google.maps.geometry.spherical.computeDistanceBetween(
             center, new google.maps.LatLng(bounds.getNorthEast().lat(), center.lng()));
       } else {
-        radiusMeters1 = $.simplicityHaversineDistanceKm(
+        radiusMeters1 = $.simplicityGeoFn.distanceKm(
             center.lat(), center.lng(), center.lat(), bounds.getNorthEast().lng()) * 1000.0;
-        radiusMeters2 = $.simplicityHaversineDistanceKm(
+        radiusMeters2 = $.simplicityGeoFn.distanceKm(
             center.lat(), center.lng(), bounds.getNorthEast().lat(), center.lng()) * 1000.0;
       }
       var minMeters = Math.min(radiusMeters1, radiusMeters2);

@@ -107,9 +107,9 @@
         radiusMiles2 = MQA.Util.distanceBetween(
           center, {lat: bounds.ul.lat, lng: center.lng});
       } else {
-        radiusMiles1 = $.simplicityHaversineDistanceMiles(
+        radiusMiles1 = $.simplicityGeoFn.distanceMiles(
           center.lat, center.lng, center.lat, bounds.ul.lng);
-        radiusMiles2 = $.simplicityHaversineDistanceMiles(
+        radiusMiles2 = $.simplicityGeoFn.distanceMiles(
           center.lat, center.lng, bounds.ul.lat, center.lng);
       }
       var minMiles = Math.min(radiusMiles1, radiusMiles2);
