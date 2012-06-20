@@ -17,7 +17,7 @@
     return c;
   };
   /**
-   * @name $.fn.simplicityHaversineDistanceMiles
+   * @name $.simplicityHaversineDistanceMiles
    * @function
    * @private
    * @description
@@ -33,7 +33,7 @@
     return $.simplicityHaversineRadiusMiles * $.simplicityHaversineDistanceRadians(lat1, lng1, lat2, lng2);
   };
   /**
-   * @name $.fn.simplicityHaversineDistanceKm
+   * @name $.simplicityHaversineDistanceKm
    * @function
    * @private
    * @description

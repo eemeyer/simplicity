@@ -1,5 +1,5 @@
 /**
- * @name $.fn.simplicityAjaxHelper
+ * @name $.simplicityAjaxHelper
  * @function
  * @description
  *

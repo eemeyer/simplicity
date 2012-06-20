@@ -1,5 +1,5 @@
 /**
- * @name $.fn.simplicityProxy
+ * @name $.simplicityProxy
  * @function
  * @description
  *
