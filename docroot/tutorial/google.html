@@ -6,6 +6,7 @@
     <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
     <link href="../css/lib/redmond/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
     <link href="../css/simplicity/simplicityPagination.css" rel="stylesheet" type="text/css" />
+    <link href="../css/simplicity/simplicityGoogleMarker.css" rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" href="../images/favicon.jpg"/>
     <style>
       body {
@@ -35,6 +36,16 @@
       #styleCheckboxes ul {
         list-style-type: none;
         padding-left: 1em;
+      }
+      .ui-simplicity-google-marker.exact div {
+        background: #E17009;
+      }
+      .ui-simplicity-google-marker.fuzzy div {
+        background: #ccc;
+        color: #fff;
+      }
+      .ui-simplicity-google-marker div.ptr {
+        background: none;
       }
   </style>
   </head>
@@ -158,7 +169,56 @@
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapBoundsCoordinator.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapBoundsTracker.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleGeocoder.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMarker.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
+      $.widget("t11e.simplicityGoogleMapResults",$.ui.simplicityGoogleMapResults,{
+        /**
+         * Adds any markers that can be extracted from the given <code>searchResponse</code>.
+         *
+         * @name $.ui.simplicityGoogleMapResults.addMarkers
+         * @function
+         * @private
+         */
+        addMarkers: function (searchResponse) {
+          if ('undefined' === typeof searchResponse) {
+            searchResponse = $(this.options.searchElement).simplicityDiscoverySearch('searchResponse');
+          }
+          $.fn.simplicityDiscoverySearchItemEnumerator(searchResponse, $.proxy(function (idx, row) {
+            var properties = row.properties;
+            if ('undefined' !== typeof properties) {
+              var latitude = properties[this.options.latitudeField];
+              var longitude = properties[this.options.longitudeField];
+              if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
+                var point = new google.maps.LatLng(latitude, longitude);
+                var marker = new $.simplicityGoogleMarker(
+                  $('<div class="white"/>')
+                    .append(
+                      $('<div class="circle border"/>')
+                        .text(row.index1)
+                    )
+                    .addClass(row.exact ? 'exact' : 'fuzzy')
+                    .append('<div class="ptr"/>')
+                    .append('<div class="shadow"/>'),
+                  row, {
+                  position: point,
+                  size: new google.maps.Size(20, 20)
+                });
+                var eventData = {
+                  row: row,
+                  map: this._map,
+                  marker: marker
+                };
+                this._trigger('marker', {}, eventData);
+                marker = eventData.marker;
+                if ('undefined' !== typeof marker) {
+                  marker.setMap(this._map);
+                  this._markers.push(marker);
+                }
+              }
+            }
+          }, this));
+        }
+      });
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
 
       $('#themeSwitcherButton').button().click(function (evt) {
@@ -209,7 +269,6 @@
       $('#map').bind('simplicitygooglemapresultsmarker', function (evt, ui) {
         var marker = ui.marker;
         var properties = ui.row.properties;
-        marker.setIcon('images/markers/google/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png');
         if (properties.type === 'rentals') {
           marker.setTitle('$' + properties.lease);
         } else {

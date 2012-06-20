@@ -41,6 +41,7 @@ groups:
       - js/simplicity/simplicityGoogleMapBoundsCoordinator.js
       - js/simplicity/simplicityGoogleMapBoundsTracker.js
       - js/simplicity/simplicityGoogleMapLoader.js
+      - js/simplicity/simplicityGoogleMarker.js
       - js/simplicity/simplicityBingMap.js
       - js/simplicity/simplicityBingMapResults.js
       - js/simplicity/simplicityBingMapBoundsCoordinator.js
@@ -72,6 +73,7 @@ groups:
       - css/simplicity/simplicityPagination.css
       - css/simplicity/simplicitySlider.css
       - css/simplicity/simplicityFancySelect.css
+      - css/simplicity/simplicityGoogleMarker.css
 
   - groupName: simplicityLoadJs_js
     mediaType: js
