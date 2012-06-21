@@ -42,10 +42,14 @@
         <include name="js/build/simplicity.min.js"/>
         <include name="css/build/simplicity.css"/>
         <include name="css/build/simplicity.min.css"/>
+        <include name="js/build/simplicity-*.js"/>
+        <include name="js/build/simplicity-*.min.js"/>
+        <include name="css/build/simplicity-*.css"/>
+        <include name="css/build/simplicity-*.min.css"/>
       </fileset>
       <mapper type="regexp"
-        from="simplicity(\.min\.css|\.min\.js|\.js|\.css)"
-        to="simplicity-${version}\1"/>
+        from="(simplicity|simplicity-[^.]+)(\.min\.css|\.min\.js|\.js|\.css)"
+        to="\1-${version}\2"/>
     </copy>
     <!-- The target zipfile -->
     <delete file="simplicity-${version}.zip"/>
