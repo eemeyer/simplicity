@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <title>simplicityState tests</title>
+    <link href="qunit-2010-12-09.css" rel="stylesheet" type="text/css" />
+    <link href="../css/lib/redmond/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+    <link href="../css/build/simplicity.min.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1 id="qunit-header"><a href="../index.html">home</a> | simplicity minified tests</h1>
+    <h2 id="qunit-banner"></h2>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="main"></div>
+
+    <script type="text/javascript">//<![CDATA[
+      window.simplicityMinifiedErrors = [];
+      window.onerror = function () {
+        var args = Array.prototype.slice.call(arguments, 0);
+        if ('undefined' !== typeof window.simplicityMinifiedErrors) {
+          window.simplicityMinifiedErrors.push(args);
+        }
+      };
+    //]]></script>
+    <script type="text/javascript" src="../js/lib/jquery-1.6.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.16.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/build/jquery.pagination-2.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/build/json2.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/build/simplicity.min.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="qunit-2010-12-09.js" charset="utf-8"></script>
+    <script type="text/javascript" src="simplicityMinifiedTest.js" charset="utf-8"></script>
+  </body>
+</html>
