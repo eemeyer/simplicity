@@ -1,10 +1,10 @@
-div.ui-simplicity-google-marker {
-  position: relative;
+div.simplicity-google-marker {
+  position: absolute;
   letter-spacing: normal;
   cursor: pointer;
   border: none;
 }
-.ui-simplicity-google-marker div {
+.simplicity-google-marker div {
   position: relative;
   margin: auto;
   width: 100%;
@@ -13,7 +13,7 @@ div.ui-simplicity-google-marker {
   font-size: 12px;
   font-weight: bold;
 }
-.ui-simplicity-google-marker .circle {
+.simplicity-google-marker .row {
   width: 21px;
   height: 21px;
   line-height: 21px;
@@ -22,11 +22,11 @@ div.ui-simplicity-google-marker {
   -moz-border-radius: 50%;
   -webkit-border-radius: 50%;
 }
-.ui-simplicity-google-marker.white {
+.simplicity-google-marker.white {
   color: #fff;
   border-color: #fff;
 }
-.ui-simplicity-google-marker .ptr {
+.simplicity-google-marker .ptr {
   width:0;
   height:0;
   border-bottom-width: 0;
@@ -36,7 +36,7 @@ div.ui-simplicity-google-marker {
   border-right: 4px solid transparent;
   border-top: 7px solid;
 }
-.ui-simplicity-google-marker .shadow {
+.simplicity-google-marker .shadow {
   width:0;
   height:0;
   border: none;
@@ -44,14 +44,14 @@ div.ui-simplicity-google-marker {
   box-shadow: 0 0 5px 3px rgba(100,100,100,.8);
   z-Index: -3;
 }
-.ui-simplicity-google-marker.exact div {
+.simplicity-google-marker.exact div {
   background: #000;
   color: #eee;
 }
-.ui-simplicity-google-marker.fuzzy div {
+.simplicity-google-marker.fuzzy div {
   background: #fff;
   color: #aaa;
 }
-.ui-simplicity-google-marker div.ptr {
+.simplicity-google-marker div.ptr {
   background: none;
 }

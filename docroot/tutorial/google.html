@@ -37,14 +37,14 @@
         list-style-type: none;
         padding-left: 1em;
       }
-      .ui-simplicity-google-marker.exact div {
+      .simplicity-google-marker.exact div {
         background: #E17009;
       }
-      .ui-simplicity-google-marker.fuzzy div {
+      .simplicity-google-marker.fuzzy div {
         background: #ccc;
         color: #fff;
       }
-      .ui-simplicity-google-marker div.ptr {
+      .simplicity-google-marker div.ptr {
         background: none;
       }
   </style>
@@ -183,37 +183,27 @@
           if ('undefined' === typeof searchResponse) {
             searchResponse = $(this.options.searchElement).simplicityDiscoverySearch('searchResponse');
           }
+          var properites, latitude, longitude, marker;
           $.fn.simplicityDiscoverySearchItemEnumerator(searchResponse, $.proxy(function (idx, row) {
-            var properties = row.properties;
+            properties = row.properties;
             if ('undefined' !== typeof properties) {
-              var latitude = properties[this.options.latitudeField];
-              var longitude = properties[this.options.longitudeField];
+              latitude = properties[this.options.latitudeField];
+              longitude = properties[this.options.longitudeField];
               if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
-                var point = new google.maps.LatLng(latitude, longitude);
-                var marker = new $.simplicityGoogleMarker(
-                  $('<div class="white"/>')
-                    .append(
-                      $('<div class="circle border"/>')
-                        .text(row.index1)
-                    )
-                    .addClass(row.exact ? 'exact' : 'fuzzy')
-                    .append('<div class="ptr"/>')
-                    .append('<div class="shadow"/>'),
-                  row, {
-                  position: point,
-                  size: new google.maps.Size(20, 20)
+                marker = $.simplicityGoogleMarker.create(
+                  {
+                    html: row.index1,
+                    title: '$' + properties[properties.type === 'rentals' ? 'lease' : 'price'],
+                    className: row.exact ? 'white exact' : 'white fuzzy',
+                    row: row,
+                    position: new google.maps.LatLng(latitude, longitude)
+                  });
+                marker.setMap(this._map);
+                marker.getElement().click(function(evt) {
+                  var $ele = $(evt.target).closest('.simplicity-google-marker');
+                  $('#result-' + $ele.data("row").id).effect("highlight", {}, 3000);
                 });
-                var eventData = {
-                  row: row,
-                  map: this._map,
-                  marker: marker
-                };
-                this._trigger('marker', {}, eventData);
-                marker = eventData.marker;
-                if ('undefined' !== typeof marker) {
-                  marker.setMap(this._map);
-                  this._markers.push(marker);
-                }
+                this._markers.push(marker);
               }
             }
           }, this));
@@ -265,19 +255,6 @@
           .simplicityGoogleMapResults()
           .simplicityGoogleMapBoundsCoordinator();
       }());
-
-      $('#map').bind('simplicitygooglemapresultsmarker', function (evt, ui) {
-        var marker = ui.marker;
-        var properties = ui.row.properties;
-        if (properties.type === 'rentals') {
-          marker.setTitle('$' + properties.lease);
-        } else {
-          marker.setTitle('$' + properties.price);
-        }
-        google.maps.event.addListener(marker, 'click', function() {
-          $('#result-' + ui.row.id).effect("highlight", {}, 3000);
-        });
-      });
 
       $('#locationFields')
         .simplicityInputs()

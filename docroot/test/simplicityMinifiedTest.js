@@ -151,6 +151,9 @@ test("defines $.ui.simplicityGoogleMapLoader", function() {
 test("defines $.simplicityGoogleMarker", function() {
   ok('undefined' !== typeof($.simplicityGoogleMarker), 'undefined widget: $.simplicityGoogleMarker');
 });
+test("defines $.simplicityGoogleMarker.OverlayMarker", function() {
+  ok('undefined' !== typeof($.simplicityGoogleMarker.OverlayMarker), 'undefined widget: $.simplicityGoogleMarker.OverlayMarker');
+});
 test("defines $.ui.simplicityBingMap", function() {
   ok('undefined' !== typeof($.ui.simplicityBingMap), 'undefined widget: $.ui.simplicityBingMap');
 });
