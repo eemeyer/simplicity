@@ -53,6 +53,15 @@
      *   <dd>
      *     Classes to apply to the Next, Prev and Page elements. Defaults to <code>ui-corner-all</code>.
      *   </dd>
+     *   <dt>scrollTopSelector</dt>
+     *   <dd>
+     *     Determines the jQuery selector to apply <code>$(window).scrollTop(0)</code> when
+     *     a page changes. Defaults to <code>window</code>.
+     *   </dd>
+     *   <dt>scrollTopPosition</dt>
+     *   <dd>
+     *     Determines the scroll top position to use for <code>$(window).scrollTop(0)</code>. Defaults to <code>0</code>.
+     *   </dd>
      *   <dt>debug</dt>
      *   <dd>
      *     Enable logging of key events to <code>console.log</code>. Defaults to <code>false</code>.
@@ -66,6 +75,8 @@
       pageParam: 'page',
       input: '',
       applyClass: 'ui-corner-all',
+      scrollTopSelector: window,
+      scrollTopPosition: 0,
       debug: false
     },
     _create : function () {
@@ -132,6 +143,9 @@
      */
     _paginationCallback: function (page) {
       if (!this._ignoreCallback) {
+        if (this.options.scrollTopSelector !== '') {
+          $(this.options.scrollTopSelector).scrollTop(this.options.scrollTopPosition);
+        }
         if (this.options.input !== '') {
           // Store the page in an input
           $(this.options.input).val(page + 1);
