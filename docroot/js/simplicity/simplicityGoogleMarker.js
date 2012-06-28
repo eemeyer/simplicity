@@ -222,12 +222,26 @@
    * parameters to the method are the same as for the constructor of
    * $.simplicityGoogleMarker.OverlayMarker.
    *
-   * @name $.simplicityGoogleMarker.create
+   * @name $.simplicityGoogleMarker.createOverlayMarker
    * @function
+   * @returns {$.simplicityGoogleMarker.OverlayMarker}
    * @public
    */
-  $.simplicityGoogleMarker.create = function () {
+  $.simplicityGoogleMarker.createOverlayMarker = function () {
     $.simplicityGoogleMarker.setup();
     return new $.simplicityGoogleMarker.OverlayMarker(arguments[0]);
+  };
+  /**
+   * Factory Method to create a new google.maps.Marker. The
+   * parameters to the method are the same as for the constructor of
+   * google.maps.Marker.
+   *
+   * @name $.simplicityGoogleMarker.createMarker
+   * @function
+   * @returns {google.maps.Marker}
+   * @public
+   */
+  $.simplicityGoogleMarker.createMarker = function () {
+    return new google.maps.Marker(arguments[0]);
   };
 }(jQuery));

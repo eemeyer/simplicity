@@ -114,6 +114,17 @@
             <label for="longitude">Longitude</label>
             <input id="longitude" name="lon" />
           </fieldset>
+          <fieldset id='mapControls'>
+            <legend>Map Controls</legend>
+            <label>
+              Marker style
+              <select name="markerType">
+                <option value="overlay">overlay</option>
+                <option value="google">google</option>
+              </select>
+            </label>
+          </fieldset>
+
         </div>
         <div id="main" class="yui3-u">
           <div class="yui3-g">
@@ -171,44 +182,6 @@
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleGeocoder.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleMarker.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
-      $.widget("t11e.simplicityGoogleMapResults",$.ui.simplicityGoogleMapResults,{
-        /**
-         * Adds any markers that can be extracted from the given <code>searchResponse</code>.
-         *
-         * @name $.ui.simplicityGoogleMapResults.addMarkers
-         * @function
-         * @private
-         */
-        addMarkers: function (searchResponse) {
-          if ('undefined' === typeof searchResponse) {
-            searchResponse = $(this.options.searchElement).simplicityDiscoverySearch('searchResponse');
-          }
-          var properites, latitude, longitude, marker;
-          $.fn.simplicityDiscoverySearchItemEnumerator(searchResponse, $.proxy(function (idx, row) {
-            properties = row.properties;
-            if ('undefined' !== typeof properties) {
-              latitude = properties[this.options.latitudeField];
-              longitude = properties[this.options.longitudeField];
-              if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
-                marker = $.simplicityGoogleMarker.create(
-                  {
-                    html: row.index1,
-                    title: '$' + properties[properties.type === 'rentals' ? 'lease' : 'price'],
-                    className: row.exact ? 'white exact' : 'white fuzzy',
-                    row: row,
-                    position: new google.maps.LatLng(latitude, longitude)
-                  });
-                marker.setMap(this._map);
-                marker.getElement().click(function(evt) {
-                  var $ele = $(evt.target).closest('.simplicity-google-marker');
-                  $('#result-' + $ele.data("row").id).effect("highlight", {}, 3000);
-                });
-                this._markers.push(marker);
-              }
-            }
-          }, this));
-        }
-      });
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
 
       $('#themeSwitcherButton').button().click(function (evt) {
@@ -254,6 +227,27 @@
           })
           .simplicityGoogleMapResults()
           .simplicityGoogleMapBoundsCoordinator();
+        $('#map').bind('simplicitygooglemapresultsmarker', function (evt, ui) {
+          var marker = ui.marker;
+          var row = ui.row;
+          if ('undefined' !== typeof marker.setTitle) {
+            // Standard google marker
+            marker.setIcon('images/markers/google/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png');
+            marker.setTitle('$' + row.properties[row.properties.type === 'rentals' ? 'lease' : 'price']);
+            google.maps.event.addListener(marker, 'click', function() {
+              $('#result-' + ui.row.id).effect("highlight", {}, 3000);
+            });
+          } else {
+            // Overlay - $.simplicityGoogleMarker
+            marker.title('$' + row.properties[row.properties.type === 'rentals' ? 'lease' : 'price']);
+            marker.getElement()
+              .addClass(row.exact ? 'white exact' : 'white fuzzy')
+              .click(function(evt) {
+                var $ele = $(evt.target).closest('.simplicity-google-marker');
+                $('#result-' + $ele.data("row").id).effect("highlight", {}, 3000);
+              });
+          }
+        });
       }());
 
       $('#locationFields')
@@ -304,6 +298,15 @@
       // Rendered search results
       $('#searchResults').simplicitySearchResults();
 
+      $(':input[name="markerType"]')
+        // Update the markerType input for the currently configured one at page load
+        .val($('#map').simplicityGoogleMapResults('option', 'markerType'))
+        // Update the markerType when the user changes it in the dropdown
+        .bind('change', function (evt, ui) {
+          $('#map').simplicityGoogleMapResults('option', 'markerType', $(evt.target).val());
+        });
+
+      $('')
       $('body')
         .simplicityState('mergeQueryParams')
         .simplicityHistory()

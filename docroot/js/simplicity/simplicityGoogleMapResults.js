@@ -40,6 +40,10 @@
      *   <dd>
      *     Whether or not the map bounds should be updated to include the result locations. Defaults to true.
      *   </dd>
+     *   <dt>markerType</dt>
+     *   <dd>
+     *     Optional marker type, either "overlay" or "google". Defaults to <code>overlay</code>.
+     *   </dd>
      * </dl>
      * @name $.ui.simplicityGoogleMapResults.options
      */
@@ -48,7 +52,8 @@
       latitudeField: 'latitude',
       longitudeField: 'longitude',
       updateBounds: true,
-      map: ''
+      map: '',
+      markerType: 'overlay'
     },
     _create: function () {
       this._addClass('ui-simplicity-google-map-results');
@@ -57,6 +62,20 @@
       this
         ._bind(this.options.searchElement, 'simplicitySearchResponse', this._resultSetHandler)
         ._bind('simplicitygooglemapboundscoordinatorcalculatebounds', this._calcBoundsHandler);
+    },
+    /**
+     * Override of <code>_setOption</code> that is used to ensure that the
+     * map is refreshed when the <code>markerType</code> changes.
+     *
+     * @name $.ui.simplicityGoogleMapResults._setOption
+     * @function
+     * @private
+     */
+    _setOption: function (option, value) {
+      $.ui.simplicityWidget.prototype._setOption.apply(this, arguments);
+      if ('markerType' === option) {
+        this.refreshMap();
+      }
     },
     /**
      * Return the actual map object.
@@ -133,15 +152,18 @@
       if ('undefined' === typeof searchResponse) {
         searchResponse = $(this.options.searchElement).simplicityDiscoverySearch('searchResponse');
       }
+      var markerFactory = $.simplicityGoogleMarker[this.options.markerType === 'google' ? 'createMarker' : 'createOverlayMarker'];
       $.fn.simplicityDiscoverySearchItemEnumerator(searchResponse, $.proxy(function (idx, row) {
         var properties = row.properties;
         if ('undefined' !== typeof properties) {
           var latitude = properties[this.options.latitudeField];
           var longitude = properties[this.options.longitudeField];
           if ('undefined' !== typeof latitude && 'undefined' !== typeof longitude) {
-            var point = new google.maps.LatLng(latitude, longitude);
-            var marker = new google.maps.Marker({
-              position: point,
+            var marker = markerFactory(
+            {
+              position: new google.maps.LatLng(latitude, longitude),
+              row: row,
+              html: row.index1,
               zIndex: -row.index1
             });
             var eventData = {
