@@ -6,6 +6,7 @@
     <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
     <link href="../css/lib/redmond/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
     <link href="../css/simplicity/simplicityPagination.css" rel="stylesheet" type="text/css" />
+    <link href="../css/simplicity/simplicityGoogleMarker.css" rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" href="../images/favicon.jpg"/>
     <style>
       body {
@@ -35,6 +36,16 @@
       #styleCheckboxes ul {
         list-style-type: none;
         padding-left: 1em;
+      }
+      .simplicity-google-marker.exact div {
+        background: #E17009;
+      }
+      .simplicity-google-marker.fuzzy div {
+        background: #ccc;
+        color: #fff;
+      }
+      .simplicity-google-marker div.ptr {
+        background: none;
       }
     </style>
   </head>
@@ -109,6 +120,16 @@
             <label for="west">West</label>
             <input id="west" name="w" />
           </fieldset>
+          <fieldset id='mapControls'>
+            <legend>Map Controls</legend>
+            <label>
+              Marker style
+              <select name="markerType">
+                <option value="overlay">overlay</option>
+                <option value="google">google</option>
+              </select>
+            </label>
+          </fieldset>
         </div>
         <div id="main" class="yui3-u">
           <div class="yui3-g">
@@ -164,6 +185,7 @@
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapBoundsCoordinator.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleMapBoundsTracker.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityGoogleGeocoder.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGoogleMarker.js" charset="utf-8"></script>
     <script type="text/javascript"><!--//<![CDATA[
       $('#nav fieldset').addClass("ui-widget ui-widget-content");
 
@@ -216,16 +238,24 @@
 
       $('#map').bind('simplicitygooglemapresultsmarker', function (evt, ui) {
         var marker = ui.marker;
-        var properties = ui.row.properties;
-        marker.setIcon('images/markers/google/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png');
-        if (properties.type === 'rentals') {
-          marker.setTitle('$' + properties.lease);
+        var row = ui.row;
+        if ('undefined' !== typeof marker.setTitle) {
+          // Standard google marker
+          marker.setIcon('images/markers/google/' + (ui.row.exact ? 'exact' : 'fuzzy') + '.png');
+          marker.setTitle('$' + row.properties[row.properties.type === 'rentals' ? 'lease' : 'price']);
+          google.maps.event.addListener(marker, 'click', function() {
+            $('#result-' + ui.row.id).effect("highlight", {}, 3000);
+          });
         } else {
-          marker.setTitle('$' + properties.price);
+          // Overlay - $.simplicityGoogleMarker
+          marker.title('$' + row.properties[row.properties.type === 'rentals' ? 'lease' : 'price']);
+          marker.getElement()
+            .addClass(row.exact ? 'white exact' : 'white fuzzy')
+            .click(function(evt) {
+              var $ele = $(evt.target).closest('.simplicity-google-marker');
+              $('#result-' + $ele.data("row").id).effect("highlight", {}, 3000);
+            });
         }
-        google.maps.event.addListener(marker, 'click', function() {
-          $('#result-' + ui.row.id).effect("highlight", {}, 3000);
-        });
       });
 
       $('#locationFields2')
@@ -277,6 +307,14 @@
 
       // Rendered search results
       $('#searchResults').simplicitySearchResults();
+
+      $(':input[name="markerType"]')
+      // Update the markerType input for the currently configured one at page load
+      .val($('#map').simplicityGoogleMapResults('option', 'markerType'))
+      // Update the markerType when the user changes it in the dropdown
+      .bind('change', function (evt, ui) {
+        $('#map').simplicityGoogleMapResults('option', 'markerType', $(evt.target).val());
+      });
 
       $('body')
         .simplicityState('mergeQueryParams')
