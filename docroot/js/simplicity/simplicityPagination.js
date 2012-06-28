@@ -142,7 +142,7 @@
           state[this.options.pageParam] = String(page + 1);
           $(this.options.stateElement).simplicityState('state', state);
         }
-        if (this.options.search !== '') {
+        if (this.options.searchElement !== '') {
           if (false === $(this.options.searchElement).simplicityDiscoverySearch('option', 'searchOnStateChange')) {
             $(this.options.searchElement).simplicityDiscoverySearch('search');
           }
