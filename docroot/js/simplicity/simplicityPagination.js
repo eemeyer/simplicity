@@ -25,7 +25,7 @@
  *     });
  *   &lt;/script>
  */
-(function ($) {
+(function ($, window) {
   $.widget("ui.simplicityPagination", $.ui.simplicityWidget, {
     /**
      * Widget options.
@@ -181,4 +181,4 @@
       }
     }
   });
-}(jQuery));
+}(jQuery, window));

@@ -25,7 +25,7 @@
  *     })
  *     .simplicityDiscoverySearch('search');
  */
-(function ($) {
+(function ($, window) {
   $.widget("ui.simplicityHistory", $.ui.simplicityWidget, {
     /**
      * Widget options.
@@ -182,4 +182,4 @@
       return result;
     }
   });
-}(jQuery));
+}(jQuery, window));

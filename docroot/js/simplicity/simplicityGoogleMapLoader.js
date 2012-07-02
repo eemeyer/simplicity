@@ -12,7 +12,7 @@
  *
  * @see Google Maps JavaScript API V3 <a href="http://code.google.com/apis/maps/documentation/javascript/">documentation</a>.
  */
-(function ($) {
+(function ($, window) {
   $.widget("ui.simplicityGoogleMapLoader", $.ui.simplicityWidget, {
     /**
      * Widget options.
@@ -55,4 +55,4 @@
       }
     }
   });
-}(jQuery));
+}(jQuery, window));
