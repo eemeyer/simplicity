@@ -131,7 +131,7 @@
               vendor: result
             };
             if (typeof result.geometry !== 'undefined' &&
-              typeof typeof result.geometry.location !== 'undefined') {
+              typeof result.geometry.location !== 'undefined') {
               $.extend(item, {
                 latitude: result.geometry.location.lat(),
                 longitude: result.geometry.location.lng()
