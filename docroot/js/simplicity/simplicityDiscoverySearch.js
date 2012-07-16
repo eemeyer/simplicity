@@ -84,6 +84,10 @@
     /**
      * Runs a search. The search happens asynchronously and will trigger multiple events.
      * <ul>
+     *   <li>simplicitySearchSearching (before the ajax request is dispatched). This event may be
+     *   triggered multiple times in advance of the simplicitySearchResponse event. For example,
+     *   if any in-flight requests were aborted before the response has been handled, only the last
+     *   non-aborted response will trigger simplicitySearchResponse.</li>
      *   <li>simplicitySearchResponse (original response)</li>
      *   <li>ajaxSetup</li>
      *   <li>ajaxSuccess</li>
@@ -131,6 +135,7 @@
             this.searchResponse(data);
           }
         };
+      this.element.triggerHandler('simplicitySearchSearching');
       this.element.triggerHandler('ajaxSetup', ajaxOptions);
       this._ajaxHelperSearch.ajax(ajaxOptions);
     },
@@ -175,6 +180,7 @@
               this.searchResponse(response);
             }
         };
+      this.element.triggerHandler('simplicitySearchSearching');
       this.element.triggerHandler('ajaxSetup', ajaxOptions);
       this._ajaxHelperQuery.ajax(ajaxOptions);
     },
@@ -207,8 +213,8 @@
      * last response. Called with arguments to process the current response (called by
      * <code>search</code> on success or failure).
      *
-     * In processing mode, this method triggers <code>simplicitySearchResponse</code>
-     * and <code>simplicitySearchResponseHandled</code> events, then calls
+     * In processing mode, this method triggers <code>simplicitySearchSearching</code>,
+     * <code>simplicitySearchResponse</code> and <code>simplicitySearchResponseHandled</code> events, then calls
      * <code>facetCounts</code> and <code>resultSet</code>.
      *
      *
