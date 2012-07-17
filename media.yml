@@ -20,6 +20,8 @@ groups:
       - js/simplicity/simplicityAjaxHelper.js
       - js/simplicity/simplicityDiscoverySearch.js
       - js/simplicity/simplicityDebug.js
+      # JQuery UI autocomplete $.autofocus patch for pre 1.9 versions
+      - js/lib/jquery.ui.autocomplete.autofocus.fix.js
       # Widget sensitive to search
       - js/simplicity/simplicitySearchResults.js
       - js/simplicity/simplicityRenderParamsSearchResults.js
