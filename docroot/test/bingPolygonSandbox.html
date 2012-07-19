@@ -79,38 +79,30 @@
           $('body').simplicityState('state', JSON.parse(val ? val : '{}'));
         });
         $('#create').click(function(){
-          $('#map').simplicityBingMapShapeCreator({
-            input: $('<input name="placemark"/>').simplicityInputs(),
-            debug: true
-          })
-          .bind('simplicitybingmapshapecreatorshapechange', function (evt, ui) {
-            var geoJson = ui.geoJson;
-            if ('undefined' !== typeof geoJson) {
-              $('#shape').val(JSON.stringify(geoJson, null, '  '));
-            }
-          });
-          var geocoder = $('<input class="geocoder input-large" type="text" placeholder="Enter city, state, zip or location" />')
-            .simplicityBingGeocoder({
-                url: 'bingGeocoderProxy.php',
-                requestTemplate: {
-                  key: apiKey
-                }
-              })
-              .autocomplete({
-                autoFocus: true,
-              });
-
-          $('#ui').simplicityMapShapeCreatorUi({
-            shapeCreator: '#map',
-            geocoderInput: geocoder,
-            allowMultiPoint: true,
-            debug: true
-          });
+            $('#map').bind('simplicitybingmapshapecreatorshapechange', function (evt, ui) {
+              var geoJson = ui.geoJson;
+              if ('undefined' !== typeof geoJson) {
+                $('#shape').val(JSON.stringify(geoJson, null, '  '));
+              }
+            });
+            var geocoder = $('body')
+              .simplicityBingGeocoder({
+                  url: 'bingGeocoderProxy.php',
+                  requestTemplate: {
+                    key: apiKey
+                  }
+                });
+  
+            $('#ui').simplicityMapShapeCreatorUi({
+              mapElement: '#map',
+              geocoderElement: geocoder,
+              allowMultiPoint: true,
+              debug: true
+            });
         })
         .click();
         $('#destroy').click(function(){
           $('#ui').simplicityMapShapeCreatorUi("destroy");
-          $('#map').simplicityBingMapShapeCreator("destroy");
         });
         var originalVertexOptions = $('#map').simplicityBingMapShapeCreator("option", "vertexMarkerOptions");
         function vertexOptions(first) {

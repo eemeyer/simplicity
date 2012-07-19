@@ -28,7 +28,15 @@
      * <dl>
      *   <dt><code>shapeCreator</code></dt>
      *   <dd>
-     *     Required shape creator instance.
+     *     Either option <code>shapeCreator</code> or <code>mapElement</code> are required. If the shape creator has been configured
+     *     it's selector can be passed here. When not provided, the widget will create the shape creator
+     *     on the supplied option <code>mapElement</code>. Defaults to <code>''</code>.
+     *   </dd>
+     *   <dt><code>mapElement</code></dt>
+     *   <dd>
+     *     Either option <code>shapeCreator</code> or <code>mapElement</code> are required. If the shape creator has not been supplied
+     *     the widget will create the shape creator on this option value. The supplied value must be an instance of one of the
+     *     provided simplicity{MapVendor}Map widgets, for example, "simplicityGoogleMap" or "simplicityNokiaMap". Defaults to <code>''</code>.
      *   </dd>
      *   <dt><code>allowMultiPoint</code></dt>
      *   <dd>
@@ -115,6 +123,7 @@
      */
     options: {
       shapeCreator: '',
+      mapElement: '',
       allowMultiPoint: false,
       helpPosition: '',
       geocoderInput: '<input class="geocoder" type="text" placeholder="Enter city, state, zip or location" />',
@@ -155,12 +164,20 @@
       debug: false
     },
     _create: function () {
-      this._shapeCreator = this._locateShapeCreator();
+      if (this.options.shapeCreator !== '') {
+        this._shapeCreator = this._locateShapeCreator($(this.options.shapeCreator), new RegExp("^simplicity(.+)MapShapeCreator$"));
+      }
+      if (this.options.mapElement !== '' && 'undefined' === typeof this._shapeCreator) {
+        this._shapeCreator = this._locateShapeCreator($(this.options.mapElement), new RegExp("^simplicity(.+)Map$"));
+      }
       if ('undefined' === typeof this._shapeCreator) {
         if (this.options.debug) {
-          throw new Error("ShapeCreator selector is required.");
+          throw new Error("ShapeCreator could not be determined from either options.shapeCreator or options.mapElement.");
         }
         return;
+      }
+      if (!this._shapeCreator("option", "debug") && this.options.debug) {
+        this._shapeCreator("option", "debug", true);
       }
       if (this.options.helpPosition === '') {
         this.options.helpPosition = {left: 300, top: -148};
@@ -169,7 +186,7 @@
       this._settings = {};
       this._settings.helpHidden = false;
       this._getSettings();
-      this._geoJson = {}; //this._newGeoJson();
+      this._geoJson = {};
       var widgetNames = this._shapeCreator("getMappingProviderWidgetNames");
       this
         ._addClass('ui-simplicity-map-shape-creator-ui')
@@ -192,22 +209,28 @@
         this._configureRadiusInput();
       }
     },
-    _locateShapeCreator: function () {
-      var target = $(this.options.shapeCreator);
-      var candidateCreatorNames = $.map(target.data(), function (value, key) {
-        return (/[^A-Z]MapShapeCreator$/).test(key) ? key : undefined;
+    _locateShapeCreator: function (target, regex) {
+      var candidateWidgetNames = $.map(target.data(), function (value, key) {
+        return regex.test(key) ? key : undefined;
       });
-      if (candidateCreatorNames.length !== 1) {
+      if (candidateWidgetNames.length !== 1) {
         if (this.options.debug) {
-          if (candidateCreatorNames.length === 0) {
-            throw new Error('Missing shape creator widget');
+          if (candidateWidgetNames.length === 0) {
+            console.log('Missing mapping widget ' + regex.source);
           } else {
-            throw new Error('Ambigious shape creator widget: ' + candidateCreatorNames);
+            console.log('Ambigious mapping widget: ' + candidateWidgetNames);
           }
         }
         return;
       }
-      var widget = target[candidateCreatorNames[0]];
+      var match = candidateWidgetNames[0].match(regex);
+      // $1 is in match[1]
+      var widgetName = 'simplicity' + match[1] + 'MapShapeCreator';
+      var widget = target[widgetName];
+      if ('undefined' === typeof target.data(widgetName)) {
+        // instantiate the widget since the element has been set up
+        widget.call(target);
+      }
       return function () {
         return widget.apply(target, arguments);
       };
@@ -534,7 +557,6 @@
       this._helpMsg.remove();
       this.element.html(this.element.data('previousHTML'));
       this.element.removeData('previousHTML');
-
       $.ui.simplicityWidget.prototype.destroy.apply(this, arguments);
     }
   });

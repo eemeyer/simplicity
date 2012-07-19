@@ -62,8 +62,8 @@
      * <dl>
      *   <dt><code>input</code></dt>
      *   <dd>
-     *     The required input or selector for the element the contains the geoJson state.
-     *     Defaults to <code>''</code>.
+     *     The input or selector for the element that contains the geoJson state.
+     *     Defaults to <code>'$('<input name="placemark"/>').simplicityInputs()'</code>.
      *   </dd>
      *   <dt><code>editMode</code></dt>
      *   <dd>
@@ -146,7 +146,7 @@
      *   <dt><code>lineStringOptions</code></dt>
      *   <dd>
      *     A dictionary of options that are used to define the look of line strings. Defaults to
-     *     <code>{}</code>.
+     *     <code>''</code>.
      *   </dd>
      *   <dt><code>dragOptimization</code></dt>
      *   <dd>
@@ -169,19 +169,16 @@
       capSegments: 8,
       jointSegments: 8,
       distanceUnit: 'MI', // or 'KM'
-      markerOptions: {},
-      lineStringOptions: {},
+      markerOptions: '',
+      lineStringOptions: '',
       polygonOptions: '',
-      circleOptions: {},
+      circleOptions: '',
       dragOptimization: false,
       debug: false,
       firstVertexMarkerOptions: '',
       vertexMarkerOptions: ''
     },
     _create: function () {
-      if (this.options.input === '') {
-        return;
-      }
       this._points = [];
       this._geoJson = this._newGeoJson();
 
@@ -192,7 +189,15 @@
       this._map = '';
       this._markers = [];
       this._firstMarkerListener = null;
-      this._input = $(this.options.input);
+      if (this.options.markerOptions === '') {
+        this.options.markerOptions = {};
+      }
+      if (this.options.circleOptions === '') {
+        this.options.circleOptions = {};
+      }
+      this._input = this.options.input === '' ?
+        $('<input name="placemark"/>').simplicityInputs() :
+        $(this.options.input);
       this._bind(this._input, 'change', this._inputChangeHandler);
       this._addClass('ui-simplicity-map-shape-creator');
       if (this.options.firstVertexMarkerOptions === '') {

@@ -84,26 +84,21 @@
           $('body').simplicityState('state', JSON.parse(val ? val : '{}'));
         });
         $('#create').click(function(){
-          $('#map').simplicityNokiaMapShapeCreator({
-            input: $('<input name="placemark"/>').simplicityInputs(),
-            debug: true
-          })
-          .bind('simplicitynokiamapshapecreatorshapechange', function (evt, ui) {
-            var geoJson = ui.geoJson;
-            if ('undefined' !== typeof geoJson) {
-              $('#shape').val(JSON.stringify(geoJson, null, '  '));
-            }
+            $('#map').bind('simplicitynokiamapshapecreatorshapechange', function (evt, ui) {
+              var geoJson = ui.geoJson;
+              if ('undefined' !== typeof geoJson) {
+                $('#shape').val(JSON.stringify(geoJson, null, '  '));
+              }
+              });
+            $('#ui').simplicityMapShapeCreatorUi({
+              mapElement: '#map',
+              allowMultiPoint: true,
+              debug: true
             });
-          $('#ui').simplicityMapShapeCreatorUi({
-            shapeCreator: '#map',
-            allowMultiPoint: true,
-            debug: true
-          });
           })
           .click();
         $('#destroy').click(function(){
           $('#ui').simplicityMapShapeCreatorUi("destroy");
-          $('#map').simplicityNokiaMapShapeCreator("destroy");
         });
         var originalVertexOptions = $('#map').simplicityNokiaMapShapeCreator("option", "vertexMarkerOptions");
         function vertexOptions(first) {
