@@ -106,6 +106,14 @@ if (array_key_exists("style", $_GET)) {
         "id" => $_GET["style"],
     );
 }
+if (array_key_exists("placemark", $_GET)) {
+    $placemark = json_decode(stripslashes($_GET["placemark"]), true);
+    $placemark['dimension'] = "location";
+    if ($placemark["placemarks"]["type"] != 'Polygon') {
+      $placemark['exactDistance'] = 0.5;
+    }
+    $criteria[] = $placemark;
+}
 
 if (array_key_exists("n", $_GET) && array_key_exists("e", $_GET) && array_key_exists("s", $_GET) && array_key_exists("w", $_GET)) {
     $north = $_GET["n"];

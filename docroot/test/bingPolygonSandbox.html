@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Bing Map Polygon Sandbox</title>
+    <link rel="stylesheet" href="../css/lib/redmond/jquery-ui-1.8.16.custom.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="../css/simplicity/simplicityMapShapeCreator.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="../css/simplicity/simplicityMapShapeCreatorUi.css" type="text/css" media="all" />
+    <style type="text/css">
+      #container { width: 600px; }
+      #map { position: absolute; width: 600px; height: 400px; border: 2px dashed red; }
+      #ui { position: absolute; top: 486px; padding: 4px 4px; width: 594px; }
+      #testButtons { position: absolute; top: 520px;  }
+      #state { position: absolute; left: 620px; top: 80px; }
+      #shape { position: absolute; left: 850px; top: 80px; }
+    </style>
+  </head>
+  <body>
+    <h1><a href="../index.html">home</a> | Bing Map Polygon Sandbox</h1>
+    <div id="container" style="float: left">
+      <div id="map"></div>
+      <span id="ui" class="ui-widget-header ui-corner-all ui-helper-clearfix"></span>
+      <span id="testButtons">
+        <button id="create">Create</button>
+        <button id="destroy">Destroy</button>
+        <button id="updateFirstVertex">Change First</button>
+        <button id="updateVertex">Change Vertex</button>
+        <button id="restoreVertex">Restore Vertex</button>
+        <button id="changeOptions">Change Vertex Options</button>
+      </span>
+    </div>
+    <fieldset style="float: left; margin-left: 1em;">
+      <legend>State</legend>
+      <textarea id="state" cols="30" rows="40"></textarea>
+    </fieldset>
+    <fieldset style="float: left; margin-left: 1em;">
+      <legend>geoJSON</legend>
+      <textarea id="shape" cols="30" rows="40"></textarea>
+    </fieldset>
+    <script type="text/javascript" src="../js/lib/jquery-1.6.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.16.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+    <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityEquiv.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityProxy.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityWidget.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityToState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFromState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityInputs.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityHistory.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityBingMap.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityBingMapBoundsCoordinator.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityBingGeocoder.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGeoFn.js"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapShapeCreator.js"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapShapeCreatorUi.js"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityBingMapShapeCreator.js"></script>
+    <script type="text/javascript">//<![CDATA[
+      $(function () {
+        $('body').simplicityState();
+
+        var apiKey = 'AqsWuHqZWoV942yySq7z7YZcyz7skrvFfPX_if4OmK5FyHkyJDmQSvX17Z7ymtok';
+        $('#map').simplicityBingMap({
+          mapOptions: {
+          center: new Microsoft.Maps.Location(40.69847032728747, -73.9514422416687),
+          zoom: 10,
+          mapTypeId: Microsoft.Maps.MapTypeId.road,
+          credentials: apiKey
+        }})
+        .simplicityBingMapBoundsCoordinator();
+        $('body').bind('simplicityStateChange', function (evt, state) {
+          $('#state').val(JSON.stringify(state, null, '  '));
+        });
+        $('#state').change(function (evt) {
+          var val = $(evt.target).val().trim();
+          $('body').simplicityState('state', JSON.parse(val ? val : '{}'));
+        });
+        $('#create').click(function(){
+          $('#map').simplicityBingMapShapeCreator({
+            input: $('<input name="placemark"/>').simplicityInputs(),
+            debug: true
+          })
+          .bind('simplicitybingmapshapecreatorshapechange', function (evt, ui) {
+            var geoJson = ui.geoJson;
+            if ('undefined' !== typeof geoJson) {
+              $('#shape').val(JSON.stringify(geoJson, null, '  '));
+            }
+          });
+          var geocoder = $('<input class="geocoder input-large" type="text" placeholder="Enter city, state, zip or location" />')
+            .simplicityBingGeocoder({
+                url: 'bingGeocoderProxy.php',
+                requestTemplate: {
+                  key: apiKey
+                }
+              })
+              .autocomplete({
+                autoFocus: true,
+              });
+
+          $('#ui').simplicityMapShapeCreatorUi({
+            shapeCreator: '#map',
+            geocoderInput: geocoder,
+            allowMultiPoint: true,
+            debug: true
+          });
+        })
+        .click();
+        $('#destroy').click(function(){
+          $('#ui').simplicityMapShapeCreatorUi("destroy");
+          $('#map').simplicityBingMapShapeCreator("destroy");
+        });
+        var originalVertexOptions = $('#map').simplicityBingMapShapeCreator("option", "vertexMarkerOptions");
+        function vertexOptions(first) {
+          var w = 37;
+          var h = 37;
+          return {
+            icon: "../css/simplicity/images/" + (first ? "first_" : "") + "vertex_test_29x29",
+            size: [w, h], // size of div from style, width, height should be odd to enable pixel centering
+            anchor: [(w + w % 2) / 2, h - 5] // centered horizontally / vertically
+          };
+        }
+        $('#updateFirstVertex').click(function(){
+          $('#map').simplicityBingMapShapeCreator("option", "firstVertexMarkerOptions", vertexOptions(true));
+        });
+        $('#updateVertex').click(function(){
+          $('#map').simplicityBingMapShapeCreator("option", "vertexMarkerOptions", vertexOptions(false));
+        });
+        $('#restoreVertex').click(function(){
+          $('#map').simplicityBingMapShapeCreator("option", "vertexMarkerOptions", originalVertexOptions);
+        });
+        $('#changeOptions').click(function(){
+          alert('visible will be set to false.');
+          $('#map').simplicityBingMapShapeCreator("option", "markerOptions", {visible: false});
+        });
+        $('body')
+          .simplicityState('mergeQueryParams')
+          .simplicityHistory({
+            debug: false
+          })
+         .simplicityState('triggerChangeEvent');
+      });
+    //]]></script>
+  </body>
+</html>

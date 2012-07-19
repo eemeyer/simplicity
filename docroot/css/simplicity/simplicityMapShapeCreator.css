@@ -1,0 +1,10 @@
+.ui-simplicity-map-shape-creator .vertex-marker {
+  background-image: url(images/vertex_29x29.png);
+  width: 29px;
+  height: 29px;
+}
+.ui-simplicity-map-shape-creator .first-vertex-marker {
+  background-image: url(images/first_vertex_29x29.png);
+  width: 29px;
+  height: 29px;
+}

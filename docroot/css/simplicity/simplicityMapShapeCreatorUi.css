@@ -1,0 +1,35 @@
+.ui-simplicity-map-shape-creator-ui .help {
+  z-index: +1;
+  position: relative;
+  cursor: move;
+  width: 300px;
+}
+.ui-simplicity-map-shape-creator-ui .help .text .background {
+  position: absolute;
+  z-index: -1;
+  background-color: #404040;
+  width: 100%;
+  height: 100%;
+}
+.ui-simplicity-map-shape-creator-ui .help .text {
+  position: absolute;
+  font-size: 13px;
+  font-weight: bold;
+  font-family: sans-serif;
+  color: #ffffff;
+  width: 100%;
+}
+.ui-simplicity-map-shape-creator-ui .help .text p {
+  margin: 1em 1em 1em 1.5em;
+}
+.ui-simplicity-map-shape-creator-ui .help .closer {
+  position: absolute;
+  z-index: +1;
+  color: #ffffff;
+  font-size: 15px;
+  cursor: pointer;
+  width: 1em;
+  height: 1em;
+  font-weight: bold;
+  margin-left: .4em;
+}

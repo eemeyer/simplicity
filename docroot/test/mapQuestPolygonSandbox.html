@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>MapQuest Polygon Sandbox</title>
+    <link rel="stylesheet" href="../css/lib/redmond/jquery-ui-1.8.16.custom.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="../css/simplicity/simplicityMapShapeCreator.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="../css/simplicity/simplicityMapShapeCreatorUi.css" type="text/css" media="all" />
+    <style type="text/css">
+      #container { width: 600px; }
+      #map { border: 2px dashed red; }
+      #ui { padding: 4px 4px; width: 594px; }
+    </style>
+  </head>
+  <body>
+    <h1><a href="../index.html">home</a> | MapQuest Polygon Sandbox</h1>
+    <div id="container" style="float: left">
+      <div id="map" style="width: 600px; height: 400px;"></div>
+      <span id="ui" class="ui-widget-header ui-corner-all ui-helper-clearfix"></span>
+      <button id="create">Create</button>
+      <button id="destroy">Destroy</button>
+      <button id="updateFirstVertex">Change First</button>
+      <button id="updateVertex">Change Vertex</button>
+      <button id="restoreVertex">Restore Vertex</button>
+    </div>
+    <fieldset style="float: left; margin-left: 1em;">
+      <legend>State</legend>
+      <textarea id="state" cols="30" rows="40"></textarea>
+    </fieldset>
+    <fieldset style="float: left; margin-left: 1em;">
+      <legend>geoJSON</legend>
+      <textarea id="shape" cols="30" rows="40"></textarea>
+    </fieldset>
+
+    <script type="text/javascript" src="../js/lib/jquery-1.6.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery-ui-1.8.16.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/jquery.ba-bbq-1.2.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/lib/json2.js" charset="utf-8"></script>
+    <script src="http://mapquestapi.com/sdk/js/v6.0.0/mqa.toolkit.js?key=Fmjtd%7Cluu22q68nq%2C75%3Do5-h67wg"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityEquiv.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityProxy.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityWidget.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityToState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityFromState.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityInputs.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityHistory.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMap.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMapBoundsCoordinator.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapQuestGeocoder.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityGeoFn.js"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapShapeCreator.js"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapShapeCreatorUi.js"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityMapQuestMapShapeCreator.js"></script>
+    <script type="text/javascript">//<![CDATA[
+      $(function () {
+       MQA.withModule('mapinit', 'geocoder', 'shapes', 'zoomcontrol3', function() {
+         $('body').simplicityState();
+         $('#map').simplicityMapQuestMap()
+           .simplicityMapQuestMapBoundsCoordinator();
+         var map = $('#map').simplicityMapQuestMap('map');
+         // TODO Configure controls and behavior
+         map.addControl(new MQA.LargeZoomControl3(), new MQA.MapCornerPlacement(MQA.MapCorner.TOP_RIGHT));
+         map.setZoomLevel(7);
+         map.setCenter({lat:40.69847032728747, lng:-73.9514422416687})
+         $('body').bind('simplicityStateChange', function (evt, state) {
+           $('#state').val(JSON.stringify(state, null, '  '));
+         });
+         $('#state').change(function (evt) {
+           var val = $(evt.target).val().trim();
+           $('body').simplicityState('state', JSON.parse(val ? val : '{}'));
+         });
+         $('#create').click(function(){
+           $('#map').simplicityMapQuestMapShapeCreator({
+             input: $('<input name="placemark"/>').simplicityInputs(),
+             debug: true
+           })
+           .bind('simplicitymapquestmapshapecreatorshapechange', function (evt, ui) {
+             var geoJson = ui.geoJson;
+             if ('undefined' !== typeof geoJson) {
+               $('#shape').val(JSON.stringify(geoJson, null, '  '));
+             }
+           });
+           $('#ui').simplicityMapShapeCreatorUi({
+             shapeCreator: '#map',
+             allowMultiPoint: true,
+             debug: true
+           });
+           })
+           .click();
+         $('#destroy').click(function(){
+           $('#ui').simplicityMapShapeCreatorUi("destroy");
+           $('#map').simplicityMapQuestMapShapeCreator("destroy");
+         });
+         var originalVertexOptions = $('#map').simplicityMapQuestMapShapeCreator("option", "vertexMarkerOptions");
+         function vertexOptions(first) {
+           var w = 37;
+           var h = 37;
+           return {
+             icon: "../css/simplicity/images/" + (first ? "first_" : "") + "vertex_test_29x29",
+             size: [w, h], // size of div from style, width, height should be odd to enable pixel centering
+             anchor: [(w + w % 2) / 2, h - 5] // centered horizontally / vertically
+           }
+         }
+         $('#updateFirstVertex').click(function(){
+           $('#map').simplicityMapQuestMapShapeCreator("option", "firstVertexMarkerOptions", vertexOptions(true));
+         });
+         $('#updateVertex').click(function(){
+           $('#map').simplicityMapQuestMapShapeCreator("option", "vertexMarkerOptions", vertexOptions(false));
+         });
+         $('#restoreVertex').click(function(){
+           $('#map').simplicityMapQuestMapShapeCreator("option", "vertexMarkerOptions", originalVertexOptions);
+         });
+         $('body')
+           .simplicityState('mergeQueryParams')
+           .simplicityHistory({
+             debug: false
+           })
+           .simplicityState('triggerChangeEvent');
+       });
+     });
+    //]]></script>
+  </body>
+</html>

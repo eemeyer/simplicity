@@ -66,6 +66,14 @@ groups:
       - js/simplicity/simplicityMapQuestGeocoder.js
       - js/simplicity/simplicityYahooGeocoder.js
       - js/simplicity/simplicityNokiaGeocoder.js
+      # Shape Creators
+      - js/simplicity/simplicityGeoFn.js
+      - js/simplicity/simplicityMapShapeCreator.js
+      - js/simplicity/simplicityMapShapeCreatorUi.js
+      - js/simplicity/simplicityBingMapShapeCreator.js
+      - js/simplicity/simplicityGoogleMapShapeCreator.js
+      - js/simplicity/simplicityNokiaMapShapeCreator.js
+      - js/simplicity/simplicityMapQuestMapShapeCreator.js
 
   - groupName: simplicity_css
     mediaType: css
@@ -76,6 +84,8 @@ groups:
       - css/simplicity/simplicitySlider.css
       - css/simplicity/simplicityFancySelect.css
       - css/simplicity/simplicityGoogleMarker.css
+      - css/simplicity/simplicityMapShapeCreator.css
+      - css/simplicity/simplicityMapShapeCreatorUi.css
 
   - groupName: simplicityLoadJs_js
     mediaType: js
@@ -131,7 +141,7 @@ jslintOptions:
     - plusplus
     - eqeqeq
     - forin
-    - regexp
+    #- regexp
     #- undef
     #- devel
     #

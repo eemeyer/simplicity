@@ -63,6 +63,7 @@
         <include name="simplicity-*.css"/>
         <include name="simplicity-*.min.css"/>
       </zipfileset>
+      <zipfileset prefix="simplicity-${version}/css/images" dir="docroot/css/simplicity/images"/>
       <!-- JavaScript dependencies -->
       <zipfileset prefix="simplicity-${version}/js/" dir="docroot/js/lib">
         <exclude name="jquery.numberformatter-*.js"/>
