@@ -247,7 +247,7 @@
         this._changeHandler();
         break;
       case "radius":
-        this._bufferShape();
+        this._applyShapeBuffer();
         this._geoJson.properties.radius = value;
         this._changeHandler();
         break;
@@ -268,7 +268,7 @@
           }
           this._geoJson.properties.radius = this.options.radius;
           this._draw();
-          this._bufferShape();
+          this._applyShapeBuffer();
           this._changeHandler(true);
         }
         break;
@@ -342,7 +342,7 @@
         this._removeShapeFromMap();
         this._geoJson.properties.radius = radius;
         this._createLineString();
-        this._bufferShape();
+        this._applyShapeBuffer();
         this._addMarkerClickListener(0, this._firstMarkerClickHandler);
         if (this._points.length >= 3) {
           this._setFirstPointUi();
@@ -538,24 +538,22 @@
       throw new Error("_removeMarkerClickListener method should be implemented");
     },
     /**
-     * Displays a buffered line string (polygon)
+     * Buffers a shape
      *
-     * @name $.ui.simplicityMapShapeCreator._bufferLineString
+     * @name $.ui.simplicityMapShapeCreator._bufferShape
      * @function
-     * @param {Array} coords The coordinates for the polygon representing the buffered
-     * line string.
      */
-    _bufferLineString: function (coords) {
-      throw new Error("_bufferLineString method should be implemented");
+    _bufferShape: function () {
+      throw new Error("_bufferShape method should be implemented");
     },
     /**
-     * Displays a buffered point (circle) for each point in the shape
+     * Removes any buffers from shapes
      *
-     * @name $.ui.simplicityMapShapeCreator._bufferPoints
+     * @name $.ui.simplicityMapShapeCreator._unbufferShape
      * @function
      */
-    _bufferPoints: function () {
-      throw new Error("_bufferPoints method should be implemented");
+    _unbufferShape: function () {
+      throw new Error("_unbufferShape method should be implemented");
     },
     /**
      * Sets the path coordinates
@@ -660,22 +658,16 @@
     /**
      * Manages setting the radius for a shape.
      *
-     * @name $.ui.simplicityMapShapeCreator._bufferShape
+     * @name $.ui.simplicityMapShapeCreator._applyShapeBuffer
      * @function
      * @private
-     * @param {double} radius A radius value in units specified by <code>distanceUnit</code> options.
-     * @param {String} shapeType The geometry name in use, <code>Point</code>, <code>MultiPoint</code>, <code>LineString</code>, <code>Polygon</code> .
      */
-    _bufferShape: function () {
+    _applyShapeBuffer: function () {
       this._radiusMeters = this.options.radius * (this.options.distanceUnit === 'MI' ? 1609.344 : 1000);
+      this._unbufferShape();
       if (this.options.radius === "0" || this.options.radius === 0 || this._geoJson.placemarks.type === 'Polygon' || this._coordsLength() === 0) {
-        this._unbufferShape();
       } else {
-        if (this._geoJson.placemarks.type === 'LineString') {
-          this._bufferLineString(this._getLineStringBufferPoints());
-        } else {
-          this._bufferPoints();
-        }
+        this._bufferShape();
       }
     },
     /**
@@ -757,7 +749,7 @@
         var latLng = this._getDragPosition(marker, evt);
         this._coordsSetAt(idx, latLng);
         if (!this.options.dragOptimization && this._geoJson.placemarks.type === 'LineString') {
-          this._setPolylinePath(this._getLineStringBufferPoints());
+          this._setPolylinePath(this._updateBufferedShape(idx));
         }
       };
     },
@@ -785,7 +777,7 @@
             }
           }
         } else if (type === 'LineString' || type === 'MultiPoint') {
-          if (type === 'LineString') {
+          if (this.options.dragOptimization && this._geoJson.placemarks.type === 'LineString') {
             this._setPolylinePath(this._getLineStringBufferPoints());
           }
           coords = this._geoJson.placemarks.coordinates;
@@ -833,7 +825,7 @@
         } else if (this._points.length === 3) {
           this._setFirstPointUi();
         }
-        this._bufferShape();
+        this._applyShapeBuffer();
       }
       return marker;
     },
@@ -956,7 +948,7 @@
       } else if (placemarkType === 'MultiPoint') {
         this.options.connected = false;
       }
-      this._bufferShape();
+      this._applyShapeBuffer();
       if (this.options.editMode !== geoJson.properties.editMode) {
         this._setOption("editMode", geoJson.properties.editMode);
       }
@@ -966,14 +958,15 @@
      * heading frpm the previous and to the next point in the shape. These points form the
      * buffered two-dimensional shape of a one-dimension LineString.
      *
-     * plus90 refers to the point 90 degrees from the heading to the "next" point.
-     * min90 refers to the point 270 degrees from the same heading, the opposite point.
+     * "out" refers to the point 90 degrees from the heading to the "next" point.
+     * Also referred to as Outbound.
+     * "back" refers to the point 270 degrees from the same heading, the opposite point.
+     * Also referred to as Inbound.
      *
      * @name $.ui.simplicityMapShapeCreator._getBluntVertexData
      * @function
      * @private
      * @param {integer} idx The index of the point to buffer
-     * @param {array} vertex The lat and lng of the vertex expressed as [lat, lng].
      * @param {double} radius The radius to use when buffering
      * @returns {object} Convenience object to simplify recalculation of point positions
      * and buffering when the enclosing shape changes.
@@ -981,46 +974,34 @@
      * <code>
      *   {
      *     fromPrev: {
-     *       plus90: [lat, lng],
-     *       min90: [lat, lng],
+     *       out: [lat, lng],
+     *       back: [lat, lng],
      *       heading: degrees
      *     },
      *     toNext: {
-     *       plus90: [lat, lng],
-     *       min90: [lat, lng],
+     *       out: [lat, lng],
+     *       back: [lat, lng],
      *       heading: degrees
      *     }
      *   }
      * </code>
      */
-    _getBluntVertexData: function (idx, vertex, r) {
-      var p = null,
-        h = null,
-        fromPrev = null,
-        toNext = null;
-      if (idx > 0) {
-        p = this._coordsGetAsDArray(idx - 1);
-        h = $.simplicityGeoFn.computeHeading(vertex, p);
-        fromPrev = {
-            plus90: $.simplicityGeoFn.travel(vertex, r, h + 90),
-            min90: $.simplicityGeoFn.travel(vertex, r, h - 90),
-            heading: h
-          };
-      }
-      if (idx < this._coordsLength() - 1) {
-        p = this._coordsGetAsDArray(idx + 1);
-        h = $.simplicityGeoFn.computeHeading(vertex, p);
-        toNext = {
-            plus90: $.simplicityGeoFn.travel(vertex, r, h + 90),
-            min90: $.simplicityGeoFn.travel(vertex, r, h - 90),
-            heading: h
-          };
-      }
+    _getBluntVertexData: function (idx) {
+      var vertex = this._coordsGetAsDArray(idx);
       return {
         vertex: vertex,
-        fromPrev: fromPrev,
-        toNext: toNext
+        fromPrev: idx > 0 ? this._makeVertexPart(idx - 1, vertex) : null,
+        toNext: idx < this._coordsLength() - 1 ? this._makeVertexPart(idx + 1, vertex) : null
       };
+    },
+    _makeVertexPart: function (idx, vertex) {
+      var p = this._coordsGetAsDArray(idx),
+        h = $.simplicityGeoFn.computeHeading(vertex, p);
+      return {
+          out: $.simplicityGeoFn.travel(vertex, this._radiusMeters, h + 90),
+          back: $.simplicityGeoFn.travel(vertex, this._radiusMeters, h - 90),
+          heading: h
+        };
     },
     /**
      * Creates an arc between two points such that the arc connects to opposing 
@@ -1037,11 +1018,13 @@
      * @returns {array} An array of points needed to complete the arch, where each point is expressed as [lat, lng]
      */
     _getArc: function (angle, vertex, pFrom, radius, deg) {
-      var heading = $.simplicityGeoFn.computeHeading(vertex, pFrom);
-      var arc = [];
-      var segmentsToAdd = angle / deg;
-      for (var i = 1; i < segmentsToAdd; i = i + 1) {
-        var apex = $.simplicityGeoFn.travel(vertex, radius, heading - deg * i);
+      var heading = $.simplicityGeoFn.computeHeading(vertex, pFrom),
+        arc = [],
+        segmentsToAdd = Math.abs(angle / deg),
+        dir = angle < 0 ? -1 : 1;
+
+      for (var i = 1; i < segmentsToAdd; i += 1) {
+        var apex = $.simplicityGeoFn.travel(vertex, radius, heading - deg * dir * i);
         arc.push(apex);
       }
       return arc;
@@ -1051,95 +1034,230 @@
      * in which the end points and connecting vertices will be capped and shaped to represent the true
      * shape of the buffered LineString.
      *
+     * The shape coordinates are built in two arrays, the "outbound" (out) and the "inbound" (back).
+     *
+     * Each "outbound" buffered points are calculated from the heading of the
+     * vertex to the next vertex traveling <code>radius</code> distance at 90 degrees from
+     * that heading. The "outbound" shape includes the encap arc at the last vertex.
+     *
+     * Each "inbound" buffered points are calculated from the heading of the
+     * vertex to the previous vertex traveling <code>radius</code> distance at -90 degrees from
+     * that heading. The "inbound" shape includes the encap arc at the first vertex.
+     *
+     * For points between the first and the last (connector), the curve shape is either a point or an arc.
+     * The curve shape is an arc for obtuse angles. For acute angles, it is the
+     * intersection of two lines, one traveling with heading from the previous vertex to the connector, the
+     * the other traveling from the next vertex back to the connector. Both of these lines originate
+     * from their respective buffered points.
+     *
+     * The information used to create the buffer is stored in this._vertexData;
+     *
      * @name $.ui.simplicityMapShapeCreator._getLineStringBufferPoints
      * @function
      * @private
      * @returns {array} An array of coordinates for the Polygon representing the buffered LineString.
      */
     _getLineStringBufferPoints: function () {
-      var vertex;
-      this.vertexData = [];
-      var idx = 0, len = this._coordsLength();
-      for (idx = 0; idx < len; idx = idx + 1) {
-        vertex = this._getBluntVertexData(idx, this._coordsGetAsDArray(idx), this._radiusMeters);
-        this.vertexData.push(vertex);
+      var out = [], // array of buffered points heding out to end of the line string
+        back = []; // array of buffered points heading back to the first point of the line string;
+      this._vertexData = [];
+      this._firstVertexEndCap(out, back);
+      var idx, max = this._coordsLength() - 1;
+      for (idx = 1; idx < max; idx += 1) {
+        this._midVertexCurves(idx, out, back);
       }
-      var pFrom, pX, a1 = [], a2 = [], i, k;
-      for (idx = 0; idx < len; idx = idx + 1) {
-        vertex = this.vertexData[idx];
-        vertex.arc = null;
-        vertex.arcType = null;
-        if (vertex.toNext !== null) {
-          if (idx === 0) {
-            a1.push(vertex.toNext.plus90);
-          } else if (idx > 0 && idx < this.vertexData.length - 1) {
-            pFrom = this.vertexData[idx - 1];
-            var angle = vertex.toNext.heading - pFrom.toNext.heading;
-            if (angle < 0) {
-              angle += 360;
-            }
-            if (angle > 3 && angle < 357) {
-              if (angle <= 180) {
-                pX = $.simplicityGeoFn.intersection(
-                  pFrom.toNext.plus90, pFrom.toNext.heading,
-                  vertex.toNext.plus90, vertex.toNext.heading);
-                if (pX !== null) {
-                  vertex.toNext.plus90 = vertex.fromPrev.min90 = pX;
-                }
-                a1.push(vertex.fromPrev.min90);
-                a2.push(vertex.fromPrev.plus90);
-                a1.push(vertex.toNext.plus90);
-                // Then build arc between vertex.toNext.min90 and vertex.fromPrev.min90
-                pFrom = vertex.toNext.min90;
-                vertex.arc = this._getArc(angle, vertex.vertex, pFrom, this._radiusMeters, this._jointDegrees).reverse();
-                k = vertex.arc.length;
-                for (i = 0; i < k; i = i + 1) {
-                  a2.push(vertex.arc[i]);
-                }
+      this._lastVertexEndCap(max, out, back);
+      return this._getBufferedShapeArray(out, back);
+    },
+    /**
+     * Partner method to _getLineStringBufferPoints. This method updates the existing
+     * buffered shape by only addresses vertices that are impacted when a single
+     * vertex moves. When the firt and last vertices are moved, only their adjacent vertices
+     * will also need to be updated. For any connecting vertex, the preceding and
+     * subsequent vertices will need to be updated.
+     * 
+     * @name $.ui.simplicityMapShapeCreator._updateBufferedShape
+     * @function
+     * @private
+     * @param {int} idx The index of the vertex that has moved
+     * @returns {array} An array of coordinates for the Polygon representing the buffered LineString.
+     */
+    _updateBufferedShape: function (idx) {
+      var last = this._vertexData.length - 1;
+      var range,
+      out = [], // array of buffered points heding out to end of the line string
+      back = []; // array of buffered points heading back to the first point of the line string;
+      if (idx === 0) {
+        range = [0, 1];
+      } else if (idx === last) {
+        range = [idx - 1, idx];
+      } else {
+        range = [idx - 1, idx + 1];
+      }
+      var i, k = this._vertexData.length, vertex;
+      for (i = 0; i < k; i += 1) {
+        while (true) {
+          if (i > range[0] && i < range[1] ||
+              i > 0 && i === range[0] ||
+              i < last && i === range[1]) {
+            this._midVertexCurves(i, out, back);
+            break;
+          } else if (i === range[0]) { // First Vertex
+            this._firstVertexEndCap(out, back);
+            break;
+          } else if (i === range[1]) { // Last Vertex
+            this._lastVertexEndCap(i, out, back);
+            break;
+          }
+          // Copy vertices not linked to the dragged vertex
+          vertex = this._vertexData[i];
+          if (i === 0) {
+            out.push(vertex.toNext.out);
+            back.push.apply(back, vertex.arc);
+            back.push(vertex.toNext.back);
+          } else if (i === last) {
+            out.push(vertex.fromPrev.back);
+            out.push.apply(out, vertex.arc);
+            back.push(vertex.fromPrev.out);
+          } else {
+            if (vertex.angle < -3 || vertex.angle > 3) {
+              // If we're within 3 degrees of straight
+              var pushTo = vertex.angle < 0 ? [out, back] : [back, out];
+              if (vertex.arc.length > 0) {
+                pushTo[0].push.apply(pushTo[0], vertex.arc);
               } else {
-                pX = $.simplicityGeoFn.intersection(
-                  pFrom.toNext.min90, pFrom.toNext.heading,
-                  vertex.toNext.min90, vertex.toNext.heading);
-                if (pX !== null) {
-                  vertex.toNext.min90 = vertex.fromPrev.plus90 = pX;
-                }
-                a1.push(vertex.fromPrev.min90);
-                a2.push(vertex.fromPrev.plus90);
-                // Then build arc between vertex.fromPrev.plus90 and vertex.toNext.plus90
-                pFrom = vertex.fromPrev.min90;
-                vertex.arc = this._getArc(360 - angle, vertex.vertex, pFrom, this._radiusMeters, this._jointDegrees);
-                k = vertex.arc.length;
-                for (i = 0; i < k; i = i + 1) {
-                  a1.push(vertex.arc[i]);
-                }
-                a1.push(vertex.toNext.plus90);
+                pushTo[0].push(vertex.fromPrev.back);
+                pushTo[0].push(vertex.toNext.out);
+              }
+              if (vertex.intersect !== null) {
+                pushTo[1].push(vertex.intersect);
+              } else {
+                pushTo[1].push(vertex.fromPrev.out);
+                pushTo[1].push(vertex.toNext.back);
               }
             }
           }
-          pFrom = vertex.toNext.min90;
-          if (idx === 0) { // first point endcap
-            vertex.arc = this._getArc(180, vertex.vertex, pFrom, this._radiusMeters, this._capDegrees).reverse();
-            k = vertex.arc.length;
-            for (i = 0; i < k; i = i + 1) {
-              a2.push(vertex.arc[i]);
-            }
-          }
-          a2.push(pFrom);
-        } else { // last point endcap
-          pFrom = vertex.fromPrev.min90;
-          a1.push(pFrom);
-          vertex.arc = this._getArc(180, vertex.vertex, pFrom, this._radiusMeters, this._capDegrees);
-          k = vertex.arc.length;
-          for (i = 0; i < k; i = i + 1) {
-            a1.push(vertex.arc[i]);
-          }
-          a2.push(vertex.fromPrev.plus90);
+          break;
         }
       }
-      var bufferedLine = a1.concat(a2.reverse());
-      // LinearRing
-      bufferedLine.push(a1[0]);
-      return this._newCoordsArray(bufferedLine);
+      return this._getBufferedShapeArray(out, back);
+    },
+    /**
+     * Helper method to _getLineStringBufferPoints and _updateBufferedShape. Manages
+     * the creation of the endcap arc for the first vertex of the shape.
+     * 
+     * @name $.ui.simplicityMapShapeCreator._firstVertexEndCap
+     * @function
+     * @private
+     * @param {Array} out The reference to the array of outbound points
+     * @param {Array} back The reference to the array of inbound points
+     */
+    _firstVertexEndCap: function (out, back) {
+      var vertex = this._vertexData[0] = this._getBluntVertexData(0);
+      out.push(vertex.toNext.out);
+
+      vertex.arc = this._getArc(-180, vertex.vertex, vertex.toNext.out, this._radiusMeters, this._capDegrees);
+      back.push.apply(back, vertex.arc);
+      back.push(vertex.toNext.back);
+    },
+    /**
+     * Helper method to _getLineStringBufferPoints and _updateBufferedShape. Manages
+     * the creation of the endcap arc for the last vertex of the shape.
+     * 
+     * @name $.ui.simplicityMapShapeCreator._lastVertexEndCap
+     * @function
+     * @private
+     * @param {int} idx The index of the last vertex
+     * @param {Array} out The reference to the array of outbound points
+     * @param {Array} back The reference to the array of inbound points
+     */
+    _lastVertexEndCap: function (idx, out, back) {
+      var vertex = this._vertexData[idx] = this._getBluntVertexData(idx);
+      out.push(vertex.fromPrev.back);
+      vertex.arc = this._getArc(180, vertex.vertex, vertex.fromPrev.back, this._radiusMeters, this._capDegrees);
+      out.push.apply(out, vertex.arc);
+      back.push(vertex.fromPrev.out);
+    },
+    /**
+     * Helper method to _getLineStringBufferPoints and _updateBufferedShape. Manages
+     * the creation of the endcap arc for the last vertex of the shape.
+     * 
+     * @name $.ui.simplicityMapShapeCreator._midVertexCurves
+     * @function
+     * @private
+     * @param {int} idx The index of the connector vertex
+     * @param {Array} out The reference to the array of outbound points
+     * @param {Array} back The reference to the array of inbound points
+     */
+    _midVertexCurves: function (i, out, back) {
+      var pX, pFrom;
+      var vertex = this._vertexData[i] = this._getBluntVertexData(i);
+      vertex.arc = pX = null;
+
+      pFrom = this._vertexData[i - 1];
+      angle = vertex.toNext.heading - pFrom.toNext.heading;
+      angle -= angle > 180 ? 360 : 0;
+      angle += angle < -180 ? 360 : 0;
+      vertex.angle = angle;
+      if (angle < -3 || angle > 3) {
+        // If we're within 3 degrees of straight, we want to show the curve(s)
+        if (angle < 0) {
+          vertex.arc = this._getArc(-angle, vertex.vertex, vertex.fromPrev.back, this._radiusMeters, this._jointDegrees);
+          if (vertex.arc.length > 0) {
+            out.push.apply(out, vertex.arc);
+          } else {
+            out.push(vertex.fromPrev.back);
+            out.push(vertex.toNext.out);
+          }
+          pX = vertex.intersect = $.simplicityGeoFn.intersection(
+              pFrom.toNext.back, pFrom.toNext.heading,
+              vertex.toNext.back, vertex.toNext.heading);
+          if (pX !== null) {
+            back.push(pX);
+          } else {
+            back.push(vertex.fromPrev.out);
+            back.push(vertex.toNext.back);
+          }
+        } else {
+          pX = vertex.intersect = $.simplicityGeoFn.intersection(
+              pFrom.toNext.out, pFrom.toNext.heading,
+              vertex.toNext.out, vertex.toNext.heading);
+          if (pX !== null) {
+            // Coalesce the two vertices into the intersection
+            out.push(pX);
+          } else {
+            out.push(vertex.fromPrev.back);
+            out.push(vertex.toNext.out);
+          }
+          vertex.arc = this._getArc(-angle, vertex.vertex, vertex.fromPrev.out, this._radiusMeters, this._jointDegrees);
+          if (vertex.arc.length > 0) {
+            back.push.apply(back, vertex.arc);
+          } else {
+            back.push(vertex.fromPrev.out);
+            back.push(vertex.toNext.back);
+          }
+        }
+      }
+    },
+    /**
+     * Helper method to _getLineStringBufferPoints and _updateBufferedShape. Manages
+     * the creation of the final array of points making up the buffered shape. This
+     * array of points is in a state that can be used to create a polygon. It
+     * represents a LinearRing.
+     * 
+     * @name $.ui.simplicityMapShapeCreator._getBufferedShapeArray
+     * @function
+     * @private
+     * @param {Array} out The reference to the array of outbound points
+     * @param {Array} back The reference to the array of inbound points
+     */
+    _getBufferedShapeArray: function (out, back) {
+      // The back array is reversed since it was built at the same time
+      // as the outbound array.
+      out.push.apply(out, back.reverse());
+      // Make the LinearRing
+      out.push(out[0]);
+      return this._newCoordsArray(out);
     },
     destroy: function () {
       this._removeMapClickListener();

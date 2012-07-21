@@ -120,6 +120,27 @@
         this._polylineRadius.setLocations(v);
       }
     },
+    _bufferShape: function () {
+      if (this._geoJson.placemarks.type === 'LineString') {
+        var polyOptions = $.extend({}, this.options.polygonOptions);
+        if (this._polylineRadius) {
+          this._map.entities.remove(this._polylineRadius);
+        }
+        this._polylineRadius = new Microsoft.Maps.Polygon(this._getLineStringBufferPoints(), polyOptions);
+        this._map.entities.push(this._polylineRadius);
+      } else {
+        $.each(this._markers, $.proxy(function (idx, m) {
+          if (m.radiusCircle) {
+            this._map.entities.remove(m.radiusCircle);
+          }
+          if (this._radiusMeters) {
+            var center = this._latLngAsArray(m.marker.getLocation());
+            m.radiusCircle = this._createCircle(center);
+            this._map.entities.push(m.radiusCircle);
+          }
+        }, this));
+      }
+    },
     _unbufferShape: function () {
       $.each(this._markers, $.proxy(function (idx, m) {
         if (m.radiusCircle) {
@@ -131,27 +152,6 @@
         this._map.entities.remove(this._polylineRadius);
       }
       this._polylineRadius = null;
-    },
-    _bufferLineString: function (coords) {
-      this._unbufferShape();
-      var polyOptions = $.extend({}, this.options.polygonOptions);
-      if (this._polylineRadius) {
-        this._map.entities.remove(this._polylineRadius);
-      }
-      this._polylineRadius = new Microsoft.Maps.Polygon(coords, polyOptions);
-      this._map.entities.push(this._polylineRadius);
-    },
-    _bufferPoints: function () {
-      $.each(this._markers, $.proxy(function (idx, m) {
-        if (m.radiusCircle) {
-          this._map.entities.remove(m.radiusCircle);
-        }
-        if (this._radiusMeters) {
-          var center = this._latLngAsArray(m.marker.getLocation());
-          m.radiusCircle = this._createCircle(center);
-          this._map.entities.push(m.radiusCircle);
-        }
-      }, this));
     },
     _removeFromMap: function (object) {
       if (object !== null) {

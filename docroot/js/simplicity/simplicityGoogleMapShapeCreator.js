@@ -120,6 +120,30 @@
         this._polylineRadius.setPath(v);
       }
     },
+    _bufferShape: function () {
+      if (this._geoJson.placemarks.type === 'LineString') {
+        var polyOptions = $.extend({}, this.options.polygonOptions, {paths: this._getLineStringBufferPoints()});
+        if (this._polylineRadius) {
+          this._polylineRadius.setMap(null);
+        }
+        this._polylineRadius = new google.maps.Polygon(polyOptions);
+        this._polylineRadius.setMap(this._map);
+      } else {
+        $.each(this._markers, $.proxy(function (idx, m) {
+          if (m.radiusCircle) {
+            m.radiusCircle.setRadius(this._radiusMeters);
+          } else if (this._radiusMeters) {
+            m.radiusCircle = new google.maps.Circle(
+              $.extend({}, this.options.polygonOptions, this.options.circleOptions,
+              {
+                center: m.marker.getPosition(),
+                radius: this._radiusMeters
+              }));
+            m.radiusCircle.setMap(this._map);
+          }
+        }, this));
+      }
+    },
     _unbufferShape: function () {
       $.each(this._markers, $.proxy(function (idx, m) {
         if (m.radiusCircle) {
@@ -131,30 +155,6 @@
         this._polylineRadius.setMap(null);
       }
       this._polylineRadius = null;
-    },
-    _bufferLineString: function (coords) {
-      this._unbufferShape();
-      var polyOptions = $.extend({}, this.options.polygonOptions, {paths: coords});
-      if (this._polylineRadius) {
-        this._polylineRadius.setMap(null);
-      }
-      this._polylineRadius = new google.maps.Polygon(polyOptions);
-      this._polylineRadius.setMap(this._map);
-    },
-    _bufferPoints: function () {
-      $.each(this._markers, $.proxy(function (idx, m) {
-        if (m.radiusCircle) {
-          m.radiusCircle.setRadius(this._radiusMeters);
-        } else if (this._radiusMeters) {
-          m.radiusCircle = new google.maps.Circle(
-            $.extend({}, this.options.polygonOptions, this.options.circleOptions,
-            {
-              center: m.marker.getPosition(),
-              radius: this._radiusMeters
-            }));
-          m.radiusCircle.setMap(this._map);
-        }
-      }, this));
     },
     _removeShapeFromMap: function () {
       if (this._currentMapShape !== null) {

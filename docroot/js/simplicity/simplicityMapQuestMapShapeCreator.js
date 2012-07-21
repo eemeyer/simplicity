@@ -126,6 +126,31 @@
         this._polylineRadius.setShapePoints(v);
       }
     },
+    _bufferShape: function () {
+      if (this._geoJson.placemarks.type === 'LineString') {
+        this._polylineRadius = new MQA.PolygonOverlay();
+        this._polylineRadius.setShapePoints(this._getLineStringBufferPoints());
+        this._polylineRadius.setValues($.extend({}, this.options.polygonOptions));
+        this._mapShapes.add(this._polylineRadius);
+      } else {
+        $.each(this._markers, $.proxy(function (idx, m) {
+          if (m.radiusCircle) {
+            m.radiusCircle.setRadius(this.options.radius);
+            this._mapShapes.removeItem(m.radiusCircle);
+          } else if (this.options.radius) {
+            m.radiusCircle = new MQA.CircleOverlay();
+            m.radiusCircle.setRadiusUnit(this.options.distanceUnit);
+            m.radiusCircle.setValues($.extend({}, this.options.polygonOptions, this.options.circleOptions));
+            m.radiusCircle.setRadius(this.options.radius);
+            m.radiusCircle.setShapePoints([m.marker.latLng.lat, m.marker.latLng.lng]);
+            this._mapShapes.add(m.radiusCircle);
+          }
+          if (!this._mapShapes.contains(m.radiusCircle)) {
+            this._mapShapes.add(m.radiusCircle);
+          }
+        }, this));
+      }
+    },
     _unbufferShape: function () {
       $.each(this._markers, $.proxy(function (idx, m) {
         if (m.radiusCircle) {
@@ -137,31 +162,6 @@
         this._removeFromMap(this._polylineRadius);
         this._polylineRadius = null;
       }
-    },
-    _bufferLineString: function (coords) {
-      this._unbufferShape();
-      this._polylineRadius = new MQA.PolygonOverlay();
-      this._polylineRadius.setShapePoints(coords);
-      this._polylineRadius.setValues($.extend({}, this.options.polygonOptions));
-      this._mapShapes.add(this._polylineRadius);
-    },
-    _bufferPoints: function () {
-      $.each(this._markers, $.proxy(function (idx, m) {
-        if (m.radiusCircle) {
-          m.radiusCircle.setRadius(this.options.radius);
-          this._mapShapes.removeItem(m.radiusCircle);
-        } else if (this.options.radius) {
-          m.radiusCircle = new MQA.CircleOverlay();
-          m.radiusCircle.setRadiusUnit(this.options.distanceUnit);
-          m.radiusCircle.setValues($.extend({}, this.options.polygonOptions, this.options.circleOptions));
-          m.radiusCircle.setRadius(this.options.radius);
-          m.radiusCircle.setShapePoints([m.marker.latLng.lat, m.marker.latLng.lng]);
-          this._mapShapes.add(m.radiusCircle);
-        }
-        if (!this._mapShapes.contains(m.radiusCircle)) {
-          this._mapShapes.add(m.radiusCircle);
-        }
-      }, this));
     },
     _removeFromMap: function (object) {
       if (object !== null) {

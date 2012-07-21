@@ -125,6 +125,28 @@
         this._polylineRadius.set('path', v);
       }
     },
+    _bufferShape: function () {
+      if (this._geoJson.placemarks.type === 'LineString') {
+        var polyOptions = $.extend({}, this.options.polygonOptions);
+        this._polylineRadius = new nokia.maps.map.Polygon(this._getLineStringBufferPoints(), polyOptions);
+        this._map.objects.add(this._polylineRadius);
+      } else {
+        $.each(this._markers, $.proxy(function (idx, m) {
+          if (m.radiusCircle) {
+            m.radiusCircle.set($.extend({}, {"radius": this._radiusMeters}));
+          } else if (this._radiusMeters) {
+            m.radiusCircle = new nokia.maps.map.Circle(
+              m.marker.coordinate,
+              this._radiusMeters,
+              $.extend({}, this.options.polygonOptions, this.options.circleOptions));
+            this._map.objects.add(m.radiusCircle);
+          }
+          if (this._map.objects.indexOf(m.radiusCircle) === -1) {
+            this._map.objects.add(m.radiusCircle);
+          }
+        }, this));
+      }
+    },
     _unbufferShape: function () {
       $.each(this._markers, $.proxy(function (idx, m) {
         if (m.radiusCircle) {
@@ -136,28 +158,6 @@
         this._removeFromMap(this._polylineRadius);
         this._polylineRadius = null;
       }
-    },
-    _bufferLineString: function (coords) {
-      this._unbufferShape();
-      var polyOptions = $.extend({}, this.options.polygonOptions);
-      this._polylineRadius = new nokia.maps.map.Polygon(coords, polyOptions);
-      this._map.objects.add(this._polylineRadius);
-    },
-    _bufferPoints: function () {
-      $.each(this._markers, $.proxy(function (idx, m) {
-        if (m.radiusCircle) {
-          m.radiusCircle.set($.extend({}, {"radius": this._radiusMeters}));
-        } else if (this._radiusMeters) {
-          m.radiusCircle = new nokia.maps.map.Circle(
-            m.marker.coordinate,
-            this._radiusMeters,
-            $.extend({}, this.options.polygonOptions, this.options.circleOptions));
-          this._map.objects.add(m.radiusCircle);
-        }
-        if (this._map.objects.indexOf(m.radiusCircle) === -1) {
-          this._map.objects.add(m.radiusCircle);
-        }
-      }, this));
     },
     _removeFromMap: function (object) {
       if (object !== null) {
