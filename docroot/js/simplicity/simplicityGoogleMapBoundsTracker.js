@@ -27,23 +27,36 @@
      *   <dd>
      *     Provides an override of which vendor specific map events are used to determine
      *     when the position of the map changes. Expects a comma separated list of event names.
-     *     Defaults to <code>'idle'</code>.
+     *     Defaults to <code>'dragstart,idle,dragend'</code> when <code>idleWhileDragging</code> is
+     *     enabled, otherwise <code>'idle'</code>.
+     *   </dd>
+     *   <dt>idleWhileDragging</dt>
+     *   <dd>
+     *     Provided that option <code>mapMoveEvents</code> targets event <code>'idle'</code>, then this option
+     *     will enable the <code>idle</code> event to trigger a bounds change even while dragging the map.
+     *     Defaults to <code>false</code>.
+     *   </dd>
      * </dl>
      * @name $.ui.simplicityGoogleMapBoundsTracker.options
      */
     options: {
       map: '',
-      mapMoveEvents: 'idle'
+      mapMoveEvents: '',
+      idleWhileDragging: false
     },
     _create: function () {
       this._addClass('ui-simplicity-google-map-bounds-tracker');
       this._map = this.options.map !== '' ? this.options.map : this.element.simplicityGoogleMap('map');
       this._boundsShapes = [];
       this._boundsChangeListeners = {};
+      this._dragging = false;
+      if (this.options.mapMoveEvents === '') {
+        this.options.mapMoveEvents = this.options.idleWhileDragging ? 'idle' : 'dragstart,idle,dragend';
+      }
       $.each(this.options.mapMoveEvents.split(','), $.proxy(function (idx, eventName) {
         eventName = $.trim(eventName);
         if (eventName !== '') {
-          var listener = google.maps.event.addListener(this._map, eventName, $.proxy(this._mapBoundsChangeHandler, this));
+          var listener = google.maps.event.addListener(this._map, eventName, $.proxy(this._mapBoundsChangeHandler(eventName), this));
           this._boundsChangeListeners[eventName] = listener;
         }
       }, this));
@@ -57,12 +70,27 @@
     map: function () {
       return this._map;
     },
-    _mapBoundsChangeHandler: function () {
-      var bounds = this.bounds();
-      if (this.options.debug) {
-        console.log('simplicityGoogleMapBoundsTracker: Bounds changed', bounds);
-      }
-      this._trigger('bounds', {}, bounds);
+    _mapBoundsChangeHandler: function (eventName) {
+      return function () {
+        if (!this.options.idleWhileDragging) {
+          if (eventName === 'dragstart') {
+            this._dragging = true;
+            return;
+          } else if (eventName === 'dragend') {
+            this._dragging = false;
+          } else if (this._dragging) {
+            return;
+          }
+        }
+        var bounds = this.bounds();
+        if (!bounds.bounds.vendor.equals(this._lastBounds)) {
+          this._lastBounds = bounds.bounds.vendor;
+          if (this.options.debug) {
+            console.log('simplicityGoogleMapBoundsTracker: Bounds changed', bounds);
+          }
+          this._trigger('bounds', {}, bounds);
+        }
+      };
     },
     /**
      * Returns the normalized bounds for this map.
