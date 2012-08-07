@@ -55,6 +55,10 @@
      *   <dd>
      *     When <code>true</code> enables triggering of the simplicitySearchResultSet event. Defaults to <code>false</code>.
      *   </dd>
+     *   <dt>extractResultSet</dt>
+     *   <dd>
+     *     When <code>true</code> a standardized resultSet dictionary is available. Defaults to <code>true</code>.
+     *   </dd>
      * </dl>
      * @name $.ui.simplicityDiscoverySearch.options
      */
@@ -66,6 +70,7 @@
       debug: false,
       triggerFacetCountEvent: false,
       triggerResultSetEvent: false,
+      extractResultSet: true,
       profile: false,
       getPayloadParam: ''
     },
@@ -247,7 +252,9 @@
       if (this.options.triggerFacetCountEvent) {
         searchResponse.drillDown = this.extractFacetCounts(response);
       }
-      searchResponse.resultSet = this.extractResultSet(response);
+      if (this.options.extractResultSet) {
+        searchResponse.resultSet = this.extractResultSet(response);
+      }
       this._searchResponse = JSON.stringify(searchResponse);
       if (triggerEvent !== false) {
         this.element.triggerHandler('simplicitySearchResponse',
@@ -256,7 +263,7 @@
       if (this.options.triggerFacetCountEvent) {
         this.facetCounts(searchResponse.drillDown, triggerEvent);
       }
-      if (this.options.triggerResultSetEvent) {
+      if (this.options.triggerResultSetEvent && this.options.extractResultSet) {
         this.resultSet(searchResponse.resultSet, triggerEvent);
       }
       if (triggerEvent !== false) {
