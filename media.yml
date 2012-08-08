@@ -94,13 +94,6 @@ groups:
     sourceFileNames:
       - js/simplicity/simplicityLoadJs.js
 
-  - groupName: jquery_ui_css
-    mediaType: css
-    outputFileName: css/build/jquery-ui-1.8.16.custom.css
-    outputFileNameMinified: css/build/jquery-ui-1.8.16.custom.min.css
-    sourceFileNames:
-      - css/lib/redmond/jquery-ui-1.8.16.custom.css
-
   - groupName: jquery_pagination_js
     mediaType: js
     jslint: off
