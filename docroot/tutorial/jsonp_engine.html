@@ -66,6 +66,7 @@
 
       $('body').simplicityDiscoverySearch({
         url: $('#engineUrl').val(),
+        getPayloadParam: 'q',
         dataType: 'jsonp'
       });
       $('#engineUrl').change(function (evt) {
