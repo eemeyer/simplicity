@@ -21,6 +21,10 @@
      * Widget options.
      *
      * <dl>
+     *   <dt>url</dt>
+     *   <dd>
+     *     The required url to submit the search query.
+     *   </dd>
      *   <dt>stateElement</dt>
      *   <dd>
      *     The location of the simplicityState widget. Defaults to <code>'body'</code>.
@@ -33,6 +37,15 @@
      *   <dd>
      *     The initial search response. Used when a page has a server-side search triggered during load.
      *     Defaults to <code>{}</code>.
+     *   </dd>
+     *   <dt>backend</dt>
+     *   <dd>
+     *     Defaults to 'controller', change to 'engine' to allow for direct queries to an engine.
+     *   </dd>
+     *   <dt>controllerCallback</dt>
+     *   <dd>
+     *     The a provided callback that completes or modifies the search query when option <code>backend</code>
+     *     is 'engine'. Defaults to <code>''</code>.
      *   </dd>
      *   <dt>dataType</dt>
      *   <dd>
@@ -63,6 +76,8 @@
      * @name $.ui.simplicityDiscoverySearch.options
      */
     options : {
+      url: '',
+      backend: 'controller',
       stateElement: 'body',
       searchOnStateChange: true,
       initialSearchResponse: {},
@@ -78,8 +93,7 @@
       this._addClass('ui-simplicity-discovery-search');
       this.searchResponse(JSON.stringify(this.options.initialSearchResponse), false);
       this._bind(this.options.stateElement, 'simplicityStateChange', this._stateChangeHandler);
-      this._ajaxHelperSearch = $.simplicityAjaxHelper(this);
-      this._ajaxHelperQuery = $.simplicityAjaxHelper(this);
+      this._ajaxHelper = $.simplicityAjaxHelper(this);
     },
     _stateChangeHandler: function (evt, state) {
       if (this.options.searchOnStateChange) {
@@ -114,18 +128,45 @@
      *     $('body').simplicityDiscoverySearch('search');
      *   });
      */
-    search: function (searchState) {
+    search: function (stateOrDiscoveryRequest) {
+      if (this.options.url === '') {
+        if (this.options.debug) {
+          console.log("Option url is required.");
+        }
+        return;
+      }
       if (arguments.length === 0) {
-        searchState = $(this.options.stateElement).simplicityState('state');
+        if (this.options.backend === 'engine' && !$.isFunction(this.options.controllerCallback)) {
+          if (this.options.debug) {
+            console.log("Backend type 'engine' requires controllerCallback to be valid function.");
+          }
+          return;
+        }
+        stateOrDiscoveryRequest = $(this.options.stateElement).simplicityState('state');
+      }
+      var request;
+      if ($.isFunction(this.options.controllerCallback)) {
+        request = this.options.controllerCallback(stateOrDiscoveryRequest);
+      } else {
+        request = stateOrDiscoveryRequest;
+      }
+      var ajaxData = request;
+      if (this.options.dataType === 'jsonp') {
+        if (this.options.getPayloadParam !== '') {
+          ajaxData = {};
+          ajaxData[this.options.getPayloadParam] = JSON.stringify(request);
+        }
+      } else if (this.options.backend === 'engine') {
+        ajaxData = JSON.stringify(request);
       }
       if (this.options.debug) {
-        console.log('Searching for ', this.element, 'with state', searchState);
+        console.log('Searching by "', this.options.backend, '" for ', this.element, 'with request', ajaxData);
       }
       var ajaxOptions = {
           url: this.options.url,
-          type: 'GET',
+          type: this.options.backend === 'controller' || this.options.dataType === 'jsonp' ? "GET" : "POST",
           contentType: 'application/json',
-          data: searchState,
+          data: ajaxData,
           dataType: this.options.dataType,
           cache: false,
           beforeSend: $.proxy(this._beforeSend, this),
@@ -137,57 +178,21 @@
             }
             this.element.triggerHandler('ajaxSuccess', data, textStatus, xhr);
             this._addHeadersToResponse(data, xhr);
+            if (this.options.backend === "engine") {
+              // decorate engine response for compatibility with widgets
+              data = {
+                _discovery: {
+                  request: request,
+                  response: data
+                }
+              };
+            }
             this.searchResponse(data);
           }
         };
       this.element.triggerHandler('simplicitySearchSearching');
       this.element.triggerHandler('ajaxSetup', ajaxOptions);
-      this._ajaxHelperSearch.ajax(ajaxOptions);
-    },
-    query: function (jsonString) {
-      var data = jsonString;
-      if (this.options.dataType === 'jsonp') {
-        try {
-          if (this.options.getPayloadParam !== '') {
-            data = {};
-            data[this.options.getPayloadParam] = JSON.stringify(JSON.parse(jsonString));
-          } else {
-            data = JSON.parse(jsonString);
-          }
-        }
-        catch (e) {
-          this.searchResponse({error: true, message: "Invalid request JSON"});
-          return;
-        }
-      }
-      var ajaxOptions = {
-          url: this.options.url,
-          type: 'POST',
-          contentType: 'application/json',
-          data: data,
-          dataType: this.options.dataType,
-          cache: false,
-          beforeSend: $.proxy(this._beforeSend, this),
-          debug: this.options.debug,
-          error: this._errorHandler,
-          success: function (data, textStatus, xhr) {
-              if (this.options.debug) {
-                console.log('Search success for', this.element, 'with response', data);
-              }
-              this.element.triggerHandler('ajaxSuccess', data, textStatus, xhr);
-              var response = {
-                  _discovery: {
-                    request: JSON.parse(jsonString),
-                    response: data
-                  }
-                };
-              this._addHeadersToResponse(response, xhr);
-              this.searchResponse(response);
-            }
-        };
-      this.element.triggerHandler('simplicitySearchSearching');
-      this.element.triggerHandler('ajaxSetup', ajaxOptions);
-      this._ajaxHelperQuery.ajax(ajaxOptions);
+      this._ajaxHelper.ajax(ajaxOptions);
     },
     _beforeSend: function (xhr) {
       if (this.options.profile) {
@@ -477,10 +482,7 @@
       return resultSet;
     },
     searchStats: function () {
-      return this._ajaxHelperSearch.getStats();
-    },
-    queryStats: function () {
-      return this._ajaxHelperQuery.getStats();
+      return this._ajaxHelper.getStats();
     }
   });
   $.fn.simplicityDiscoverySearchItemEnumerator = function (searchResponse, callback) {

@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
   <head>
-    <title>Direct Engine Query via JSONP</title>
+    <title>Direct Engine Query via CORS</title>
     <link href="../css/lib/yui-grids-min-3.2.0.css" rel="stylesheet" type="text/css" />
     <link href="../css/lib/jquery-ui-1.8.22/redmond/jquery-ui-1.8.22.custom.css" rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" href="../images/favicon.jpg"/>
@@ -20,13 +20,13 @@
     </style>
   </head>
   <body>
-    <h1><a href="index.html">home</a> | Direct Engine Query via JSONP</h1>
+    <h1><a href="index.html">home</a> | Direct Engine Query via CORS</h1>
     <div id="main">
       <form id="myForm" onsubmit="return false;">
         <fieldset class="ui-widget ui-widget-content">
           <legend>JSONP</legend>
           <button id="searchButton">Search</button>
-          <input id="engineUrl" value="http://tutorial.discoverysearchengine.com:8090/json/query"></input>
+          <input id="engineUrl" value="http://gsa.discoverysearchengine.com:8090/json/query"></input>
         </fieldset>
         <div class="yui3-g">
           <div class="yui3-u-1-2">
@@ -38,7 +38,7 @@
       "dimension": ""
     }
   ],
-  "properties": "",
+  "properties": [],
   "startIndex": 0,
   "pageSize": 10
 }</textarea>
@@ -60,15 +60,18 @@
     <script type="text/javascript" src="../js/simplicity/simplicityProxy.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityWidget.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityAjaxHelper.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/simplicity/simplicityState.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/simplicity/simplicityDiscoverySearch.js" charset="utf-8"></script>
     <script type="text/javascript">
       $('#body fieldset').addClass("ui-widget ui-widget-content");
 
-      $('body').simplicityDiscoverySearch({
-        url: $('#engineUrl').val(),
-        getPayloadParam: 'q',
-        dataType: 'jsonp'
-      });
+      $('body')
+        .simplicityState()
+        .simplicityDiscoverySearch({
+          url: $('#engineUrl').val(),
+          backend: "engine",
+          debug: true
+        });
       $('#engineUrl').change(function (evt) {
         $('body').simplicityDiscoverySearch('option', 'url', $('#engineUrl').val());
       });
@@ -85,7 +88,16 @@
       });
       $('#searchButton').button().click(function (evt) {
         $('body').simplicityDiscoverySearch('searchResponse', {message: "Searching..."});
-        $('body').simplicityDiscoverySearch('query', $('#request').val());
+        var jsonString = $('#request').val(), discoveryRequest = {};
+        if (jsonString) {
+          try {
+            discoveryRequest = JSON.parse(jsonString);
+            $('body').simplicityDiscoverySearch('search', discoveryRequest);
+          }
+          catch (e) {
+            $('body').simplicityDiscoverySearch('searchResponse', {error: true, message: "Invalid request JSON"});
+          }
+        }
         evt.stopPropagation();
       });
     </script>
