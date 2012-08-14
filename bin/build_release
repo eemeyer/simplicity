@@ -1,0 +1,32 @@
+#!/bin/sh
+
+set -e
+
+if [ $# -ne 1 ]; then
+    echo >&2 "Usage: $(basename $0) version"
+    exit 1
+fi
+
+VERSION="$1"
+ORIG_DIR="$PWD"
+WORKSPACE="$HOME/workspace"
+TMP_DIR="/tmp/simplicity-$$"
+
+echo >&2 "Extracting release $VERSION in $TMP_DIR"
+mkdir "$TMP_DIR"
+
+cd "$TMP_DIR"
+git init
+git pull "$ORIG_DIR" "refs/tags/$VERSION"
+
+ant "-Dversion=$VERSION" clean dist
+
+cp "simplicity-$VERSION.zip" "$WORKSPACE/archives/"
+cd "$WORKSPACE/releases"
+if [ -d "simplicity-$VERSION" ]; then
+    echo >&2 "Unpacked release already exists, removing it"
+    rm -rf "simplicity-$VERSION"
+fi
+unzip "../archives/simplicity-$VERSION"
+
+rm -rf "$TMP_DIR"
