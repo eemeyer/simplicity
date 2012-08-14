@@ -1,7 +1,7 @@
 <?php
-require("../../util.php");
-
 error_reporting(E_WARNING);
+require("../../util.php");
+enable_cors();
 
 if (array_key_exists("itemIds", $_GET)) {
     $itemIds = explode(" ", $_GET["itemIds"]);

@@ -1,7 +1,7 @@
 <?php
-require("../../util.php");
-
 error_reporting(E_WARNING);
+require("../../util.php");
+enable_cors();
 
 $pageSize = 5;
 $startIndex = 0;
