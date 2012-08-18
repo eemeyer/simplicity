@@ -88,7 +88,7 @@
       if ('undefined' !== typeof val.min || 'undefined' !== typeof val.max) {
         var v = ["["];
         $.each([val.min, val.max], function (idx, f) {
-          v.push = f || "";
+          v.push(f || "");
           v.push(idx === 0 ? "," : "");
         });
         v.push("]");
