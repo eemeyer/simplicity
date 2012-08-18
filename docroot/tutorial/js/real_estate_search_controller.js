@@ -126,11 +126,11 @@
       }
     });
     discoveryRequest.facets = {
-      type: {includeLable: false},
-      condition: {includeLable: false},
-      bedroom: {includeLable: false},
+      type: {includeLabel: false},
+      condition: {includeLabel: false},
+      bedroom: {includeLabel: false},
       style: {
-        includeLable: false,
+        includeLabel: false,
         ids: ["multi-family", "apartment", "condo", "co-op", "townhome",
               "single-family", "colonial", "classical", "victorian", "contemporary"]
       }
