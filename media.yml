@@ -97,7 +97,7 @@ groups:
   - groupName: real_estate_cors_js
     mediaType: js
     outputFileName: js/build/realestate_cors.js
-    outputFileNameMinified: docroot/js/build/realestate_cors.min.js
+    outputFileNameMinified: js/build/realestate_cors.min.js
     sourceFileNames:
       - tutorial/js/real_estate_search_controller.js
       - tutorial/js/real_estate_search_results.js
