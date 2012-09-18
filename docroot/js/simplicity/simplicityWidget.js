@@ -28,12 +28,9 @@
      * Wrapper around $.bind that registers a destroy hook.
      *
      * The traditional use of:
-     * @example
-     *   $(selector).bind('click', $.proxy(this._handler, this));
-     *
+     * <pre>$(selector).bind('click', $.proxy(this._handler, this));</pre>
      * Would be written as:
-     * @example
-     *     this._bind(selector, 'click', this._handler);
+     * <pre>this._bind(selector, 'click', this._handler);</pre>
      *
      * @name $.ui.simplicityWidget._bind
      * @function

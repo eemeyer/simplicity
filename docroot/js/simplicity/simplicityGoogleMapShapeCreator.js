@@ -12,7 +12,7 @@
  *   &lt;script type="text/javascript">
  *     $('#map').simplicityGoogleMap();
  *     $('#map').simplicityGoogleMapShapeCreator({
- *       input: $('<input name="placemark"/>').simplicityInputs()
+ *       input: $('&lt;input name="placemark"/>').simplicityInputs()
  *     });
  *   &lt;/script>
  *

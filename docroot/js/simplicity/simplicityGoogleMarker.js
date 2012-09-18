@@ -22,13 +22,12 @@
    *   <dt>template</dt>
    *   <dd>
    *     The HTML for the marker. The template is converted to a jQuery object.
-   *     Defaults to <code><p>
-   *       &nbsp;&lt;div><br/>
-   *         &nbsp;&nbsp;&lt;div class="row"/><br/>
-   *         &nbsp;&nbsp;&lt;div class="ptr"/><br/>
-   *         &nbsp;&nbsp;&lt;div class="shadow"/><br/>
-   *       &nbsp;&lt;/div>
-   *       </p></code>
+   *     Defaults to <pre>
+   * &lt;div>
+   *   &lt;div class="row"/>
+   *   &lt;div class="ptr"/>
+   *   &lt;div class="shadow"/>
+   * &lt;/div></pre>
    *   </dd>
    *   <dt>html</dt>
    *   <dd>

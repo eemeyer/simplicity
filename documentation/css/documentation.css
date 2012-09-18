@@ -1,0 +1,121 @@
+.jsdoc h1 {
+    font-size: x-large;
+}
+
+.jsdoc #content h2 {
+    font-size: inherit;
+    line-height: inherit;
+    margin: inherit;
+}
+
+.jsdoc #index h2 {
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.jsdoc hr {
+    border: none 0;
+    border-top: 1px solid #7F8FB1;
+    height: 1px;
+    margin: 0.5em 0 0.5em 0;
+}
+
+.jsdoc #index {
+    padding: 1em;
+    background-color: #F3F3F3;
+}
+
+.jsdoc .classList {
+    list-style-type: none;
+    margin: 0;
+}
+
+.jsdoc dl {
+    margin: inherit;
+}
+
+.jsdoc .detailList dt.heading {
+     font-weight: bold;
+     margin-left: 0em;
+}
+
+.jsdoc .detailList dt {
+    font-weight: inherit;
+    margin-left: 2em;
+}
+
+.jsdoc .detailList dd {
+    margin-left: 4em;
+}
+
+.jsdoc dt code {
+    padding: inherit;
+    color: inherit;
+    background-color: inherit;
+    border: inherit;   
+}
+
+.jsdoc pre {
+    font-size: 80%;
+    padding: 0.5em 1em 0.5em 1em;
+}
+
+.jsdoc .light,
+.jsdoc td.attributes {
+    color: #777;
+    font-style: italic;
+}
+
+.jsdoc .summaryTable {
+    width: 100%;
+}
+
+.jsdoc caption,
+.jsdoc div.sectionTitle  {
+    background-color: #7F8FB1;
+    color: #fff;
+    font-size: larger;
+    text-align: left;
+    padding: 0.25em 0.5em 0.25em 0.5em;
+    border: 1px #7F8FB1 solid;
+}
+
+.jsdoc div.sectionTitle {
+    margin-bottom: 0.5em;
+}
+
+.jsdoc .summaryTable thead {
+    display: none;
+}
+
+.jsdoc .summaryTable td {
+    vertical-align: top;
+    padding: 0.5em 1em 0.5em 1em;
+    border-bottom: 1px #7F8FB1 solid;
+    border-right: 1px #7F8FB1 solid;
+}
+
+.jsdoc .summaryTable td.attributes {
+    border-left: 1px #7F8FB1 solid;
+    width: 10em;
+    text-align: right;
+}
+
+.jsdoc td.attributes,
+.jsdoc .fixedFont {
+    color: #002EBE;
+    font-family: monospace;
+}
+
+.jsdoc .summaryTable td.nameDescription {
+    text-align: left;
+}
+
+.jsdoc .summaryTable {
+    margin-bottom: 1em;
+}
+
+.jsdoc .fineprint {
+    text-align: right;
+    font-size: 10px;
+}

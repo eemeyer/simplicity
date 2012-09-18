@@ -1,0 +1,31 @@
+#!/bin/sh
+set -e
+
+# Builds the jsdoc and commits it to the local gh-pages branch
+
+SHA="$(git rev-parse HEAD)"
+PROJECT_DIR="$(pwd)"
+
+TMP_DIR="/tmp/simplicity-documentation-$$"
+echo >&2 "Staging documentation at $TMP_DIR"
+mkdir "$TMP_DIR"
+
+cd "$TMP_DIR"
+git init
+git pull "$PROJECT_DIR" gh-pages
+
+echo "Building and copying jsdoc"
+cd "$PROJECT_DIR"
+ant clean documentation
+rm -rf "$TMP_DIR"/*
+cp -r build.ant/documentation/* "$TMP_DIR/"
+
+echo "Committing jsdoc"
+cd "$TMP_DIR"
+git add --all .
+git commit -m "Updates documentation from ${SHA}."
+
+echo "Publishing jsdoc"
+git push "$PROJECT_DIR" master:gh-pages
+cd "$PROJECT_DIR"
+rm -rf "$TMP_DIR"

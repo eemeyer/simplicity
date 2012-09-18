@@ -74,14 +74,13 @@
      *     (selector '.available-container'). Also acts as the default for <code>selectedTemplate</code>
      *     and <code>overflowTemplate</code>.
      *     <p>Default:</p>
-     *     <code>
-     *      &lt;ul class="options ui-helper-clearfix"><br/>
-     *        &nbsp;&lt;li class="option ui-helper-clearfix"><br/>
-     *        &nbsp;&nbsp;&lt;a href="#" class="label"/><br/>
-     *        &nbsp;&nbsp;&lt;span class="count"/><br/>
-     *        &nbsp;&lt;/li><br/>
-     *      &lt;/ul><br/>
-     *     </code>
+     *     <pre>
+     *&lt;ul class="options ui-helper-clearfix">
+     *  &lt;li class="option ui-helper-clearfix">
+     *    &lt;a href="#" class="label"/>
+     *    &lt;span class="count"/>
+     *  &lt;/li>
+     *&lt;/ul></pre>
      *   </dd>
      *   <dt>selectedTemplate</dt>
      *   <dd>

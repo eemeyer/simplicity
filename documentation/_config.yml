@@ -1,0 +1,8 @@
+destination: ../build.ant/documentation/
+topnav:
+  - nav: home
+    label: home
+    url: /
+  - nav: jsdoc
+    label: jsdoc
+    url: /jsdoc/

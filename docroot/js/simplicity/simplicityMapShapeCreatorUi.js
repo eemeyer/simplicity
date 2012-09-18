@@ -9,7 +9,7 @@
  *   &lt;script type="text/javascript">
  *     $('#map').simplicityGoogleMap();
  *     $('#map').simplicityGoogleMapShapeCreator({
- *       input: $('<input name="placemark"/>').simplicityInputs()
+ *       input: $('&lt;input name="placemark"/>').simplicityInputs()
  *     });
  *     $('#ui').simplicityMapShapeCreatorUi({
  *       shapeCreator: '#map'
@@ -57,16 +57,16 @@
      *     The selector to use for identify simplicity radius selection control. The selector's element
      *     moved to the DOM location via <code>$(this.options.template).find('.radius .control')</code>.
      *     <p>Defaults to</p>
-     *     <code>
-     *       &lt;select class="radius"><br/>
-     *          &nbsp;&nbsp;&lt;option value="0.5">½ mile&lt;/option><br/>
-     *          &nbsp;&nbsp&lt;option value="1">1 mile&lt;/option><br/>
-     *          &nbsp;&nbsp&lt;option value="5">5 miles&lt;/option><br/>
-     *          &nbsp;&nbsp&lt;option value="10">10 miles&lt;</option><br/>
-     *          &nbsp;&nbsp&lt;option value="20">20 miles&lt;/option><br/>
-     *          &nbsp;&nbsp&lt;option value="50">50 miles&lt;/option><br/>
-     *          &nbsp;&nbsp&lt;option value="0">None&lt;/option><br/>
-     *       &lt;/select></code>
+     *     <pre>
+     *&lt;select class="radius">
+     *  &lt;option value="0.5">½ mile&lt;/option>
+     *  &lt;option value="1">1 mile&lt;/option>
+     *  &lt;option value="5">5 miles&lt;/option>
+     *  &lt;option value="10">10 miles&lt;</option>
+     *  &lt;option value="20">20 miles&lt;/option>
+     *  &lt;option value="50">50 miles&lt;/option>
+     *  &lt;option value="0">None&lt;/option>
+     *&lt;/select></pre>
      *   </dd>
      *   <dt><code>geocoderInput</code></dt>
      *   <dd>
@@ -86,17 +86,17 @@
      *   <dd>
      *     The html template to use for the UI.
      *     <p>Defaults to</p>
-     *     <code>
-     *       &lt;div class="ui"><br/>
-     *          &nbsp;&nbsp;&lt;span class="geocoder"/><br/>
-     *          &nbsp;&nbsp;&lt;span class="radius">Radius&lt;span class="control"/>&lt;/span><br/>
-     *          &nbsp;&nbsp;&lt;span class="tbBox"><br/>
-     *            &nbsp;&nbsp;&nbsp;&lt;button class="drawBtn btn" title="Start drawing a shape to search on the map.">&lt;i class="icon-edit">&lt;/i>&lt;span>Draw&lt;/span>&lt;/button><br/>
-     *            &nbsp;&nbsp;&nbsp;&lt;button class="linkerBtn btn" title="Click to draw points only">&lt;span>●­­–●–●&lt;/span>&lt;/button><br/>
-     *            &nbsp;&nbsp;&nbsp;&lt;button class="clear btn" title="Clear any drawn shape">&lt;i class="icon-remove">&lt;/i> Clear&lt;/button><br/>
-     *            &nbsp;&nbsp;&nbsp;&lt;button class="showhelp btn" title="Show help">&lt;i class="icon-info-sign">&lt;/i> Help&lt;/button><br/>
-     *          &nbsp;&nbsp;&lt;/span><br/>
-     *       &lt;/div></code>
+     *     <pre>
+     *&lt;div class="ui">
+     *  &lt;span class="geocoder"/>
+     *  &lt;span class="radius">Radius&lt;span class="control"/>&lt;/span>
+     *  &lt;span class="tbBox">
+     *    &lt;button class="drawBtn btn" title="Start drawing a shape to search on the map.">&lt;i class="icon-edit">&lt;/i>&lt;span>Draw&lt;/span>&lt;/button>
+     *    &lt;button class="linkerBtn btn" title="Click to draw points only">&lt;span>●­­–●–●&lt;/span>&lt;/button>
+     *    &lt;button class="clear btn" title="Clear any drawn shape">&lt;i class="icon-remove">&lt;/i> Clear&lt;/button>
+     *    &lt;button class="showhelp btn" title="Show help">&lt;i class="icon-info-sign">&lt;/i> Help&lt;/button>
+     *  &lt;/span>
+     *&lt;/div></pre>
      *   </dd>
      *   <dt><code>helpTemplate</code></dt>
      *   <dd>

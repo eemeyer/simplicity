@@ -63,7 +63,7 @@
      *   <dt><code>input</code></dt>
      *   <dd>
      *     The input or selector for the element that contains the geoJson state.
-     *     Defaults to <code>'$('<input name="placemark"/>').simplicityInputs()'</code>.
+     *     Defaults to <code>'$('&lt;input name="placemark"/>').simplicityInputs()'</code>.
      *   </dd>
      *   <dt><code>editMode</code></dt>
      *   <dd>

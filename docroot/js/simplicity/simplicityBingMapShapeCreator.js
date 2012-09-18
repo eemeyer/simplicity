@@ -12,7 +12,7 @@
  *   &lt;script type="text/javascript">
  *     $('#map').simplicityBingMap();
  *     $('#map').simplicityBingMapShapeCreator({
- *       input: $('<input name="placemark"/>').simplicityInputs()
+ *       input: $('&lt;input name="placemark"/>').simplicityInputs()
  *     });
  *   &lt;/script>
  *

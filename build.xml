@@ -5,7 +5,7 @@
     <delete dir="build.ant"/>
     <delete dir="docroot/js/build"/>
     <delete dir="docroot/css/build"/>
-    <delete dir="docroot/jsdoc"/>
+    <delete dir="documentation/jsdoc"/>
   </target>
 
   <target name="compress-media"
@@ -16,18 +16,25 @@
     </java>
   </target>
 
+  <target name="documentation" depends="jsdoc"
+    description="Builds the documentation">
+    <delete dir="build.ant/documentation"/>
+    <exec executable="jekyll" dir="documentation" failonerror="true">
+      <arg value="--no-server"/>
+    </exec>
+    <echo message="JavaScript documentation now available at build.ant/documentation/index.html"/>
+  </target>
+
   <target name="jsdoc"
     description="Builds the JavaScript documentation">
-    <delete dir="docroot/jsdoc"/>
     <java jar="tools/jsdoc-toolkit-2.4.0/jsrun.jar" fork="true" failonerror="true">
       <arg value="tools/jsdoc-toolkit-2.4.0/app/run.js"/>
       <arg value="-e=UTF-8"/>
-      <arg value="-d=docroot/jsdoc/"/>
-      <arg value="-t=tools/jsdoc-toolkit-2.4.0/templates/jsdoc"/>
+      <arg value="-d=documentation/jsdoc/"/>
+      <arg value="-t=tools/jsdoc-toolkit-2.4.0/templates/jekyll"/>
       <arg value="--private"/>
       <arg value="docroot/js/simplicity/"/>
     </java>
-    <echo message="JavaScript documentation now available at docroot/jsdoc/index.html"/>
   </target>
 
   <property name="version" value="0.0.0"/>
