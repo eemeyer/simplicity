@@ -10,3 +10,4 @@ topnav:
   - nav: jsdoc
     label: jsdoc
     url: /jsdoc/
+pygments: true
