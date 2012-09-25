@@ -1,8 +1,12 @@
 destination: ../build.ant/documentation/
+simplicityRelease: 3.1
 topnav:
   - nav: home
     label: home
     url: /
+  - nav: download
+    label: download
+    url: /download.html
   - nav: jsdoc
     label: jsdoc
     url: /jsdoc/
