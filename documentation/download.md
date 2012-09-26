@@ -2,6 +2,8 @@
 layout: default
 nav: download
 title: download
+subhead: Download
+lead: Download, fork or link to the CDN.
 ---
 
 CDN

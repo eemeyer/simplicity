@@ -45,6 +45,18 @@
         </div>
       </div>
     </div>
+
+    {% if page.subhead %}
+      <header class="subhead">
+        <div class="container">
+          <h1>{{page.subhead}}</h1>
+          {% if page.lead %}
+            <p class="lead">{{page.lead}}</p>
+          {% endif %}
+        </div>
+      </header>
+    {% endif %}
+
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
     <div class="container-fluid">
 {{content}}

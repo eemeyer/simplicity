@@ -1,3 +1,11 @@
+header.subhead {
+    background-color: #435A6E;
+    color: white;
+    text-shadow: #333 1px 1px 1px;
+    margin: -20px -20px 20px -20px;
+    padding: 1em 2em 1em 2em;
+}
+
 .jsdoc h1 {
     font-size: x-large;
 }

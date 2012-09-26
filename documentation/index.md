@@ -2,6 +2,8 @@
 layout: default
 nav: home
 title: home
+subhead: Simplicity Widgets
+lead: Search made simple.
 ---
 A suite of Ajax search widgets to interface with the Discovery Engine.
 
