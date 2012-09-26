@@ -24,16 +24,17 @@
   <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
-        <a class="brand" href="/">Simplicity Widgets</a>
-        <ul class="nav">
-          {% for nav in site.topnav %}
-            {% if page.nav == nav.nav %}
-              <li class="active"><a href="{{nav.url}}" class="active">{{nav.label}}</a></li>
-            {% else %}
-              <li><a href="{{nav.url}}">{{nav.label}}</a></li>
-            {% endif %}
-          {% endfor %}
-        </ul>
+        <div class="container">
+          <a class="brand" href="/">Simplicity Widgets</a>
+          <ul class="nav">
+            {% for nav in site.topnav %}
+              {% if page.nav == nav.nav %}
+                <li class="active"><a href="{{nav.url}}" class="active">{{nav.label}}</a></li>
+              {% else %}
+                <li><a href="{{nav.url}}">{{nav.label}}</a></li>
+              {% endif %}
+            {% endfor %}
+          </ul>
         </div>
       </div>
     </div>
