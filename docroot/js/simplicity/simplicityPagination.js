@@ -141,16 +141,6 @@
           if (this.options.next_text && (this.options.next_show_always || currentPage < numPages - 1)) {
             target.append(this._makeLink(currentPage + 1, currentPage, numPages, this.options.next_text, 'next'));
           }
-          target.find('span.current').each($.proxy(function (idx, ele) {
-            var span = $(ele);
-            if (span.hasClass("prev") || span.hasClass("next")) {
-              span
-                .addClass('ui-state-disabled ui-priority-primary');
-            } else {
-              span
-                .addClass('ui-state-active ui-priority-primary');
-            }
-          }, this));
           this.element.find('div.pagination').html(target);
         } finally {
           this._ignoreCallback = false;
@@ -184,6 +174,13 @@
       }
       result.addClass(this.options.applyClass);
       result.data('page', page);
+      if (page === currentPage) {
+        if ((result.attr('class') || '').match(/\bprev\b|\bnext\b/g)) {
+          result.addClass('ui-state-disabled ui-priority-primary');
+        } else {
+          result.addClass('ui-state-active ui-priority-primary');
+        }
+      }
       return result;
     },
     _getStartEnd: function (currentPage, numPages) {
