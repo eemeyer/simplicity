@@ -115,7 +115,6 @@
         var itemsPerPage = resultSet.pageSize;
         var numPages = Math.ceil(resultSet.totalSize / itemsPerPage);
         var currentPage = resultSet.startIndex / itemsPerPage;
-        var paginationCallback = $.proxy(this._paginationCallback, this);
         this.element.data('currentPage', currentPage);
         try {
           this._ignoreCallback = true;
@@ -174,7 +173,8 @@
         result = $('<a/>')
           .attr('href', this.options.link_to.replace(/__id__/, page))
           .text(text)
-          .addClass('ui-state-default');
+          .addClass('ui-state-default')
+          .click($.proxy(this._paginationCallback, this));
       }
       if (classes) {
         result.addClass(classes);
