@@ -111,7 +111,6 @@
       if (searchResponse) {
         var discoveryResponse = searchResponse._discovery || {};
         var resultSet = discoveryResponse.response || {};
-        var numItems = resultSet.totalSize;
         var itemsPerPage = resultSet.pageSize;
         var numPages = Math.ceil(resultSet.totalSize / itemsPerPage);
         var currentPage = resultSet.startIndex / itemsPerPage;
