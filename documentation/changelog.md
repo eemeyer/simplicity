@@ -85,7 +85,7 @@ Improvements
 ------------
 
 * Adds support for Nokia map (will replace Yahoo maps).
-* Adds `removemarker` event to `simplicity${vendor}MapResults`.
+* Adds `removemarker` event to `simplicity{vendor}MapResults`.
 
 <h1>2.6</h1>
 <div class="release-date">2011-12-16</div>
@@ -145,7 +145,119 @@ Improvements
 Compatibility
 -------------
 
-* Breaks up the map widgets into smaller components. `simplicity${vendor}Map` becomes `simplicity${vendor}Map`, `simplicity${vendor}MapBoundsCoordinator`, `simplicity${vendor}MapBoundsTracker` and `simplicity${vendor}MapResults`.
+* Breaks up the map widgets into smaller components. `simplicity{vendor}Map` becomes `simplicity{vendor}Map`, `simplicity{vendor}MapBoundsCoordinator`, `simplicity{vendor}MapBoundsTracker` and `simplicity{vendor}MapResults`.
+
+You will need to instantiate a different set of simplicity mapping widgets,
+configure them slightly differently, and update any jQuery event handlers
+related to the map events. The event names are slightly different due to the
+namespacing offered by jQuery's `_trigger()` method. The semantics of some
+events were modified to better support the new feature set. The bottom line is
+that if you are using jQuery to bind to `simplicity{vendor}map{event}` events,
+you will need to adjust the names of the events to match the new widget names
+and double check that your event handler still works with the updated API.
+
+We strongly suggest that you review the generated JavaScript documentation for
+full details, and that you explore the tutorial pages to see the new mapping
+widgets in action.
+
+Here is a simple example of the `simplicityGoogleMap` widget being migrated from
+release 2.2 to release 2.3. Note that all the options are optional. Here's an
+example just using the widget defaults.
+
+Old:
+{% highlight javascript %}
+$('#map').simplicityGoogleMap();
+{% endhighlight %}
+
+New:
+{% highlight javascript %}
+$('#map')
+  .simplicityGoogleMap()
+  .simplicityGoogleMapBoundsCoordinator()
+  .simplicityGoogleMapResults();
+{% endhighlight %}
+
+Here is an example with all the defaults shown.
+
+Old:
+{% highlight javascript %}
+$('#map')
+  .simplicityGoogleMap({
+     searchElement: 'body',
+     latitudeField: 'latitude',
+     longitudeField: 'longitude',
+     fitOnResultSet: true,
+     mapOptions: {},
+     mapMoveEvents: 'idle'
+  });
+{% endhighlight %}
+
+New:
+{% highlight javascript %}
+$('#map')
+  .simplicityGoogleMap({
+       mapOptions: {}
+  })
+  .simplicityGoogleMapBoundsCoordinator({
+       searchElement: 'body'
+  })
+  .simplicityGoogleMapResults({
+       searchElement: 'body',
+       latitudeField: 'latitude',
+       longitudeField: 'longitude',
+       updateBounds: true
+  });
+{% endhighlight %}
+
+With the new smaller widgets, you can see that you can easily choose which
+behaviors and features to add to your simplicity map.
+
+Note that the new widget `simplicity{vendor}BoundsTracker` will update the
+search based upon the maps current bounds. As a user pans and zooms, the search
+criteria are updated.
+
+The `simplicity{vendor}MapBoundsCoordinator` widget allows the results and
+criteria mapping widgets to update the map bounds in a coordinated manner.
+
+Here is an overview showing the mapping of the 2.2 event names to the 2.3
+event names. We recommend that you refer to the JavaScript documentation or
+source code to fully understand the event contracts.
+
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>old</th>
+      <th>new</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>simplicitygooglemapcreate</td>
+      <td>simplicitygooglemapcreate</td>
+    </tr>
+    <tr>
+      <td>simplicitygooglemapmarker</td>
+      <td>simplicitygooglemapresultsmarker</td>
+    </tr>
+    <tr>
+      <td>simplicitygooglemapbounds</td>
+      <td>simplicitygooglemapboundcoordinatorcalculatebounds</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>simplicitygooglemapboundstrackerbounds</td>
+    </tr>
+    <tr>
+      <td>simplicitygooglemapboundsshapes</td>
+      <td>simplicitygooglemapboundstrackerboundsshapes</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>simplicitygooglemapcriteriaplacemark</td>
+    </tr>
+  </tbody>
+</table>
+
 
 Improvements
 ------------
