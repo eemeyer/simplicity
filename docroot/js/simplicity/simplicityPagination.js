@@ -180,10 +180,9 @@
       var target = $('<div/>');
       if (searchResponse) {
         var discoveryResponse = searchResponse._discovery || {};
-        var resultSet = discoveryResponse.response || {};
-        var itemsPerPage = resultSet.pageSize;
-        var numPages = Math.ceil(resultSet.totalSize / itemsPerPage);
-        var currentPage = resultSet.startIndex / itemsPerPage;
+        var resultSet = discoveryResponse.response || {startIndex: 0, pageSize: 0, totalSize: 0};
+        var numPages = Math.ceil(resultSet.totalSize / resultSet.pageSize);
+        var currentPage = resultSet.startIndex / resultSet.pageSize;
         this.element.data('currentPage', currentPage);
         try {
           this._ignoreCallback = true;
