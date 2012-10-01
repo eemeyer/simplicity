@@ -77,6 +77,15 @@
       applyClass: 'ui-corner-all',
       scrollTopSelector: window,
       scrollTopPosition: 0,
+      // for compatibility with jquery.pagination
+      num_display_entries: 11,
+      num_edge_entries: 0,
+      link_to: '#',
+      prev_text: 'Prev',
+      next_text: 'Next',
+      ellipse_text: '...',
+      prev_show_always: true,
+      next_show_always: true,
       debug: false
     },
     _create : function () {
@@ -84,6 +93,7 @@
         ._addClass('ui-simplicity-pagination')
         ._bind(this.options.searchElement, 'simplicitySearchResponse', this._searchResponseHandler)
         ._bind(this.options.stateElement, 'simplicityStateReset', this._stateResetHandler);
+      this.element.append($('<div class="pagination"/>'));
     },
     /**
      * Event handler for the <code>simplicitySearchResponse</code> event. Recreates
@@ -100,38 +110,88 @@
         var resultSet = discoveryResponse.response || {};
         var numItems = resultSet.totalSize;
         var itemsPerPage = resultSet.pageSize;
+        var numPages = Math.ceil(resultSet.totalSize / itemsPerPage);
         var currentPage = resultSet.startIndex / itemsPerPage;
+        var paginationCallback = $.proxy(this._paginationCallback, this);
         try {
           this._ignoreCallback = true;
-          target.pagination(
-            numItems,
-            $.extend({
-              current_page: currentPage,
-              items_per_page: itemsPerPage,
-              callback: $.proxy(this._paginationCallback, this)
-            }, this.options)
-          );
-          target.find('a')
-            .addClass('ui-state-default')
-            .addClass(this.options.applyClass);
+          var startEnd = this._getStartEnd(currentPage, numPages);
+          var start = startEnd[0];
+          var end = startEnd[1];
+          if (this.options.prev_text && (this.options.prev_show_always || currentPage > 0)) {
+            target.append(this._makeLink(currentPage - 1, currentPage, this.options.prev_text, 'prev'));
+          }
+          if (start > 0 && this.options.num_edge_entries > 0) {
+            var lowEnd = Math.min(this.options.num_edge_entries, start);
+            this._makeLinks(target, currentPage, 0, lowEnd, 'sp');
+            if (this.options.ellipse_text && this.options.num_edge_entries < start) {
+              $('<span/>').text(this.options.ellipse_text).appendTo(target);
+            }
+          }
+          this._makeLinks(target, currentPage, start, end);
+          if (end > numPages && this.options.num_edge_entries > 0) {
+            if (this.options.ellipse_text && numPages - this.options.num_edge_entries > end) {
+              $('<span/>').text(this.options.ellipse_text).appendTo(target);
+            }
+            var startHigh = Math.max(numPages - this.options.num_edge_entries, end);
+            this._makeLinks(target, currentPage, startHigh, numPages, 'ep');
+          }
+          if (this.options.next_text && (this.options.next_show_always || currentPage < numPages - 1)) {
+            target.append(this._makeLink(currentPage + 1, currentPage, this.options.next_text, 'next'));
+          }
           target.find('span.current').each($.proxy(function (idx, ele) {
             var span = $(ele);
             if (span.hasClass("prev") || span.hasClass("next")) {
               span
-                .addClass('ui-state-disabled ui-priority-primary')
-                .addClass(this.options.applyClass);
+                .addClass('ui-state-disabled ui-priority-primary');
             } else {
               span
-                .addClass('ui-state-active ui-priority-primary')
-                .addClass(this.options.applyClass);
+                .addClass('ui-state-active ui-priority-primary');
             }
           }, this));
-          this.element.find('div.pagination').remove();
-          this.element.append(target.find('div.pagination'));
+          this.element.find('div.pagination').html(target);
         } finally {
           this._ignoreCallback = false;
         }
       }
+    },
+    _makeLinks: function (parent, currentPage, start, end, classes) {
+      var i = start;
+      for (; i < end; i += 1) {
+        this._makeLink(i, currentPage, i + 1, classes).appendTo(parent);
+      }
+    },
+    _makeLink: function (page, currentPage, text, classes) {
+      var result = $('<a/>');
+      if (page === currentPage) {
+        result = $('<span/>').addClass('current').text(text);
+      } else {
+        result = $('<a/>')
+          .attr('href', this.options.link_to.replace(/__id__/, page))
+          .text(text)
+          .addClass('ui-state-default');
+      }
+      if (classes) {
+        result.addClass(classes);
+      }
+      result.addClass(this.options.applyClass);
+      result.data('page', page);
+      return result;
+    },
+    _getStartEnd: function (currentPage, numPages) {
+      var halfNumEntries = Math.floor(this.options.num_display_entries / 2);
+      var max = numPages - this.options.num_display_entries;
+      var start = 0;
+      if (currentPage > halfNumEntries) {
+        start = Math.max(Math.min(currentPage - halfNumEntries, max), 0);
+      }
+      var end = 0;
+      if (currentPage > halfNumEntries) {
+        end = Math.min(currentPage + halfNumEntries + this.options.num_display_entries % 2, numPages);
+      } else {
+        end = Math.min(this.options.num_display_entries, numPages);
+      }
+      return [start, end];
     },
     /**
      * Callback for the upstream pagination widget that gets called when a page change action
