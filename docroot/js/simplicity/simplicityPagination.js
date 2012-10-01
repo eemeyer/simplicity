@@ -161,7 +161,7 @@
       }
       var result = $('<a/>');
       if (page === currentPage) {
-        result = $('<span/>').addClass('current').text(text);
+        result = $('<span/>').addClass('current ui-priority-primary').text(text);
       } else {
         result = $('<a/>')
           .attr('href', this.options.link_to.replace(/__id__/, page))
@@ -175,11 +175,8 @@
       result.addClass(this.options.applyClass);
       result.data('page', page);
       if (page === currentPage) {
-        if ((result.attr('class') || '').match(/\bprev\b|\bnext\b/g)) {
-          result.addClass('ui-state-disabled ui-priority-primary');
-        } else {
-          result.addClass('ui-state-active ui-priority-primary');
-        }
+        cssClass = ((result.attr('class') || '').match(/\bprev\b|\bnext\b/g)) ? 'ui-state-disabled' : 'ui-state-active';
+        result.addClass(cssClass);
       }
       return result;
     },
