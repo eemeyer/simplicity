@@ -102,14 +102,6 @@ groups:
       - tutorial/js/real_estate_search_controller.js
       - tutorial/js/real_estate_search_results.js
 
-  - groupName: jquery_pagination_js
-    mediaType: js
-    jslint: off
-    outputFileName: js/build/jquery.pagination-2.1.js
-    outputFileNameMinified: js/build/jquery.pagination-2.1.min.js
-    sourceFileNames:
-      - js/lib/jquery.pagination-2.1.js
-
   - groupName: json2_js
     mediaType: js
     jslint: off
