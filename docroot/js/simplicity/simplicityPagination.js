@@ -122,25 +122,25 @@
           var start = startEnd[0];
           var end = startEnd[1];
           if (this.options.prev_text && (this.options.prev_show_always || currentPage > 0)) {
-            target.append(this._makeLink(currentPage - 1, currentPage, this.options.prev_text, 'prev'));
+            target.append(this._makeLink(currentPage - 1, currentPage, numPages, this.options.prev_text, 'prev'));
           }
           if (start > 0 && this.options.num_edge_entries > 0) {
             var lowEnd = Math.min(this.options.num_edge_entries, start);
-            this._makeLinks(target, currentPage, 0, lowEnd, 'sp');
+            this._makeLinks(target, currentPage, numPages, 0, lowEnd, 'sp');
             if (this.options.ellipse_text && this.options.num_edge_entries < start) {
               $('<span/>').text(this.options.ellipse_text).appendTo(target);
             }
           }
-          this._makeLinks(target, currentPage, start, end);
+          this._makeLinks(target, currentPage, numPages, start, end);
           if (end > numPages && this.options.num_edge_entries > 0) {
             if (this.options.ellipse_text && numPages - this.options.num_edge_entries > end) {
               $('<span/>').text(this.options.ellipse_text).appendTo(target);
             }
             var startHigh = Math.max(numPages - this.options.num_edge_entries, end);
-            this._makeLinks(target, currentPage, startHigh, numPages, 'ep');
+            this._makeLinks(target, currentPage, numPages, startHigh, numPages, 'ep');
           }
           if (this.options.next_text && (this.options.next_show_always || currentPage < numPages - 1)) {
-            target.append(this._makeLink(currentPage + 1, currentPage, this.options.next_text, 'next'));
+            target.append(this._makeLink(currentPage + 1, currentPage, numPages, this.options.next_text, 'next'));
           }
           target.find('span.current').each($.proxy(function (idx, ele) {
             var span = $(ele);
@@ -152,20 +152,24 @@
                 .addClass('ui-state-active ui-priority-primary');
             }
           }, this));
-          target.find('a[href]').bind('click', paginationCallback);
           this.element.find('div.pagination').html(target);
         } finally {
           this._ignoreCallback = false;
         }
       }
     },
-    _makeLinks: function (parent, currentPage, start, end, classes) {
+    _makeLinks: function (parent, currentPage, numPages, start, end, classes) {
       var i = start;
       for (; i < end; i += 1) {
-        this._makeLink(i, currentPage, i + 1, classes).appendTo(parent);
+        this._makeLink(i, currentPage, numPages, i + 1, classes).appendTo(parent);
       }
     },
-    _makeLink: function (page, currentPage, text, classes) {
+    _makeLink: function (page, currentPage, numPages, text, classes) {
+      if (page < 0) {
+        page = 0;
+      } else if (page >= numPages) {
+        page = numPages - 1;
+      }
       var result = $('<a/>');
       if (page === currentPage) {
         result = $('<span/>').addClass('current').text(text);
