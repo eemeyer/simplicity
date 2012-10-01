@@ -62,6 +62,47 @@
      *   <dd>
      *     Determines the scroll top position to use for <code>$(window).scrollTop(0)</code>. Defaults to <code>0</code>.
      *   </dd>
+     *   <dt>num_display_entries</dt>
+     *   <dd>
+     *     Maximum number of pagination links to display.
+     *     Setting to <code>0</code> will trim the navigation down to simply, "Previous" and "Next" links.
+     *     Use an odd number so the current page will be displayed in the center of the
+     *     page links when there are more than <code>num_display_entries</code> pages. Defaults to <code>11</code>.
+     *   </dd>
+     *   <dt>num_edge_entries</dt>
+     *   <dd>
+     *     Number of page links to show at the min and max range regardless of other constraints.
+     *     If this number is set to 1, then links to the first and the last page are shown regardless of the current page
+     *     and the visibility constraints set by num_display_entries. Setting to a larger number shows more links.
+     *     Defaults to  <code>0</code>.
+     *   </dd>
+     *   <dt>link_to</dt>
+     *   <dd>
+     *     <code>href</code> template for the pagination links. The special value <code>__id__</code> will be replaced by the
+     *     page number. Defaults to <code>#</code>.
+     *   </dd>
+     *   <dt>prev_text</dt>
+     *   <dd>
+     *     Text for the "previous" link. Setting to an empty string will omit the link. Defaults to <code>Prev</code>.
+     *   </dd>
+     *   <dt>next_text</dt>
+     *     Text for the "next" link. Setting to an empty string will omit the link. Defaults to <code>Next</code>.
+     *   <dd>
+     *   </dd>
+     *   <dt>ellipse_text</dt>
+     *   <dd>
+     *      When there is a gap between the numbers created by num_edge_entries and the displayed number interval,
+     *      this text is inserted into the gap (in a span tag). Setting to an empty string omits the additional tag.
+     *      Defaults to <code>...</code>.
+     *   </dd>
+     *   <dt>prev_show_always</dt>
+     *   <dd>
+     *     When set to false, the "previous"-link is only shown if there is a previous page. Defaults to <code>true</code>.
+     *   </dd>
+     *   <dt>next_show_always</dt>
+     *   <dd>
+     *     When set to false, the "next"-link is only shown if there is a next page. Defaults to <code>true</code>.
+     *   </dd>
      *   <dt>debug</dt>
      *   <dd>
      *     Enable logging of key events to <code>console.log</code>. Defaults to <code>false</code>.
@@ -97,6 +138,35 @@
         ._bind(this.element, 'prevPage', this.prevPage)
         ._bind(this.element, 'nextPage', this.nextPage);
       this.element.append($('<div class="pagination"/>'));
+    },
+    /**
+     * Move to a specific page in the results. Causes a new search.
+     *
+     * @name $.ui.simplicityPagination.setPage
+     * @function
+     */
+    setPage: function (evt, page) {
+      this._setPage(page);
+    },
+    /**
+     * Move to the next page in the results. Causes a new search if the last search indicated that there will be a next page.
+     *
+     * @name $.ui.simplicityPagination.nextPage
+     * @function
+     */
+    nextPage: function (evt) {
+      var page = (this.element.data('currentPage')  || 0) + 1;
+      this._setPage(page);
+    },
+    /**
+     * Move to the previous page in the results. Causes a new search if the current page is not the first page.
+     *
+     * @name $.ui.simplicityPagination.prevPage
+     * @function
+     */
+    prevPage: function (evt) {
+      var page = (this.element.data('currentPage')  || 0) - 1;
+      this._setPage(page);
     },
     /**
      * Event handler for the <code>simplicitySearchResponse</code> event. Recreates
@@ -147,12 +217,27 @@
         }
       }
     },
+    /**
+     * Helper that makes a range of pagination links, appending them to the parent.
+     *
+     * @name $.ui.simplicityPagination._makeLinks
+     * @function
+     * @private
+     */
     _makeLinks: function (parent, currentPage, numPages, start, end, classes) {
       var i = start;
       for (; i < end; i += 1) {
         this._makeLink(i, currentPage, numPages, i + 1, classes).appendTo(parent);
       }
     },
+    /**
+     * Helper that makes a pagination link. All element event handlers and data are set in this method, so returned link is ready
+     * to be used.
+     *
+     * @name $.ui.simplicityPagination._makeLink
+     * @function
+     * @private
+     */
     _makeLink: function (page, currentPage, numPages, text, classes) {
       if (page < 0) {
         page = 0;
@@ -180,6 +265,14 @@
       }
       return result;
     },
+    /**
+     * Calculates the range of pagination links that might be displayed based on <code>num_display_entries</code>,
+     * <code>currentPage</code>, and <code>numPages</code>.
+     *
+     * @name $.ui.simplicityPagination._getStartEnd
+     * @function
+     * @private
+     */
     _getStartEnd: function (currentPage, numPages) {
       var halfNumEntries = Math.floor(this.options.num_display_entries / 2);
       var max = numPages - this.options.num_display_entries;
@@ -195,20 +288,8 @@
       }
       return [start, end];
     },
-    setPage: function (evt, page) {
-      this._setPage(page);
-    },
-    prevPage: function (evt) {
-      var page = (this.element.data('currentPage')  || 0) - 1;
-      this._setPage(page);
-    },
-    nextPage: function (evt) {
-      var page = (this.element.data('currentPage')  || 0) + 1;
-      this._setPage(page);
-    },
     /**
-     * Callback for the upstream pagination widget that gets called when a page change action
-     * has been taken.
+     * Callback for when a pagination link is clicked.
      *
      * @name $.ui.simplicityPagination._paginationCallback
      * @function
@@ -219,6 +300,13 @@
       this._setPage(page);
       return false;
     },
+    /**
+     * Changes the underlying search to reflect the requested page if page is different from the current page.
+     *
+     * @name $.ui.simplicityPagination._setPage
+     * @function
+     * @private
+     */
     _setPage: function (page) {
       var currentPage = this.element.data('currentPage');
       if (page !== currentPage && page >= 0) {
