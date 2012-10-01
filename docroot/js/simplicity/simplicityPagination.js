@@ -92,7 +92,10 @@
       this
         ._addClass('ui-simplicity-pagination')
         ._bind(this.options.searchElement, 'simplicitySearchResponse', this._searchResponseHandler)
-        ._bind(this.options.stateElement, 'simplicityStateReset', this._stateResetHandler);
+        ._bind(this.options.stateElement, 'simplicityStateReset', this._stateResetHandler)
+        ._bind(this.element, 'setPage', this.setPage)
+        ._bind(this.element, 'prevPage', this.prevPage)
+        ._bind(this.element, 'nextPage', this.nextPage);
       this.element.append($('<div class="pagination"/>'));
     },
     /**
@@ -113,6 +116,7 @@
         var numPages = Math.ceil(resultSet.totalSize / itemsPerPage);
         var currentPage = resultSet.startIndex / itemsPerPage;
         var paginationCallback = $.proxy(this._paginationCallback, this);
+        this.element.data('currentPage', currentPage);
         try {
           this._ignoreCallback = true;
           var startEnd = this._getStartEnd(currentPage, numPages);
@@ -149,6 +153,7 @@
                 .addClass('ui-state-active ui-priority-primary');
             }
           }, this));
+          target.find('a[href]').bind('click', paginationCallback);
           this.element.find('div.pagination').html(target);
         } finally {
           this._ignoreCallback = false;
@@ -193,6 +198,17 @@
       }
       return [start, end];
     },
+    setPage: function (evt, page) {
+      this._setPage(page);
+    },
+    prevPage: function (evt) {
+      var page = (this.element.data('currentPage')  || 0) - 1;
+      this._setPage(page);
+    },
+    nextPage: function (evt) {
+      var page = (this.element.data('currentPage')  || 0) + 1;
+      this._setPage(page);
+    },
     /**
      * Callback for the upstream pagination widget that gets called when a page change action
      * has been taken.
@@ -201,28 +217,35 @@
      * @function
      * @private
      */
-    _paginationCallback: function (page) {
-      if (!this._ignoreCallback) {
-        if (this.options.scrollTopSelector !== '') {
-          $(this.options.scrollTopSelector).scrollTop(this.options.scrollTopPosition);
-        }
-        if (this.options.input !== '') {
-          // Store the page in an input
-          $(this.options.input).val(page + 1);
-          $(this.options.input).change();
-        } else {
-          // Store the page directly in the search state
-          var state = $(this.options.stateElement).simplicityState('state');
-          state[this.options.pageParam] = String(page + 1);
-          $(this.options.stateElement).simplicityState('state', state);
-        }
-        if (this.options.searchElement !== '') {
-          if (false === $(this.options.searchElement).simplicityDiscoverySearch('option', 'searchOnStateChange')) {
-            $(this.options.searchElement).simplicityDiscoverySearch('search');
+    _paginationCallback: function (evt) {
+      var page = $(evt.target).data('page');
+      this._setPage(page);
+      return false;
+    },
+    _setPage: function (page) {
+      var currentPage = this.element.data('currentPage');
+      if (page !== currentPage && page >= 0) {
+        if (!this._ignoreCallback) {
+          if (this.options.scrollTopSelector !== '') {
+            $(this.options.scrollTopSelector).scrollTop(this.options.scrollTopPosition);
+          }
+          if (this.options.input !== '') {
+            // Store the page in an input
+            $(this.options.input).val(page + 1);
+            $(this.options.input).change();
+          } else {
+            // Store the page directly in the search state
+            var state = $(this.options.stateElement).simplicityState('state');
+            state[this.options.pageParam] = String(page + 1);
+            $(this.options.stateElement).simplicityState('state', state);
+          }
+          if (this.options.searchElement !== '') {
+            if (false === $(this.options.searchElement).simplicityDiscoverySearch('option', 'searchOnStateChange')) {
+              $(this.options.searchElement).simplicityDiscoverySearch('search');
+            }
           }
         }
       }
-      return false;
     },
     /**
      * Event handler for the <code>simplicityStateReset</code> event. Resets the current page
