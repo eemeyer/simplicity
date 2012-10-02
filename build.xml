@@ -78,12 +78,10 @@
       </zipfileset>
       <zipfileset prefix="simplicity-${version}/js/" dir="docroot/js/build">
         <include name="json2.min.js"/>
-        <include name="jquery.pagination-*.min.js"/>
       </zipfileset>
       <!-- CSS dependencies -->
       <zipfileset prefix="simplicity-${version}/css/" dir="docroot/css/lib">
         <exclude name="yui-grids-*.css"/>
-        <exclude name="jquery.pagination-*.css"/>
       </zipfileset>
       <!-- JsDoc -->
       <zipfileset prefix="simplicity-${version}/jsdoc/" dir="docroot/jsdoc"/>
