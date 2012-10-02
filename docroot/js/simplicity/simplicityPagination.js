@@ -138,6 +138,16 @@
         ._bind(this.element, 'prevPage', this.prevPage)
         ._bind(this.element, 'nextPage', this.nextPage);
       this.element.append($('<div class="pagination"/>'));
+      this._currentPage = 0;
+    },
+    /**
+     * Get the current page - 1 based.
+     *
+     * @name $.ui.simplicityPagination.getPage
+     * @function
+     */
+    getPage: function () {
+      return this._currentPage + 1;
     },
     /**
      * Move to a specific page in the results. Causes a new search.
@@ -145,8 +155,8 @@
      * @name $.ui.simplicityPagination.setPage
      * @function
      */
-    setPage: function (evt, page) {
-      this._setPage(page);
+    setPage: function (page1) {
+      this._setPage(page1 - 1);
     },
     /**
      * Move to the next page in the results. Causes a new search if the last search indicated that there will be a next page.
@@ -154,9 +164,8 @@
      * @name $.ui.simplicityPagination.nextPage
      * @function
      */
-    nextPage: function (evt) {
-      var page = (this.element.data('currentPage')  || 0) + 1;
-      this._setPage(page);
+    nextPage: function () {
+      this._setPage(this.getPage());
     },
     /**
      * Move to the previous page in the results. Causes a new search if the current page is not the first page.
@@ -164,9 +173,8 @@
      * @name $.ui.simplicityPagination.prevPage
      * @function
      */
-    prevPage: function (evt) {
-      var page = (this.element.data('currentPage')  || 0) - 1;
-      this._setPage(page);
+    prevPage: function () {
+      this._setPage(this.getPage() - 2);
     },
     /**
      * Event handler for the <code>simplicitySearchResponse</code> event. Recreates
@@ -181,34 +189,33 @@
       if (searchResponse) {
         var discoveryResponse = searchResponse._discovery || {};
         var resultSet = discoveryResponse.response || {startIndex: 0, pageSize: 0, totalSize: 0};
-        var numPages = Math.ceil(resultSet.totalSize / resultSet.pageSize);
-        var currentPage = resultSet.startIndex / resultSet.pageSize;
-        this.element.data('currentPage', currentPage);
+        this._numPages = Math.ceil(resultSet.totalSize / resultSet.pageSize);
+        this._currentPage = resultSet.startIndex / resultSet.pageSize;
         try {
           this._ignoreCallback = true;
-          var startEnd = this._getStartEnd(currentPage, numPages);
+          var startEnd = this._getStartEnd();
           var start = startEnd[0];
           var end = startEnd[1];
-          if (this.options.prev_text && (this.options.prev_show_always || currentPage > 0)) {
-            target.append(this._makeLink(currentPage - 1, currentPage, numPages, this.options.prev_text, 'prev'));
+          if (this.options.prev_text && (this.options.prev_show_always || this._currentPage > 0)) {
+            target.append(this._makeLink(this._currentPage - 1, this.options.prev_text, 'prev'));
           }
           if (start > 0 && this.options.num_edge_entries > 0) {
             var lowEnd = Math.min(this.options.num_edge_entries, start);
-            this._makeLinks(target, currentPage, numPages, 0, lowEnd, 'sp');
+            this._makeLinks(target, 0, lowEnd, 'sp');
             if (this.options.ellipse_text && this.options.num_edge_entries < start) {
               $('<span/>').text(this.options.ellipse_text).appendTo(target);
             }
           }
-          this._makeLinks(target, currentPage, numPages, start, end);
-          if (end > numPages && this.options.num_edge_entries > 0) {
-            if (this.options.ellipse_text && numPages - this.options.num_edge_entries > end) {
+          this._makeLinks(target, start, end);
+          if (end < this._numPages && this.options.num_edge_entries > 0) {
+            if (this.options.ellipse_text && this._numPages - this.options.num_edge_entries > end) {
               $('<span/>').text(this.options.ellipse_text).appendTo(target);
             }
-            var startHigh = Math.max(numPages - this.options.num_edge_entries, end);
-            this._makeLinks(target, currentPage, numPages, startHigh, numPages, 'ep');
+            var startHigh = Math.max(this._numPages - this.options.num_edge_entries, end);
+            this._makeLinks(target, startHigh, this._numPages, 'ep');
           }
-          if (this.options.next_text && (this.options.next_show_always || currentPage < numPages - 1)) {
-            target.append(this._makeLink(currentPage + 1, currentPage, numPages, this.options.next_text, 'next'));
+          if (this.options.next_text && (this.options.next_show_always || this._currentPage < this._numPages - 1)) {
+            target.append(this._makeLink(this._currentPage + 1, this.options.next_text, 'next'));
           }
           this.element.find('div.pagination').html(target);
         } finally {
@@ -223,10 +230,10 @@
      * @function
      * @private
      */
-    _makeLinks: function (parent, currentPage, numPages, start, end, classes) {
+    _makeLinks: function (parent, start, end, classes) {
       var i = start;
       for (; i < end; i += 1) {
-        this._makeLink(i, currentPage, numPages, i + 1, classes).appendTo(parent);
+        this._makeLink(i, i + 1, classes).appendTo(parent);
       }
     },
     /**
@@ -237,14 +244,14 @@
      * @function
      * @private
      */
-    _makeLink: function (page, currentPage, numPages, text, classes) {
+    _makeLink: function (page, text, classes) {
       if (page < 0) {
         page = 0;
-      } else if (page >= numPages) {
-        page = numPages - 1;
+      } else if (page >= this._numPages) {
+        page = this._numPages - 1;
       }
       var result = $('<a/>');
-      if (page === currentPage) {
+      if (page === this._currentPage) {
         result = $('<span/>').addClass('current ui-priority-primary').text(text);
       } else {
         result = $('<a/>')
@@ -258,7 +265,7 @@
       }
       result.addClass(this.options.applyClass);
       result.data('page', page);
-      if (page === currentPage) {
+      if (page === this._currentPage) {
         cssClass = ((result.attr('class') || '').match(/\bprev\b|\bnext\b/g)) ? 'ui-state-disabled' : 'ui-state-active';
         result.addClass(cssClass);
       }
@@ -272,18 +279,18 @@
      * @function
      * @private
      */
-    _getStartEnd: function (currentPage, numPages) {
+    _getStartEnd: function () {
       var halfNumEntries = Math.floor(this.options.num_display_entries / 2);
-      var max = numPages - this.options.num_display_entries;
+      var max = this._numPages - this.options.num_display_entries;
       var start = 0;
-      if (currentPage > halfNumEntries) {
-        start = Math.max(Math.min(currentPage - halfNumEntries, max), 0);
+      if (this._currentPage > halfNumEntries) {
+        start = Math.max(Math.min(this._currentPage - halfNumEntries, max), 0);
       }
       var end = 0;
-      if (currentPage > halfNumEntries) {
-        end = Math.min(currentPage + halfNumEntries + this.options.num_display_entries % 2, numPages);
+      if (this._currentPage > halfNumEntries) {
+        end = Math.min(this._currentPage + halfNumEntries + this.options.num_display_entries % 2, this._numPages);
       } else {
-        end = Math.min(this.options.num_display_entries, numPages);
+        end = Math.min(this.options.num_display_entries, this._numPages);
       }
       return [start, end];
     },
@@ -300,33 +307,30 @@
       return false;
     },
     /**
-     * Changes the underlying search to reflect the requested page if page is different from the current page.
+     * Changes the underlying search to reflect the requested page if page is different from the current page. Page is zero based.
      *
      * @name $.ui.simplicityPagination._setPage
      * @function
      * @private
      */
-    _setPage: function (page) {
-      var currentPage = this.element.data('currentPage');
-      if (page !== currentPage && page >= 0) {
-        if (!this._ignoreCallback) {
-          if (this.options.scrollTopSelector !== '') {
-            $(this.options.scrollTopSelector).scrollTop(this.options.scrollTopPosition);
-          }
-          if (this.options.input !== '') {
-            // Store the page in an input
-            $(this.options.input).val(page + 1);
-            $(this.options.input).change();
-          } else {
-            // Store the page directly in the search state
-            var state = $(this.options.stateElement).simplicityState('state');
-            state[this.options.pageParam] = String(page + 1);
-            $(this.options.stateElement).simplicityState('state', state);
-          }
-          if (this.options.searchElement !== '') {
-            if (false === $(this.options.searchElement).simplicityDiscoverySearch('option', 'searchOnStateChange')) {
-              $(this.options.searchElement).simplicityDiscoverySearch('search');
-            }
+    _setPage: function (page0) {
+      if (!this._ignoreCallback && page0 !== this._currentPage && page0 >= 0) {
+        if (this.options.scrollTopSelector !== '') {
+          $(this.options.scrollTopSelector).scrollTop(this.options.scrollTopPosition);
+        }
+        if (this.options.input !== '') {
+          // Store the page in an input
+          $(this.options.input).val(page0 + 1);
+          $(this.options.input).change();
+        } else {
+          // Store the page directly in the search state
+          var state = $(this.options.stateElement).simplicityState('state');
+          state[this.options.pageParam] = String(page0 + 1);
+          $(this.options.stateElement).simplicityState('state', state);
+        }
+        if (this.options.searchElement !== '') {
+          if (false === $(this.options.searchElement).simplicityDiscoverySearch('option', 'searchOnStateChange')) {
+            $(this.options.searchElement).simplicityDiscoverySearch('search');
           }
         }
       }
