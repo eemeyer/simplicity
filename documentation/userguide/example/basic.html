@@ -1,0 +1,54 @@
+---
+layout: default
+nav: userguide
+nav2: example-basic
+title: Example
+subhead: Example
+lead: Basic working example.
+---
+
+{% include userguide/nav.html %}
+
+<div class="well">
+  This example shows a basic working search page. It is described in more detail on the <a href="/userguide/">getting started</a> page of the userguide.
+</div>
+
+<style>
+  .ui-simplicity-search-results .result-set .result-row {
+    font-size: 0.8em;
+    line-height: 1em;
+    padding: 0.5em 1em 0.5em 1em;
+    margin: 0.5em 0 0.5em 0;
+    max-height: 8em;
+    overflow: scroll;
+  }
+  .ui-simplicity-search-results label {
+    font-size: inherit;
+    line-height: inherit;
+  }
+  .ui-simplicity-fancy-select ul {
+    font-size: 0.8em;
+    margin: inherit;
+  }
+</style>
+
+<div class="row">
+  <div class="span3">
+{% include userguide/example/basic/searchForm.html %}
+  </div>
+  <div class="span8">
+{% include userguide/example/basic/resultsArea.html %}
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(function() {
+{% include userguide/example/basic/state.js %}
+    
+{% include userguide/example/basic/searchForm.js %}
+
+{% include userguide/example/basic/resultsArea.js %}
+
+{% include userguide/example/basic/search.js %}
+  });
+</script>

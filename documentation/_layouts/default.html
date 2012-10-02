@@ -7,13 +7,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link href="/css/bootstrap-2.1.1.min.css" rel="stylesheet">
-    <style>
-      body {
-        padding-top: 60px;
-      }
-    </style>
     <link href="/css/bootstrap-responsive-2.1.1.min.css" rel="stylesheet">
-    <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/base/jquery-ui.css" rel="stylesheet">
+    <link href="//ajax.googleapis.com/ajax/libs/jqueryui/{{site.jQueryUiRelease}}/themes/{{site.jQueryUiTheme}}/jquery-ui.css" rel="stylesheet">
     <link href="//cdn.transparensee.com/simplicity/{{site.simplicityRelease}}/simplicity.min.css" rel="stylesheet">
     <link href="/css/syntax.css" rel="stylesheet">
     <link href="/css/documentation.css" rel="stylesheet">
@@ -22,7 +17,7 @@
     <![endif]-->
   </head>
   <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar navbar-inverse navbar-static-top">
       <div class="navbar-inner">
         <div class="container">
           <a class="brand" href="/">Simplicity Widgets</a>
@@ -50,8 +45,8 @@
       </header>
     {% endif %}
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
-    <div class="container-fluid">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/{{site.jQueryRelease}}/jquery.min.js"></script>
+    <div class="container">
 {{content}}
     </div>
 
@@ -65,8 +60,16 @@
         </p>
       </div>
     </footer>
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
+    <!--[if IE]>
+      <script src="/js/xdr.js"></script>
+      <script src="/js/json2.min.js"></script>
+      <script src="/js/jquery.bgiframe-2.1.2.min.js"></script>
+    <![endif]-->
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/{{site.jQueryUiRelease}}/jquery-ui.min.js"></script>
+    <script src="/js/jquery.pagination-2.1.min.js"></script>
+    <script src="/js/jquery.ba-bbq-1.2.1.min.js"></script>
     <script src="/js/bootstrap-2.1.1.min.js"></script>
     <script src="//cdn.transparensee.com/simplicity/{{site.simplicityRelease}}/simplicity.min.js"></script>
+    <script src="/js/documentation.js"></script>
   </body>
 </html>

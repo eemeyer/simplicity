@@ -1,0 +1,29 @@
+<form id="searchForm" class="form-search" onsubmit="return false;">
+  <button id="searchButton" type="submit" class="btn">Search</button>
+  <button id="resetButton" type="button" class="btn">Reset</button>
+  <fieldset>
+    <legend>Text Search</legend>
+    <input type="text" name="dataset_freetext" class="input-large search-query">
+  </fieldset>
+  <fieldset>
+    <legend>Category Type</legend>
+    <select name="category_type">
+      <option value="">Any...</option>
+      <option value="1">Raw Data Catalog</option>
+      <option value="2">Tool Catalog</option>
+    </select>
+  </fieldset>
+  <fieldset>
+    <legend>Formats Available</legend>
+    <select name="formats_avail">
+      <option value="">Any...</option>
+    </select>
+  </fieldset>
+  <fieldset>
+    <legend>Agency</legend>
+    <select name="agency" class="ui-helper-hidden-accessible">
+      <option value="">Any...</option>
+    </select>
+    <div id="agencyFancy"></div>
+  </fieldset>
+</form>
