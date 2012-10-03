@@ -12,26 +12,24 @@ lead: Binding HTML inputs to state.
 simplicityInputs
 ================
 
-We progressively enhance the standard HTML `input` elements to bind them to the widget state and thus decouple UI features from the backend search specific widgets.
+We progressively enhance standard HTML `input` elements to bind them to the widget state. This decouples UI features from back-end search specific widgets.
 
-Changes to the `input`s are automatically reflected in the state. Changes to the state are automatically reflected in the `input`s.
+Changes to `input`s automatically update the widget state, and vice versa.
 
 Text Input
 ==========
 
-To bind a single `input` to the state, first create the input.
+To bind a single `input` to the state,
 
-{% highlight html %}
-<input type="text" name="example">
+1. Create the input
+    {% highlight html %}
+ <input type="text" name="example">
 {% endhighlight %}
-
-Then apply the `simplicityInputs` widget to it.
-
-{% highlight javascript %}
+1. Apply the `simplicityInputs` widget to it
+    {% highlight javascript %}
 $('input').simplicityInputs();
 {% endhighlight %}
-
-Changes to the `input` will cause the state to be updated and changes to the state will be reflected in the `input`.
+1. Admire your handiwork!
 
 This live example shows how the state propagation works.
 
@@ -61,19 +59,17 @@ Alter the JSON in <span class="badge">2</span>, tab out and the value in <span c
 Textarea
 ========
 
-To bind a single `textarea` to the state, first create the input.
+To bind a single `textarea` to the state... you guessed it:
 
-{% highlight html %}
+1. Create the input
+    {% highlight html %}
 <textarea type="text" name="example"> </textarea>
 {% endhighlight %}
-
-Then apply the `simplicityInputs` widget to it.
-
-{% highlight javascript %}
+1. Apply the `simplicityInputs` widget to it
+    {% highlight javascript %}
 $('textarea').simplicityInputs();
 {% endhighlight %}
-
-Changes to the `textarea` will cause the state to be updated and changes to the state will be reflected in the `textarea`.
+1. You get the idea, right?
 
 This live example shows how the state propagation works.
 
