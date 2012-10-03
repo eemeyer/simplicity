@@ -219,6 +219,7 @@ Change the selection in <span class="badge">1</span> and the visible state in <s
 
 Click on rows in <span class="badge">2</span> and the value in <span class="badge">1</span> is updated.
 
+{% comment %}
 Checkboxes
 ==========
 
@@ -354,3 +355,4 @@ Example
         });
     });
 </script>
+{% endcomment %}
