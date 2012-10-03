@@ -75,7 +75,15 @@ $facets = array(
   "privacy" => array("dimension" => "privacy_and_confidentiality")
 );
 
+if (empty($criteria)) {
+  // No search parameters were used, apply a default search of "everything".
+  $criteria[] = array(
+    "dimension" => "data_category_type_id"
+  );
+}
+
 $discoveryRequest = array(
+    "criteria" => $criteria,
     "startIndex" => $startIndex,
     "pageSize" => $pageSize,
     "highlighting" => array(
@@ -87,9 +95,6 @@ $discoveryRequest = array(
 
 $discoveryRequest["properties"] = array();
 
-if (!empty($criteria)) {
-    $discoveryRequest["criteria"] = $criteria;
-}
 if (!empty($facets)) {
     $discoveryRequest["facets"] = $facets;
 }
