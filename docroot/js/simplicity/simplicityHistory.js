@@ -69,24 +69,8 @@
       if (this.options.debug) {
         console.log('simplicityHistory: Initial state is', this.initialState);
       }
-
-      var fragment = this._handleBang($.param.fragment());
-
-      if (fragment !== '') {
-        var state = $.deparam(fragment);
-        if ($.isEmptyObject(state)) {
-          if (this.options.debug) {
-            console.log('simplicityHistory: Hash state is deparams as empty, ignoring: "' + fragment + '"');
-          }
-        } else {
-          if (this.options.debug) {
-            console.log('simplicityHistory: Restoring hash state', state);
-          }
-          $(this.options.stateElement).simplicityState('state', state);
-        }
-      }
       this
-        ._bind(window, 'hashchange', this._hashChangeHandler)
+        ._bind(window, 'statechange', this._hashChangeHandler)
         ._bind(this.options.stateElement, 'simplicityStateChange', this._stateChangeHandler);
     },
     /**
@@ -98,21 +82,11 @@
      * @private
      */
     _hashChangeHandler: function (evt) {
-      var state;
-      if ('' === evt.fragment) {
-        state = this.initialState;
-        if (this.options.debug) {
-          console.log('simplicityHistory: Hash state is empty, restoring initial page state', state);
-        }
-      } else {
-        state = $.deparam(this._handleBang(evt.fragment));
-        if (this.options.debug) {
-          console.log('simplicityHistory: Back or forward button was activated, applying state', state);
-        }
-      }
+      var state = History.getState();
+      console.log('changed', state);
       try {
         this._ignoreStateChange = true;
-        $(this.options.stateElement).simplicityState('state', state);
+        $(this.options.stateElement).simplicityState('state', state.data);
       } finally {
         this._ignoreStateChange = false;
       }
@@ -127,59 +101,10 @@
      */
     _stateChangeHandler: function (evt, state) {
       if (!this._ignoreStateChange) {
-        var fragment = $.param.fragment();
-        var fragmentState = $.deparam(fragment);
-        var newFragment = undefined;
-        if (fragment === '') {
-          if ($.simplicityEquiv(this.initialState, state)) {
-            if (this.options.debug) {
-              console.log('simplicityHistory: State reset to initial page state, leaving the hash state empty');
-            }
-          } else {
-            newFragment = $.param.fragment('', state);
-          }
-        } else if ($.simplicityEquiv(fragmentState, state)) {
-          if (this.options.debug) {
-            console.log('simplicityHistory: Ignoring state change as is matches current history, state is', state, 'fragment is', decodeURIComponent(fragment));
-          }
-        } else {
-          newFragment = $.param.fragment('', state);
-        }
-        if ('undefined' !== typeof newFragment) {
-          if (this.options.debug) {
-            console.log('simplicityHistory: Updating hash state', state, newFragment);
-          }
-          $.bbq.pushState('#!' + newFragment.substr(1));
-        }
+        var fragment = $.param.fragment('', state);
+        var url = fragment && fragment !== '#' ? '?' + fragment.substr(1) : '';
+        History.pushState(state, null, url);
       }
-    },
-    /**
-     * Follows widget options regarding bangs (!). Normally bangs are expected
-     * and will be removed. For backward compatibility, a fragment without a bang
-     * can still be used.
-     *
-     * @name $.ui.simplicityHistory._handleBang
-     * @function
-     * @param {string} fragment The fragment containing query string values
-     * @private
-     */
-    _handleBang: function (fragment) {
-      // Remove !
-      var result;
-      if (!/^!/.test(fragment)) {
-        if (this.options.debug) {
-          if (this.options.acceptMissingBang) {
-            console.log('simplicityHistory: Bang not found, using the same fragment: "' + fragment + '"');
-          } else {
-            console.log('simplicityHistory: Bang not found, fragment will be ignored: "' + fragment + '"');
-          }
-        }
-        result = this.options.acceptMissingBang ? fragment : '';
-      } else {
-        // remove bang (!)
-        result = fragment.substr(1);
-      }
-      return result;
     }
   });
 }(jQuery, window));
