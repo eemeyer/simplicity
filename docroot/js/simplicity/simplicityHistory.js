@@ -101,7 +101,7 @@
     _stateChangeHandler: function (evt, state) {
       if (!this._ignoreStateChange) {
         var fragment = $.param.fragment('', state);
-        var url = fragment && fragment !== '#' ? '?' + fragment.substr(1) : '';
+        var url = fragment && fragment !== '#' && fragment.length > 1 ? '?' + fragment.substr(1) : window.location.pathname;
         History.pushState(state, null, url);
       }
     }
