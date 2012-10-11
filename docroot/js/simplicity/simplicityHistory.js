@@ -83,7 +83,6 @@
      */
     _hashChangeHandler: function (evt) {
       var state = History.getState();
-      console.log('changed', state);
       try {
         this._ignoreStateChange = true;
         $(this.options.stateElement).simplicityState('state', state.data);
