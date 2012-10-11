@@ -35,16 +35,6 @@
      *   <dd>
      *     The location of the simplicityState widget. Defaults to <code>'body'</code>.
      *   </dd>
-     *   <dt>noEscape</dt>
-     *   <dd>
-     *     Optional list of characters that should not be escaped. Defaults to <code>''</code>.
-     *     This is just a convenience that calls <code>$.param.fragment.noEscape</code> when
-     *     not the empty string.
-     *   </dd>
-     *   <dt>acceptMissingBang</dt>
-     *   <dd>
-     *     Determines if URLs without a bang (!) should be accepted. Defaults to <code>true</code>.
-     *   </dd>
      *   <dt>debug</dt>
      *   <dd>
      *     Enable logging of key events to <code>console.log</code>. Defaults to <code>false</code>.
@@ -54,35 +44,33 @@
      */
     options : {
       stateElement: 'body',
-      noEscape: '',
-      acceptMissingBang: false,
       debug: false
     },
     _create : function () {
-      this._addClass('ui-simplicity-history');
-
-      if (this.options.noEscape !== '') {
-        $.param.fragment.noEscape(this.options.noEscape);
+      if (typeof window.History === 'undefined' || !window.History.enabled) {
+        return;
       }
+
+      this._addClass('ui-simplicity-history');
 
       this.initialState = $(this.options.stateElement).simplicityState('state');
       if (this.options.debug) {
         console.log('simplicityHistory: Initial state is', this.initialState);
       }
       this
-        ._bind(window, 'statechange', this._hashChangeHandler)
-        ._bind(this.options.stateElement, 'simplicityStateChange', this._stateChangeHandler);
+        ._bind(window, 'statechange', this._load)
+        ._bind(this.options.stateElement, 'simplicityStateChange', this._save);
     },
     /**
      * Event handler for the <code>hashchange</code> event. Applies the new hash state to the
      * simplicityState.
      *
-     * @name $.ui.simplicityHistory._hashChangeHandler
+     * @name $.ui.simplicityHistory._load
      * @function
      * @private
      */
-    _hashChangeHandler: function (evt) {
-      var state = History.getState();
+    _load: function (evt) {
+      var state = window.History.getState();
       try {
         this._ignoreStateChange = true;
         $(this.options.stateElement).simplicityState('state', state.data);
@@ -92,17 +80,17 @@
     },
     /**
      * Event handler for the <code>simplicityStateChange</code> event. Applies the state to
-     * the browser history (hash fragment).
+     * the browser history.
      *
-     * @name $.ui.simplicityHistory._stateChangeHandler
+     * @name $.ui.simplicityHistory._save
      * @function
      * @private
      */
-    _stateChangeHandler: function (evt, state) {
+    _save: function (evt, state) {
       if (!this._ignoreStateChange) {
         var fragment = $.param.fragment('', state);
         var url = fragment && fragment !== '#' && fragment.length > 1 ? '?' + fragment.substr(1) : window.location.pathname;
-        History.pushState(state, null, url);
+        window.History.pushState(state, null, url);
       }
     }
   });
