@@ -48,6 +48,7 @@
      * @name $.ui.simplicityState.mergeQueryParams
      * @function
      */
+    // TODO: Move to simplicityHistory
     mergeQueryParams: function (triggerChangeEventStyle) {
       var state = this.state();
       $.extend(state, $.deparam($.param.querystring()));
